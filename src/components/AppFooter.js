@@ -5,7 +5,7 @@ const AppFooter = () => {
   return (
     <CFooter>
       <div className='ms-auto'>
-        <span className='me-1'>&copy; २०२४ महसूल विभाग महाराष्ट्र</span>
+        <span className='me-1'>&copy; २०२५ महसूल विभाग, महाराष्ट्र</span>
        
       </div>{' '}
      

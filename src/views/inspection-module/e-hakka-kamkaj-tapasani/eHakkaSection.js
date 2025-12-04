@@ -1,77 +1,87 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './EHakkaSection.module.css'; // Correct CSS Modules import
+import styles from './EHakkaSection.module.css'; 
+import { CIcon } from '@coreui/icons-react';
+import { cilChevronBottom } from '@coreui/icons';
 
 function EHakkaSection() {
   const navigate = useNavigate();
+  const [expandedCardId, setExpandedCardId] = useState(null);
 
   // Mock data for cards
   const mainCards = [
-    { id: 'card1', title: 'त्रुटीपूर्ततेसाठी भूधारकास परत पाठविण्यात आलेल्या अर्जांची तपासणी',
-         subCards: [
-        { id: 'main1', title: 'किमान ५ तपासणी करणे अनिवार्य आहे ' },
-      
+    { 
+      id: 'card1', 
+      title: 'त्रुटीपूर्ततेसाठी भूधारकास परत पाठविण्यात आलेल्या अर्जांची तपासणी',
+      subCards: [
+        { id: 'main1', title: 'किमान ५ तपासणी करणे अनिवार्य आहे' },
       ]
-     },
+    },
     { 
       id: 'card2', 
-      title: 'तलाठी स्तरावर फेरफाराकरीता प्रलंबित अर्जांची तपासणी', 
+      title: 'तलाठी स्तरावर फेरफाराकरीता प्रलंबित अर्जांची तपासणी', 
       subCards: [
-        { id: 'main2-1', title: '९० दिवसापेक्षा जास्त दिवस प्रलंबित', description: '(किमान २५% तपासणी अनिवार्य)' },
-        { id: 'main2-2', title: '१५ ते ९० दिवसातील प्रलंबित', description: '(किमान १०% तपासणी अनिवार्य)' },
-        { id: 'main2-3', title: '१५ दिवसा पेक्षा कमी दिवस प्रलंबित', description: '(तपासणी आवश्यक नाही)' },
+        { id: '1', title: '१८० दिवसापेक्षा जास्त दिवस प्रलंबित', description: '(१००% तपासणी अनिवार्य)' },
+        { id: '2', title: '९० ते १८०  दिवसातील प्रलंबित', description: '(१००% तपासणी अनिवार्य)' },
+        { id: '3', title: '३० ते ९० दिवसातील प्रलंबित', description: '(किमान ५०% तपासणी अनिवार्य)' },
+        { id: '4', title: '३० दिवसा पेक्षा कमी दिवस प्रलंबित', description: '(तपासणी आवश्यक नाही)' },
       ]
     },
   ];
 
-  const handleCardClick = (id) => {
-    if(id=='main1'){
-      navigate(`/e-hakka-kamkaj-tapasani/info-truti-arj`)
+  const handleHeaderClick = (id) => {
+    setExpandedCardId(expandedCardId === id ? null : id);
+  };
 
-    }else{
-
-      navigate(`/e-hakka-kamkaj-tapasani/info/${id}`)
+  const handleSubCardClick = (id) => {
+    if (id === 'main1') {
+      navigate(`/e-hakka-kamkaj-tapasani/info-truti-arj`);
+    } else {
+      navigate(`/e-hakka-kamkaj-tapasani/info/${id}`);
     }
   };
 
   return (
     <>
-                  <div className={styles.header}>ई-हक्क प्रणाली कामकाज तपासणी (Online)</div>
+      <div className={styles.headerWrapper}>
+        <div className={styles.header}>
+          इ - हक्क प्रणाली कामकाज तपासणी (Online)
+        </div>
+      </div>
 
-    <div className={styles['cards-container']}>
-
-      {mainCards.map((card) => (
-        <div key={card.id} className={styles['main-card']}>
-          <h2>{card.title}</h2>
-          
-          {card.description && (
+      <div className={styles['cards-container']}>
+        {mainCards.map((card) => (
+          <div key={card.id} className={styles['main-card-accordion']}>
             <div 
-              className={styles['card-content']}
-              onClick={() => handleCardClick(card.id)}
+              className={styles['accordion-header']} 
+              onClick={() => handleHeaderClick(card.id)}
             >
-              <p>{card.description}</p>
+              <h2 className={styles['accordion-title']}>{card.title}</h2>
+              <CIcon 
+                icon={cilChevronBottom} 
+                className={`${styles['accordion-icon']} ${expandedCardId === card.id ? styles.expanded : ''}`}
+              />
             </div>
-          )}
-
-          {card.subCards && (
-            <div className={styles['sub-cards']}>
+            
+            <div 
+              className={`${styles['accordion-body']} ${expandedCardId === card.id ? styles.open : ''}`}
+            >
               {card.subCards.map((subCard) => (
                 <div 
                   key={subCard.id} 
                   className={styles['sub-card']}
-                  onClick={() => handleCardClick(subCard.id)}
+                  onClick={() => handleSubCardClick(subCard.id)}
                 >
-                  <h3>{subCard.title}</h3>
-                  <p>{subCard.description}</p>
+                  <h3 className={styles['sub-card-title']}>{subCard.title}</h3>
+                  <p className={styles['sub-card-description']}>{subCard.description}</p>
                 </div>
               ))}
             </div>
-          )}
-        </div>
-      ))}
-    </div>
+          </div>
+        ))}
+      </div>
     </>
   );
-}
+}  
 
 export default EHakkaSection;

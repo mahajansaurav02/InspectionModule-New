@@ -1,67 +1,180 @@
+/* FerfarHome.module.css */
+
+:root {
+  --primary-color: #2c3e50;
+  --accent-color: #3498db;
+  --background-light: #f4f7f9;
+  --card-bg: #ffffff;
+  --text-dark: #212121;
+  --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.15);
+  --header-gradient: linear-gradient(90deg, #2b2570, #1e0dab, #00c6ff);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background-light);
+  margin: 0;
+  padding: 0;
+}
+
 .container {
-  margin-top: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.headerWrapper {
+  text-align: center;
 }
 
 .header {
-  font-size: 2rem;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 700;
-  text-align: center;
-  margin-bottom: 2rem;
-  color: #343a40;
-  letter-spacing: 1px;
+  color: var(--text-dark);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.75rem;
+  margin-bottom: 2.5rem;
+}
+
+.header::after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 5px;
+  left: 25%;
+  bottom: 0;
+  background: var(--header-gradient);
+  border-radius: 2px;
 }
 
 .cardGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 3rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
 }
 
 .card {
-  background: #a3b8c5;
-  border-radius: 15px;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
- 
+  flex: 1 1 300px;
+  max-width: 400px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  box-shadow: var(--shadow-light);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  border-top: 6px solid;
+  border-image: var(--header-gradient) 1;
 }
 
 .card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    background: #bae5fe;
-
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
 }
 
-.cardBody {
-  padding: 1.5rem;
+.cardHeader {
   display: flex;
-  flex-direction: column;
- /* justify-content: center; */
-  /* align-items: center; */
-    height: 100%;
-    
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  flex-grow: 1;
 }
 
 .cardTitle {
-  font-size: 1.1rem;
+  font-size: clamp(1rem, 2vw, 1.2rem);
   font-weight: 600;
-  color:#131a22;
-  margin-bottom: 1rem;
+  color: var(--text-dark);
   line-height: 1.4;
+  margin: 0;
+  flex-grow: 1;
+  text-align: left;
+  padding-right: 0.5rem;
+}
+
+/* --- Major layout change: new flex container for compact design --- */
+.cardContentBody {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Pushes content to the edges */
+  padding: 1rem 0;
+}
+
+.cardProgressInfo {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem; /* Space between the circle and the text */
 }
 
 .button {
-  padding: 0.5rem 1rem;
-  font-size: 0.95rem;
-  font-weight: 500;
+  padding: 0.8rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  width: auto; /* Allow the button to size based on its content */
   border: none;
-  border-radius: 0.4rem;
-  background-color: #1b1833;
-  color: #ffffff;
-  transition: background-color 0.25s ease;
-  align-self:center;
+  border-radius: 10px;
+  background: var(--primary-color);
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.25s ease;
+  box-shadow: 0 4px 10px rgba(44, 62, 80, 0.2);
 }
 
 .button:hover {
-  background-color: #1e0dab;
+  background: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(52, 152, 219, 0.3);
+}
+
+.infoButton {
+  margin-left: 1rem;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(52, 152, 219, 0.1);
+  color: var(--accent-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.25s ease;
+  flex-shrink: 0;
+}
+
+.infoButton:hover {
+  background: rgba(52, 152, 219, 0.2);
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  .cardGrid {
+    gap: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 0.5rem;
+  }
+  .header {
+    font-size: 1.8rem;
+  }
+  .card {
+    padding: 1rem;
+  }
+  .cardTitle {
+    font-size: 1rem;
+  }
+  .button {
+    padding: 0.7rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  .infoButton {
+    width: 28px;
+    height: 28px;
+  }
 }

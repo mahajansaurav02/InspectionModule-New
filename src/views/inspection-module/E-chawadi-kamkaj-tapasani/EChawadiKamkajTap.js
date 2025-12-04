@@ -1,39 +1,93 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FaEye, FaInfoCircle } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 import './EChawadiKamkajTap.css';
-import { FaEye } from 'react-icons/fa'; // Using react-icons for the eye icon
 
 function EChawadiKamkajTap() {
+  const navigate = useNavigate();
+
+  // State to manage the tooltip
+  const [tooltip, setTooltip] = useState({
+    isVisible: false,
+    text: '',
+    position: { x: 0, y: 0 },
+  });
+
+  const cards = [
+    {
+      title: 'गावातील गाव नमुना पूर्ण भरण्याची घोषणा केलेले गाव नमुना संख्या',
+      tooltipText: 'तपासणी अधिकारी यांना सदर गावातील निरंक/काम पूर्ण  घोषणा केलेल्या गाव नमुन्यांची माहिती उपलब्ध होणार आहे.',
+      onClick: () => navigate('/e-chawadi-kamkaj-tapasani/nirank-namuna-tapasani'),
+    },
+    {
+      title: 'गावातील मागणी निश्चिती करताना दुरुस्तीद्वारे मागणी रक्कम कमी केलेल्या खातेदार संख्या',
+      tooltipText: 'तपासणी अधिकारी यांना मागणीची दुरुस्ती (मागणी रक्कम कमी/जास्त )केलेल्या खात्यांचा अहवाल उपलब्ध होणार आहे.',
+      onClick: () => navigate('/e-chawadi-kamkaj-tapasani/magani-durusti-report'),
+    },
+    {
+      title: 'अकृषक दर नमूद केल्याची तपासणी',
+      tooltipText: 'तपासणी अधिकारी यांना सदर गावाचे DBA यांनी ५ पैसे, १० पैसे असे अकृषिक दर भरून घोषणा केली आहे का तसेच, नगरपालिका आणि महानगरपालिका गावे निवडून त्याचे गटनिहाय अकृषिक दर भरून घोषणा केली आहे कि नाही याची माहिती उपलब्ध होणार आहे.',
+      onClick: () => navigate('/e-chawadi-kamkaj-tapasani/akrushaki-dar-tapasani'),
+    },
+    {
+      title: 'वसूली बाबत तपशील',
+      tooltipText: 'गावात जमीन महसूल व संकीर्ण प्रकारातील मागणी किती आहे व आजपर्यंत त्यामध्ये किती वसुली झालेली आहे, त्याचा अहवाल तपासणीसाठी उपलब्ध होणार आहे.',
+      onClick: () => navigate('/e-chawadi-kamkaj-tapasani/vasuli-tapsil'),
+    },
+    {
+      title: 'उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील',
+      tooltipText: '1.आकारबंद (गाव नमुना क्र. १)Dyslr :उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद भरलेला आहे. त्याचा अहवाल तपासणीसाठी उपलब्ध होणार आहे.  2.आकारबंद (गाव नमुना क्र. १) Dyslr कमी केलेलं भूमापन क्रमांक: उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद मध्ये ग्राम महसूल अधिकारी यांच्या कडील आकारबंद live नुसार उपलब्ध नसलेले भूमापन क्रमांक कमी करण्यात आले आहे. त्याचा अहवाल तपासणीसाठी उपलब्ध होणार आहे.',
+      onClick: () => navigate('/e-chawadi-kamkaj-tapasani/dyslr-akarband'),
+    },
+  ];
+
+  const handleMouseEnter = (e, text) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    setTooltip({
+      isVisible: true,
+      text: text,
+      position: { x: rect.left + rect.width / 2, y: rect.top - 10 },
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip({ ...tooltip, isVisible: false });
+  };
+
   return (
     <div className="echawadi-container">
-      <h1 className="echawadi-title">ई-चावडी कामकाज तपासणी
-</h1>
+      <div className="echawadi-title-wrapper">
+        <h1 className="echawadi-title">ई-चावडी कामकाज तपासणी</h1>
+      </div>
       
       <div className="cards-wrapper">
-        {/* Card 1 */}
-        <div className="echawadi-card">
-          <h2 className="card-title">गावातील गाव नमुना पूर्ण भरण्याची घोषणा केलेले गाव नमुना संख्या
-</h2>
-          {/* <p className="card-description">
-            या कार्यामध्ये तुम्हाला गावातील पहिल्या प्रकल्पाची माहिती सादर करावयाची आहे. 
-            सर्व आवश्यक तपशील आणि दस्तऐवज येथे अपलोड करा.
-          </p> */}
-          <button className="paha-button">
-            <FaEye /> पहा
-          </button>
-        </div>
-        
-        {/* Card 2 */}
-        <div className="echawadi-card">
-          <h2 className="card-title">गावातील मागणी निश्चिती करताना दुरुस्तीद्वारे मागणी रक्कम कमी केलेल्या खातेदार संख्या</h2>
-          {/* <p className="card-description">
-            गावातील दुसऱ्या प्रकल्पाची अहवाल तयार करणे. यामध्ये प्रकल्पाची प्रगती, 
-            खर्च आणि इतर महत्वाच्या माहितीचा समावेश आहे.
-          </p> */}
-          <button className="paha-button">
-            <FaEye /> पहा
-          </button>
-        </div>
+        {cards.map((card, index) => (
+          <div className="echawadi-card" key={index}>
+            <div className="card-header">
+              <h2 className="card-title">{card.title}</h2>
+              <div
+                className="info-icon-wrapper"
+                onMouseEnter={(e) => handleMouseEnter(e, card.tooltipText)}
+                onMouseLeave={handleMouseLeave}
+              >
+                <FaInfoCircle className="info-icon" />
+              </div>
+            </div>
+            <button className="paha-button" onClick={card.onClick}>
+              <FaEye /> पहा
+            </button>
+          </div>
+        ))}
       </div>
+
+      {tooltip.isVisible && (
+        <div 
+          className="global-tooltip" 
+          style={{ left: tooltip.position.x, top: tooltip.position.y }}
+        >
+          {tooltip.text}
+        </div>
+      )}
     </div>
   );
 }

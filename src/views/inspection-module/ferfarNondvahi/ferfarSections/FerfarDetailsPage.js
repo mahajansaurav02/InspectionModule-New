@@ -29,7 +29,7 @@ const FerfarDetailsPage = () => {
   onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
   onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
 >
-  फेरफार क्र. {ferfar.ferfarNumber}
+  फेरफार क्र. {ferfar.mutNo}
 </h5>
       <FerfarDetailsTabs ferfar={ferfar} />
     </CContainer>

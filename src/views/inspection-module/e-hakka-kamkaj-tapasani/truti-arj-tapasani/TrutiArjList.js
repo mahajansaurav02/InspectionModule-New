@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   CCard,
   CCardBody,
@@ -17,12 +17,17 @@ import {
   CFormInput,
   CAlert,
   CSpinner,
-  CTooltip
+  CTooltip,
+  CPaginationItem
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilSearch, cilFile, cilMagnifyingGlass, cilInfo } from '@coreui/icons';
 import '@coreui/coreui/dist/css/coreui.min.css';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import URLS from 'src/URLS';
+import reqHeaders from 'src/instance/headers';
+import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList';
 
 function TrutiArjList() {
   // Sample data - replace with your actual data source
@@ -32,7 +37,7 @@ function TrutiArjList() {
     {
       id: '1',
       applicationNo: 'APP-2023-001',
-      cancelReason: 'Duplicate application',
+      cancelReason: 'आपण अपलोड केलेले दस्तावेज अपूर्ण आहेत.',
       date: '2023-05-15',
       docLink: '/documents/app-001',
       status: 'pending'
@@ -40,15 +45,15 @@ function TrutiArjList() {
     {
       id: '2',
       applicationNo: 'APP-2023-002',
-      cancelReason: 'Incomplete information',
+      cancelReason: 'धारण जमीन भोगवटदार वर्ग २ ची असल्याने सक्षम अधिकाऱ्याची परवानगी आवश्यक आहे.',
       date: '2023-05-18',
       docLink: '/documents/app-002',
-      status: 'approved'
+      status: 'rejected'
     },
     {
       id: '3',
       applicationNo: 'APP-2023-003',
-      cancelReason: 'Withdrawn by applicant',
+      cancelReason: 'अर्जामधील माहिती चा फेरफार घेणे ची तरतूद नाही.',
       date: '2023-05-20',
       docLink: '/documents/app-003',
       status: 'rejected'
@@ -56,7 +61,7 @@ function TrutiArjList() {
     {
       id: '4',
       applicationNo: 'APP-2023-1252',
-      cancelReason: 'Withdrawn by applicant',
+      cancelReason: 'दिवाणी / महसूली / सहकार न्यायालयाच्या आदेशावर स्थगिती आहे.',
       date: '2023-05-20',
       docLink: '/documents/app-003',
       status: 'rejected'
@@ -64,7 +69,7 @@ function TrutiArjList() {
     {
       id: '5',
       applicationNo: 'APP-2023-56952',
-      cancelReason: 'Withdrawn by applicant',
+      cancelReason: 'आपण अपलोड केलेला दस्तावेज व भरलेली माहिती यामध्ये तफावत आहे',
       date: '2023-05-20',
       docLink: '/documents/app-003',
       status: 'rejected'
@@ -72,7 +77,7 @@ function TrutiArjList() {
     {
       id: '6',
       applicationNo: 'APP-2023-0322',
-      cancelReason: 'Withdrawn by applicant',
+      cancelReason: 'आपण अपलोड केलेले दस्तावेज अपूर्ण आहेत',
       date: '2023-05-20',
       docLink: '/documents/app-003',
       status: 'rejected'
@@ -80,7 +85,7 @@ function TrutiArjList() {
     {
       id: '7',
       applicationNo: 'APP-2023-0322',
-      cancelReason: 'Withdrawn by applicant',
+      cancelReason: 'आपण अर्जा मध्ये अचुक माहीती भरलेली नाही',
       date: '2023-05-20',
       docLink: '/documents/app-003',
       status: 'rejected'
@@ -88,7 +93,7 @@ function TrutiArjList() {
     {
       id: '8',
       applicationNo: 'APP-2023-0322',
-      cancelReason: 'Withdrawn by applicant',
+      cancelReason: 'आपण भरलेल्या सर्व्हे/खाता नंबरवर आक्षेपीत फेरफार प्रलंबित आहे.',
       date: '2023-05-20',
       docLink: '/documents/app-003',
       status: 'rejected'
@@ -96,7 +101,7 @@ function TrutiArjList() {
     {
       id: '9',
       applicationNo: 'APP-2023-0322',
-      cancelReason: 'Withdrawn by applicant',
+      cancelReason: 'आपणास अर्ज करण्याचा कायदेशीर अधिकार नाही.',
       date: '2023-05-20',
       docLink: '/documents/app-003',
       status: 'rejected'
@@ -106,18 +111,66 @@ function TrutiArjList() {
   const [currentPage, setCurrentPage] = React.useState(1);
   const [searchTerm, setSearchTerm] = React.useState('');
   const [isLoading, setIsLoading] = React.useState(false);
+  const [trutiArjList, setTrutiArjList] = useState([])
   const itemsPerPage = 8;
+   let VillageData= localStorage.getItem('selectedVillageData')
+
+ let selectedVillageData=JSON.parse(VillageData)
+
+
+  let {
+    cCode,
+    distMarathiName,
+    districtCode,
+    lgdCode,
+    talukaCode,
+    talukaMarathiName,
+    villageName,
+  } = selectedVillageData[0]
+
+
+
+
+const getTrutiArjListList = async () => {
+    setIsLoading(true)
+   if (!cCode) {
+        alert('Village code not found....Please Select Village First')
+        return
+      }    try {
+      const res = await axios.get(
+        `${URLS.BaseURL}/inpsection/getEhakkaTrutiApplication?ccode=${cCode}`,
+        {
+          headers:reqHeaders
+        },
+      )
+
+
+      console.log(res.data,"trutiApplication list")
+      setTrutiArjList(res.data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+useEffect(() => {
   
+getTrutiArjListList()
+ 
+}, [])
+
+
   // Filter data based on search term
-  const filteredData = data.filter(item => 
-    item.applicationNo.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.cancelReason.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  // const filteredData = trutiArjList.filter(item => 
+  //   item.applicationId.includes(searchTerm.toLowerCase()) ||
+  //   item.rejReason.toLowerCase().includes(searchTerm.toLowerCase())
+  // );
   
   // Calculate paginated data
-  const totalItems = filteredData.length;
+  const totalItems = trutiArjList.length;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
-  const paginatedData = filteredData.slice(
+  const paginatedData = trutiArjList.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
@@ -138,11 +191,11 @@ navigate(`/truti-applications-details/${application.id}`, { state: { application
   const getStatusBadge = (status) => {
     switch(status) {
       case 'approved':
-        return <CBadge color="success">Approved</CBadge>;
+        return <CBadge color="success">अभिप्राय दिलेला आहे</CBadge>;
       case 'rejected':
-        return <CBadge color="danger">Rejected</CBadge>;
+        return <CBadge color="danger">अभिप्राय दिलेला नाही</CBadge>;
       default:
-        return <CBadge color="warning">Pending</CBadge>;
+        return <CBadge color="warning">प्रलंबित</CBadge>;
     }
   };
 
@@ -168,6 +221,7 @@ navigate(`/truti-applications-details/${application.id}`, { state: { application
           </CTooltip>
         </div>
       </CCardHeader>
+              <VillageDetailsList />
       
       <CCardBody>
         {isLoading ? (
@@ -177,7 +231,7 @@ navigate(`/truti-applications-details/${application.id}`, { state: { application
           </div>
         ) : (
           <>
-            {filteredData.length === 0 ? (
+            {trutiArjList.length === 0 ? (
               <CAlert color="info" className="text-center">
                 <CIcon icon={cilInfo} className="me-2" />
                 कोणतेही अर्ज सापडले नाहीत
@@ -204,12 +258,12 @@ navigate(`/truti-applications-details/${application.id}`, { state: { application
                                 className="btn btn-link text-primary text-decoration-underline p-0"
                                 onClick={() => handleApplicationClick(item)}
                               >
-                                {item.applicationNo}
+                                {item.applicationId}
                               </button>                          </CTableDataCell>
-                          <CTableDataCell>{item.cancelReason}</CTableDataCell>
-                          <CTableDataCell>{item.date}</CTableDataCell>
+                          <CTableDataCell>{item.rejReason}</CTableDataCell>
+                          <CTableDataCell>{item.appDate}</CTableDataCell>
                           <CTableDataCell>
-                            {getStatusBadge(item.status)}
+                            {getStatusBadge(item.isRemarkSubmitted)}
                           </CTableDataCell>
                           {/* <CTableDataCell>
                             <CTooltip content="7/12 पहा">
@@ -251,20 +305,31 @@ navigate(`/truti-applications-details/${application.id}`, { state: { application
   </CCol>
   
   <CCol xs={12} md={6}>
-    {totalPages > 1 && (
-      <CPagination
-        activePage={currentPage}
-        pages={totalPages}
-        onActivePageChange={setCurrentPage}
-        align="end"
-        dots={false}
-        doubleArrows={false}
-        firstButton="First"
-        lastButton="Last"
-        size="sm"
-        className="justify-content-center justify-content-md-end"
-      />
-    )}
+ <CPagination align="end" size="sm" className="mb-0">
+                        <CPaginationItem
+                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPage(currentPage - 1)}
+                        >
+                          Previous
+                        </CPaginationItem>
+
+                        {Array.from({ length: totalPages }, (_, i) => (
+                          <CPaginationItem
+                            key={i + 1}
+                            active={i + 1 === currentPage}
+                            onClick={() => setCurrentPage(i + 1)}
+                          >
+                            {i + 1}
+                          </CPaginationItem>
+                        ))}
+
+                        <CPaginationItem
+                          disabled={currentPage === totalPages}
+                          onClick={() => setCurrentPage(currentPage + 1)}
+                        >
+                          Next
+                        </CPaginationItem>
+                      </CPagination>
   </CCol>
 </CRow>
               </>

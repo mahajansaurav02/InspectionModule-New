@@ -1,0 +1,168 @@
+/* Import a professional font like Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #2c3e50; /* Dark Navy/Charcoal */
+  --secondary-color: #3498db; /* Bright Blue */
+  --background-light: #f4f7f9; /* Off-white background */
+  --card-bg: #ffffff;
+  --text-dark: #212121;
+  --text-light: #757575;
+  --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+.wrapper {
+  font-family: 'Poppins', sans-serif;
+  padding: 2rem;
+  background: var(--background-light);
+  min-height: 100vh;
+}
+
+/* Custom styles for Bootstrap Tabs */
+.customTabs .nav-link {
+  color: var(--text-dark);
+  font-weight: 500;
+  border: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.customTabs .nav-link:hover {
+  background-color: transparent;
+  border-bottom-color: var(--secondary-color);
+}
+
+.customTabs .nav-link.active {
+  color: var(--secondary-color);
+  background-color: transparent;
+  border-bottom-color: var(--secondary-color);
+}
+
+/* Tab Content and Controls */
+.tabContent {
+  margin-top: 1.5rem;
+}
+
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+/* Custom button styles */
+.customButton {
+  background-color: var(--primary-color);
+  border: none;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.customButton:hover {
+  background-color: var(--secondary-color);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+}
+
+.customButton:disabled {
+  background-color: #95a5a6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.loading {
+  text-align: center;
+  margin-top: 2rem;
+  color: var(--primary-color);
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
+/* Report Card and Table */
+.reportCard {
+  padding: 1.5rem;
+  border-radius: 12px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-light);
+  overflow-x: auto;
+}
+
+.exportControls {
+  text-align: right;
+  margin-bottom: 1rem;
+}
+
+.downloadButton {
+  background-color: #27ae60;
+  border: none;
+  font-weight: 600;
+  padding: 0.6rem 1.2rem;
+  border-radius: 8px;
+}
+
+.downloadButton:hover {
+  background-color: #2ecc71;
+}
+
+.tableContainer {
+  overflow-x: auto;
+}
+
+.report_table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.75rem; /* Drastically reduced font size */
+  background: var(--card-bg);
+}
+
+.report_table th,
+.report_table td {
+  border: 1px solid #ddd;
+  padding: 8px; /* Reduced padding */
+  text-align: center;
+  white-space: nowrap; /* Prevents text from wrapping */
+}
+
+/* Ensure header text also wraps to help with width */
+.report_table th {
+  white-space: normal;
+}
+
+.report_table thead tr:first-child th {
+  background: var(--primary-color);
+  color: white;
+  font-size: 1.1rem;
+  border: none;
+  border-bottom: 2px solid white;
+}
+
+.report_table thead th {
+  background: #f0f2f5;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.report_table tbody tr:nth-child(odd) {
+  background-color: #fcfcfc;
+}
+
+.report_table tbody tr:hover {
+  background-color: #e9f2ff;
+  transform: scale(1.01);
+  transition: transform 0.2s ease;
+}
+
+/* No data message */
+.noData,
+.placeholder {
+  text-align: center;
+  color: #888;
+  font-style: italic;
+  margin-top: 2rem;
+  font-size: 1.1rem;
+}

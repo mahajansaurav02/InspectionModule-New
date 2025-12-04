@@ -1,0 +1,53 @@
+.brandAndForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  flex-grow: 1;
+  text-align: center;
+}
+
+.brandText {
+  font-size: 1.4rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+
+  background: linear-gradient(90deg, #2b2570, #1e0dab, #00c6ff);
+  -webkit-text-fill-color: transparent;
+
+  display: inline-block;
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.formContainer {
+  width: 100%;
+  max-width: 800px; 
+  margin: 0 auto;
+}
+
+.formControl {
+  background-color: #e8f5f9;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 0 !important; 
+}
+
+.formControl .MuiFilledInput-root {
+  background-color: transparent !important;
+}
+
+.formControl .MuiInputBase-input {
+  padding: 8px 12px; 
+}
+
+.formControl .MuiInputLabel-root {
+  font-size: 0.8rem;
+  top: 4px;
+}
+
+.formControl .MuiSelect-select {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}

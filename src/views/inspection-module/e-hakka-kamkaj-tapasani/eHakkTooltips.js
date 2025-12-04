@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   CContainer,
   CCard,
@@ -15,6 +15,7 @@ import FerfarNavbar from '../ferfarNondvahi/ferfarSections/FerfarNavbar';
 
 function EHakkTooltips() {
   const navigate = useNavigate();
+  const { id } = useParams(); 
 
   const handleGoBack = () => {
     navigate(-1); // Go back to previous page
@@ -22,7 +23,8 @@ function EHakkTooltips() {
 
   const handleViewFerfar = () => {
     // Add logic or route to view Ferfar
-navigate('/e-hakka-kamkaj-tapasani/talathi-applications')  };
+    console.log(id,"check  pas id ")
+navigate(`/e-hakka-kamkaj-tapasani/talathi-applications/${id}`)  };
 
   return (
     <>
@@ -31,7 +33,7 @@ navigate('/e-hakka-kamkaj-tapasani/talathi-applications')  };
    <CContainer className="mt-4">
   <CCard className="shadow-lg border-0">
     <CCardHeader className="bg-primary text-white fs-5 fw-bold">
-      📄 PDE  (ई- हक्क)
+      📄 इ - हक्क
 
     </CCardHeader>
     <CCardBody>

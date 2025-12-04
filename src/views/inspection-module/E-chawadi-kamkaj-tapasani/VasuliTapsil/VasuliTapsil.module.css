@@ -1,0 +1,177 @@
+/* Main container for the whole component */
+.vasuli-container {
+  padding: 20px;
+  background-color: #f0f2f5; /* Light gray background for the page */
+  min-height: 100vh;
+}
+
+/* Main title styling */
+.main-title {
+  text-align: center;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 30px;
+  position: relative;
+  padding-bottom: 10px;
+}
+
+.main-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background-color: #4f5d73;
+  border-radius: 2px;
+}
+
+/* Styling for each table card */
+.table-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 30px;
+  margin-bottom: 40px;
+  border: 1px solid #e0e6ed;
+}
+
+.table-title {
+  text-align: left;
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: #555;
+  margin-bottom: 25px;
+}
+
+/* General table styling overrides */
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.custom-table th, 
+.custom-table td {
+  border: 1px solid #e0e6ed !important;
+  padding: 12px 15px !important;
+  text-align: center;
+}
+
+.custom-table th {
+  font-weight: 600;
+}
+
+/* Table header styling */
+.table-head {
+  background-color: #4f5d73 !important;
+  color: #fff !important;
+}
+
+/* Sticky headers for better scrolling on mobile */
+.sticky-header-cell {
+  background-color: #4f5d73;
+  color: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 12px 15px !important;
+}
+
+.sub-header-cell {
+  background-color: #6a798f !important;
+  color: #fff !important;
+  font-weight: 500;
+}
+
+/* Table body and data cell styling */
+.custom-table tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.custom-table tbody tr:nth-child(even) {
+  background-color: #f8f9fa; /* Lighter stripe for better readability */
+}
+
+.custom-table tbody tr:hover {
+  background-color: #eaf3ff !important;
+  cursor: pointer;
+}
+
+.data-cell {
+  color: #333;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .vasuli-container {
+    padding: 10px;
+  }
+  .main-title {
+    font-size: 1.8rem;
+  }
+  .table-card {
+    padding: 15px;
+  }
+  .custom-table {
+    font-size: 12px;
+  }
+}
+
+
+.remark-controls-section {
+    /* Background light gray for distinction */
+    background-color: #f8f9fa !important; 
+    border: 1px solid #e9ecef !important;
+    border-radius: 8px !important;
+    max-width: 1500px;
+}
+
+.remark-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-color, #2c3e50); /* Use your defined primary color */
+    border-bottom: 2px solid var(--accent-color, #3498db);
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+.remark-textarea {
+    resize: vertical;
+    min-height: 100px;
+    font-size: 0.95rem;
+    border-radius: 6px;
+    transition: border-color 0.2s;
+}
+
+.remark-textarea:focus {
+    border-color: var(--accent-color, #3498db);
+    box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
+}
+
+/* Button styles (using CoreUI/Bootstrap colors) */
+.button-container .submit-button {
+    background-color: #28a745 !important; /* Success/Green */
+    border-color: #28a745 !important;
+    font-weight: 500;
+}
+
+.button-container .submit-button:hover:not(:disabled) {
+    background-color: #218838 !important;
+    border-color: #1e7e34 !important;
+}
+
+.button-container .cancel-button {
+    background-color: #6c757d !important; /* Secondary/Grey */
+    border-color: #6c757d !important;
+    color: white;
+    font-weight: 500;
+}
+
+.button-container .cancel-button:hover {
+    background-color: #5a6268 !important;
+    border-color: #545b62 !important;
+}

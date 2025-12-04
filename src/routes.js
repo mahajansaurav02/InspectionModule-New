@@ -32,17 +32,6 @@ const ShowEightAView = React.lazy(() =>
   import('../src/views/inspection-module/inspection-online/Sections/SectionTables/ShowEightAView'),
 )
 
-// OCR-Trial-Components
-const UserRegistration = React.lazy(() =>
-  import('./views/ocr-trial/user-registration/user-registration'),
-)
-const RRRFSearchTrial = React.lazy(() => import('./views/ocr-trial/rrrf-search/rrrf-search'))
-// const TextRecognizeTrial = React.lazy(() =>
-//   import('./views/ocr-trial/text-recognize/TextRecognization'),
-// )
-const CompareDocumentsTrial = React.lazy(() =>
-  import('./views/ocr-trial/compare-documents/compare-documents'),
-)
 const ferfarNondwahiSection1 = React.lazy(() =>
   import('./views/inspection-module/ferfarNondvahi/ferfarNondwahiSection1'),
 )
@@ -134,13 +123,7 @@ const routes = [
   // },
 
   //ocr trial
-  { path: '/ocr/gr-information', name: 'GR-information', element: UserRegistration },
-  { path: '/ocr/rrrf-search', name: 'rrrf-search', element: RRRFSearchTrial },
-  {
-    path: '/ocr/compare-documents',
-    name: 'compare-documents',
-    element: CompareDocumentsTrial,
-  },
+ 
   { path: '/Mandal_Office/circular-form-1', name: 'Circular Form', element: CircularForm1 },
   { path: '/Mandal_Office/circular-form-2', name: 'Circular Form', element: CircularForm2 },
   { path: '/Mandal_Office/circular-form-3', name: 'Circular Form', element: CircularForm3 },

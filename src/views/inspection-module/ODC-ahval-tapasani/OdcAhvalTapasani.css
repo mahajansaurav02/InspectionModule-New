@@ -1,281 +1,227 @@
-.odc-container {
-  padding: 20px;
-  max-width: 1500px;
-  margin: 0 auto;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+/* General Layout & Typography */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f4f7; /* Soft, professional background */
+  color: #333333; /* Charcoal text for high legibility */
 }
 
-/* .header-odc {
-  text-align: center;
-  color: #2c3e50;
-  margin-bottom: 10px;
-  font-size: 28px;
-  background-color: rgb(228, 244, 251);
-} */
+.odc-container {
+  padding: 30px;
+  max-width: 1600px;
+  margin: 0 auto;
+  background-color: #ffffff; /* Clean white container */
+  box-shadow: 0 8px 25px rgba(26, 58, 94, 0.1); /* Deeper shadow for depth */
+  border-radius: 12px;
+}
+
+.header-section {
+  padding-bottom: 20px;
+  border-bottom: 2px solid #e0e8f0;
+  margin-bottom: 30px;
+}
+
+.header-odc {
+  font-size: 2.2rem;
+  font-weight: 600;
+  color: #1a3a5e; /* Primary authoritative blue */
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
 .header-2 {
   text-align: center;
-  color: #2c3e50;
-  margin-bottom: 20px;
-  font-size: 20px;
+  color: #555555;
+  font-size: 1.1rem;
+  font-weight: 400;
+  margin-bottom: 30px;
 }
 
+/* Kalavadhi - Updated Gold Styling */
+.kalavadhi-design-2 {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.kalavadhi-traditional {
+  background-color: #fff9e6; /* Soft golden background */
+  border: 1px solid #d4a124; /* Golden border */
+  border-radius: 8px;
+  padding: 8px 15px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow: 0 2px 5px rgba(212, 161, 36, 0.2);
+}
+
+.kalavadhi-label {
+  color: #9c7b1a; /* Darker gold text */
+  font-weight: 500;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+}
+
+.kalavadhi-date {
+  color: #5c3c00;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Main Content Grid */
 .content-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  grid-template-columns: 2fr 1fr;
+  gap: 30px;
+  min-height: 70vh;
 }
 
-/* .section {
-background: #eff4f8;
-  padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-} */
+/* ODC Records Section - Left Side */
+.left-section, .right-section {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
 
-.section h2 {
-  color: #3f51b5;
-  margin-top: 10px;
-  margin-bottom: 10px;
-  font-size: 16px;
+.left-section {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.left-section h2, .right-section h2 {
+  color: #1a3a5e;
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  font-weight: 600;
+  border-bottom: 2px solid #e0e8f0;
+  padding-bottom: 10px;
+}
+
+.boxes-grid-container {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding-right: 15px;
 }
 
 .boxes-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-  gap: 15px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 20px;
 }
 
-.odc-box, .survey-box {
-  aspect-ratio: 1/1;
+.odc-box {
+  background: #f8fbfd;
+  border: 1px solid #e0e8f0;
+  padding: 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
+  height: 150px;
 }
 
-/* .odc-box {
-  background: #f8f9fa;
-  border: 1px solid #dee2e6;
-  padding: 10px;
-} */
-
 .odc-box:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.1);
+  border-color: #5e9cdb; /* Secondary blue hover effect */
 }
 
 .odc-box.selected {
   background: #e6f0f8;
-  border: 2px solid #3f51b5;
+  border: 2px solid #1a3a5e; /* Deep blue selection border */
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 .odc-name {
-  font-weight: bold;
-  font-size: 18px;
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: #1a3a5e;
   margin-bottom: 5px;
 }
 
-.odc-date {
-  font-size: 12px;
+.odc-description {
+  font-size: 0.9rem;
   color: #6c757d;
-  margin-bottom: 8px;
+  flex-grow: 1;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.odc-date {
+  font-size: 0.8rem;
+  color: #999999;
+  margin-bottom: 5px;
 }
 
 .odc-status {
-  font-size: 12px;
-  padding: 3px 8px;
-  border-radius: 12px;
-  margin-bottom: 8px;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 15px;
   font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 10px;
 }
 
 .odc-status.completed {
-  background: #e8f5e9;
+  background-color: #e8f5e9;
   color: #2e7d32;
 }
 
 .odc-status.in-progress {
-  background: #fff8e1;
+  background-color: #fff8e1;
   color: #ff8f00;
 }
 
 .odc-status.pending {
-  background: #f5f5f5;
+  background-color: #f5f5f5;
   color: #9e9e9e;
 }
 
 .odc-surveys {
-  font-size: 11px;
-  color: #3f51b5;
+  font-size: 0.8rem;
+  color: #5e9cdb; /* Secondary blue */
+  font-weight: 500;
+  margin-top: 5px;
 }
 
-.survey-box {
-      background: #91bbda;
-    color: #04305b;
-  font-weight: bold;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 16px;
-height: 50px;
-    width: -webkit-fill-available;
+/* Left Section Footer */
+.footer-content {
+  margin-top: 20px;
 }
-
-.survey-box:hover {
-  background: #bbdefb;
-  transform: scale(1.05);
-}
-
-.no-data {
-  grid-column: 1 / -1;
-  text-align: center;
-  color: #6c757d;
-  padding: 20px;
-}
-
-@media (max-width: 768px) {
-  .content-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
-/* Previous CSS remains the same, add these new styles at the end */
-
-.right-section {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.right-section .section {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.right-section .section h2 {
-  margin: 0 0 15px 0;
-  padding: 0;
-  font-size: 1.2rem;
-}
-
-.tips-section {
-  background: hsl(46, 100%, 94%);
-  padding: 15px;
-  border-radius: 8px;
-  border-left: 4px solid #ffc107;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-  margin-top: 50px;
-}
-
-.tips-section h3 {
-  margin-top: 0;
-  color: #ff8f00;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.tips-section h3::before {
-  content: "💡";
-}
-
-.tips-content {
-  background: white;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.tips-content p {
-  margin: 0;
-}
-
-/* Previous CSS remains the same, add these new styles */
 
 .remarks-section {
-  margin-top: 20px;
-  background: #f8f9fa;
+  background: #f8fbfd;
   padding: 15px;
   border-radius: 8px;
-  border-left: 4px solid #6c757d;
+  border-left: 4px solid #5e9cdb; /* Secondary blue border */
+  margin-top: 20px;
 }
 
 .remarks-section h3 {
   margin-top: 0;
-  color: #495057;
-  font-size: 16px;
+  color: #1a3a5e;
+  font-size: 1rem;
 }
 
 .remarks-content {
-  background: white;
-  padding: 12px;
-  border-radius: 6px;
-  font-size: 14px;
+  font-size: 0.9rem;
   line-height: 1.5;
-  min-height: 60px;
+  min-height: 50px;
   display: flex;
   align-items: center;
 }
 
-.remarks-content p {
-  margin: 0;
-  color: #343a40;
-}
-
-.agreement-section {
-  margin-top: 15px;
-  text-align: center;
-}
-
-.agreement-button {
-  background-color: #28a745;
-  color: white;
-  border: none;
-  padding: 12px 20px;
-  border-radius: 6px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-  width: 100%;
-}
-
-.agreement-button:hover {
-  background-color: #218838;
-}
-
-.agreement-button:disabled {
-  background-color: #6c757d;
-  cursor: not-allowed;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .agreement-button {
-    padding: 10px 15px;
-    font-size: 14px;
-  }
-}
-
-/* Remarks Section */
-.remarks-section {
-  margin-top: 20px;
-  padding: 15px;
-  background-color: #f5f5f5;
-  border-radius: 5px;
-}
-
-.remarks-content {
-  margin-top: 10px;
-  font-size: 16px;
-}
-
-/* Action Buttons */
 .action-buttons {
   display: flex;
   justify-content: flex-end;
@@ -284,119 +230,179 @@ height: 50px;
 }
 
 .preview-btn, .post-btn {
-  padding: 8px 20px;
+  padding: 10px 25px;
   border: none;
-  border-radius: 4px;
+  border-radius: 50px;
   cursor: pointer;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
 }
 
 .preview-btn {
-  background-color: #e0e0e0;
-  color: #333;
+  background-color: #e9ecef;
+  color: #495057;
+}
+
+.preview-btn:hover {
+  background-color: #d8dee8;
 }
 
 .post-btn {
-  background-color: #4CAF50;
+  background-color: #1a3a5e; /* Primary blue for main action */
   color: white;
 }
-.header-odc {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #2c3e50;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
-  padding-bottom: 0.3rem;
-  /* border-bottom: 3px solid #39f; */
-  display: inline-block;
+
+.post-btn:hover {
+  background-color: #152d4b;
+  transform: translateY(-2px);
 }
 
-@media (max-width: 768px) {
-  .header-odc {
-    font-size: 1.5rem;
-    margin-bottom: 1rem !important;
-  }
-  
-  .text-end {
-    text-align: left !important;
-    margin-top: 1rem;
-  }
-}
-.kalavadhi-design-2 .kalavadhi-traditional {
-  border: 2px solid #d4af37;
-  border-radius: 5px;
-  padding: 5px 10px;
-  background-color: #fff9e6;
-  display: inline-block;
-  font-family: 'Noto Sans Devanagari', sans-serif;
-}
-
-.kalavadhi-design-2 .kalavadhi-label {
-  color: #b8860b;
-  font-weight: bold;
-  font-size: 14px;
-  border-bottom: 1px dashed #d4af37;
-  padding-bottom: 2px;
-  margin-bottom: 3px;
-text-align: center;
-}
-
-.kalavadhi-design-2 .kalavadhi-date {
-  color: #5c3c00;
-  font-size: 15px;
+/* Right Section */
+.right-section h2 {
+  font-size: 1.2rem;
   text-align: center;
+  color: #1a3a5e;
 }
+
+/* Image Preview */
 .image-preview-container {
-  margin: 10px 0;
+  background-color: #f8fbfd;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #e0e8f0;
+  text-align: center;
+  position: relative;
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .image-wrapper {
   position: relative;
   width: 100%;
-  max-width: 500px;
-  margin: 0 auto;
+  max-height: 400px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
-
 
 .thumbnail-image {
   width: 100%;
   height: auto;
   display: block;
-  border: 1px solid #6f6666; /* Optional */
-  box-shadow:1px solid #6f6666 ;
 }
 
-/* .no-data {
-  text-align: center;
-  width: 100%;
-  color: #666;
-} */
 .zoom-button {
   position: absolute;
-  bottom: 10px;
-  right: 10px;
-  background: rgba(0,0,0,0.5);
+  bottom: 15px;
+  right: 15px;
+  background: rgba(26, 58, 94, 0.8); /* Darkened primary blue */
   color: white;
   border: none;
   border-radius: 50%;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.2rem;
+  transition: background-color 0.3s;
 }
 
 .zoom-button:hover {
-  background: rgba(0,0,0,0.8);
+  background: rgba(26, 58, 94, 1);
 }
 
-.image-modal {
+.no-data {
+  color: #6c757d;
+  font-style: italic;
+  font-size: 0.9rem;
+}
+
+/* Tooltips Section */
+.tips-section {
+  background-color: #fff9e6;
+  padding: 20px;
+  border-radius: 10px;
+  border-left: 4px solid #d4a124; /* Accent color border */
+  margin-top: 20px;
+}
+
+.tips-section h3 {
+  color: #9c7b1a;
+  font-size: 1.1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tips-content {
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  border: 1px solid #f9e3af;
+}
+
+/* Remarks and Agreement */
+.remarks-section {
+  margin-top: 20px;
+  padding: 15px;
+  background-color: #f0f4f7;
+  border-radius: 8px;
+  border-left: 4px solid #1a3a5e; /* Primary blue border */
+}
+
+.remarks-content label {
+  font-size: 0.95rem;
+  color: #333333;
+}
+
+.agreement-section {
+  margin-top: 20px;
+  text-align: center;
+}
+
+.agreement-button {
+  background-color: #d4a124; /* Golden accent for agreement */
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 50px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+  width: 100%;
+  font-weight: 600;
+  box-shadow: 0 4px 10px rgba(212, 161, 36, 0.2);
+}
+
+.agreement-button:hover {
+  background-color: #b88a1e;
+  transform: translateY(-2px);
+}
+
+.agreement-button:disabled {
+  background-color: #9e9e9e;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Modal Styles */
+.image-modal, .preview-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -412,51 +418,153 @@ text-align: center;
 .modal-content img {
   max-width: 100%;
   max-height: 90vh;
+  border-radius: 10px;
 }
 
 .close-button {
   position: absolute;
-  top: -40px;
-  right: 0;
-  background: none;
+  top: -30px;
+  right: -30px;
+  background: #ffffff;
+  color: #333333;
   border: none;
-  color: white;
-  font-size: 30px;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
   cursor: pointer;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-.section {
+.close-button:hover {
+  background: #f0f0f0;
+}
+
+/* Preview Modal */
+.preview-modal {
+  background-color: white;
+  border-radius: 12px;
+  width: 95%;
+  max-width: 1400px;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  height: 100vh; /* or your preferred container height */
 }
 
-.boxes-grid-container {
-  flex: 1;
-  overflow-y: auto; /* makes this container scrollable */
-  padding: 8px;
-      border:#3f51b5
+.preview-modal-header {
+  padding: 20px 25px;
+  border-bottom: 1px solid #e0e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f8fbfd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-radius: 12px 12px 0 0;
 }
 
-.boxes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* adjust minmax to your card size */
-  gap: 16px;
-  /* Remove any height properties from here */
+.preview-modal-header h2 {
+  margin: 0;
+  font-size: 1.6rem;
+  color: #1a3a5e;
 }
 
-/* Keep your original card styles */
-.odc-box {
-  /* Your existing card styles */
-  background-color: rgb(210, 213, 255);
-  width: 200px; /* or whatever your original size was */
-  height: 150px; /* or whatever your original size was */
-  gap: 0px;
+.close-modal-btn {
+  font-size: 2.5rem;
+  color: #6c757d;
+  transition: color 0.3s;
 }
 
-/* Footer content stays fixed */
-.footer-content {
-  flex-shrink: 0;
-  padding: 16px;
-  border-top: 1px solid #eee;
+.close-modal-btn:hover {
+  color: #333333;
+}
+
+.preview-modal-content {
+  padding: 25px;
+  flex-grow: 1;
+}
+
+.preview-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.preview-table th, .preview-table td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e8f0;
+}
+
+.preview-table th {
+  background-color: #e0e8f0;
+  font-weight: 600;
+  color: #495057;
+  position: sticky;
+  top: 0;
+}
+
+.preview-table tr:hover {
+  background-color: #f0f4f7;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.status-badge.completed {
+  background-color: #d4edda;
+  color: #155724;
+}
+
+.status-badge.in-progress {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.pending {
+  background-color: #f8d7da;
+  color: #721c24;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .content-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .odc-container {
+    padding: 15px;
+  }
+  .header-odc {
+    font-size: 1.8rem;
+  }
+  .header-2 {
+    font-size: 1rem;
+  }
+  .odc-box {
+    padding: 15px;
+    height: auto;
+  }
+  .odc-name {
+    font-size: 1rem;
+  }
+  .preview-modal {
+    max-height: 95vh;
+  }
+  .preview-table th, .preview-table td {
+    padding: 10px;
+  }
 }

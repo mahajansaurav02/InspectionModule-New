@@ -42,6 +42,11 @@ function Section155Ferfar() {
 </li>
 
     <li className="mb-2">आदेशाप्रमाणे गाव नमुना ७ वर अपेक्षित अंमल आल्याची खात्री करावी.</li>
+<li className="mb-2">
+  <a href="/locales/patrak.pdf" target="_blank" rel="noopener noreferrer">
+    परिपत्रक PDF
+  </a>
+</li>
     </ol>
 
 

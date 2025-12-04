@@ -1,89 +1,74 @@
 import React from 'react'
 import {
-  CAvatar,
-  CBadge,
   CDropdown,
-  CDropdownDivider,
   CDropdownHeader,
-  CDropdownItem,
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react'
-import {
-  cilBell,
-  cilCreditCard,
-  cilCommentSquare,
-  cilEnvelopeOpen,
-  cilFile,
-  cilLockLocked,
-  cilSettings,
-  cilTask,
-  cilAccountLogout,
-  cilUser,
-} from '@coreui/icons'
-import CIcon from '@coreui/icons-react'
-import { useNavigate } from 'react-router-dom'
-
-import avatar8 from './../../assets/images/avatars/User.png'
+import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Logout from '../logout'
 
 const AppHeaderDropdown = () => {
-  const navigate = useNavigate()
-  // const handleLogout = () => {
-  //   //handling clear session
-  //   localStorage.clear('token')
-  //   localStorage.clear('expiryDate')
-  //   sessionStorage.clear('token')
-  //   sessionStorage.clear('expiryDate')
-  //   navigate('/Login')
-  // }
   const userName = localStorage.getItem('marathiName')
+  const fullName = localStorage.getItem('fullName')
 
   return (
     <CDropdown variant="nav-item">
-      <CDropdownToggle placement="bottom-end" className="py-0" caret={false} color={'info'}>
-        {/* <CAvatar src={avatar8} size="md" /> */}
-        <h5>{userName ? userName : 'user'}</h5>
-      </CDropdownToggle>{' '}
-      <CDropdownMenu className="pt-0" placement="bottom-end">
-        <CDropdownHeader className="bg-light fw-semibold py-2"> Account </CDropdownHeader>{' '}
-        <CDropdownItem href="#">
-          <CIcon icon={cilBell} className="me-2" />
-          Updates{' '}
-          <CBadge color="info" className="ms-2">
-            42{' '}
-          </CBadge>{' '}
-        </CDropdownItem>{' '}
-        <CDropdownItem href="#">
-          <CIcon icon={cilEnvelopeOpen} className="me-2" />
-          Messages{' '}
-          <CBadge color="success" className="ms-2">
-            42{' '}
-          </CBadge>{' '}
-        </CDropdownItem>{' '}
-        <CDropdownItem href="#">
-          <CIcon icon={cilTask} className="me-2" />
-          Tasks{' '}
-          <CBadge color="danger" className="ms-2">
-            42{' '}
-          </CBadge>{' '}
-        </CDropdownItem>{' '}
-        <CDropdownItem href="#">
-          <CIcon icon={cilCommentSquare} className="me-2" />
-          Comments{' '}
-          <CBadge color="warning" className="ms-2">
-            42{' '}
-          </CBadge>{' '}
-        </CDropdownItem>{' '}
-    
-        {/* <CDropdownItem onClick={handleLogout}>
-          <CIcon icon={cilAccountLogout} className="me-2" />
-          Account Logout{' '}
-        </CDropdownItem>{' '} */}
+      <CDropdownToggle
+        caret={false}
+        className="p-0"
+        style={{
+          width: '40px',
+          height: '40px',
+          borderRadius: '50%',
+          backgroundColor: '#007bff',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'transform 0.2s',
+        }}
+        onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.1)')}
+        onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+      >
+        <AccountCircleIcon style={{ color: '#fff', fontSize: '28px' }} />
+      </CDropdownToggle>
 
-        <Logout/>
+      <CDropdownMenu
+        className="shadow rounded-3 p-3"
+        placement="bottom-end"
+        style={{ minWidth: '220px', backgroundColor: '#f9f9f9' }}
+      >
+        <CDropdownHeader
+          className="fw-bold py-2 px-2 rounded-top text-white"
+          style={{ backgroundColor: '#007bff' }}
+        >
+          Account
+        </CDropdownHeader>
 
-      </CDropdownMenu>{' '}
+        <div className="text-center my-3">
+          <div
+            style={{
+              width: '50px',
+              height: '50px',
+              borderRadius: '50%',
+              backgroundColor: '#e0f0ff',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 8px auto',
+            }}
+          >
+            <AccountCircleIcon style={{ color: '#007bff', fontSize: '28px' }} />
+          </div>
+          <h6 className="mb-0">{fullName ? fullName : 'NA'}</h6><br/>
+          <h6 style={{fontSize:'15px'}} className="mb-0" >{userName ? userName : 'User'}</h6>
+          <small className="text-muted">Welcome back!</small>
+        </div>
+
+        <div className="d-flex justify-content-center mt-3">
+          <Logout  />
+        </div>
+      </CDropdownMenu>
     </CDropdown>
   )
 }

@@ -9,7 +9,6 @@
   border-radius: 6px;
   display: inline-block;
   transition: all 0.3s ease 0s;
-  /* background-image: linear-gradient(to bottom right, #d35400, #d35400, #fff, #fff, green); */
   background-image: linear-gradient(to bottom right, #e8eff3, #aeb2dc);
 }
 .example_d:hover {
@@ -18,3 +17,6 @@
   /* border-color: #494949 !important; */
   transition: all 0.3s ease 0s;
 }
+
+
+

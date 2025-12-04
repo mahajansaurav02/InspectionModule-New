@@ -7,6 +7,11 @@ import Section1 from './Sections/Section1'
 import Section2 from './Sections/Section2'
 import Section3 from './Sections/Section3'
 import Section4 from './Sections/Section4'
+import { useLocation } from 'react-router-dom'
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search)
+}
 
 const Dashboard = () => {
   const [dropdownVal, setDropdownVal] = useState({
@@ -15,6 +20,12 @@ const Dashboard = () => {
     cCode: '',
     revenueYear: '',
   })
+  const query = useQuery()
+  const districtCode = query.get('districtCode')
+  const roles = query.get('roles')
+  // const username = query.get("username");
+  // const token = query.get("token");
+  // const email = query.get("email");
 
   //console.info('dashboard stateup-', dropdownVal)
   const [totalLiveKhatedar, setTotalLiveKhatedar] = useState(0)
@@ -152,6 +163,8 @@ const Dashboard = () => {
   }
 
   useEffect(() => {
+    console.log(roles, 'rolesroles')
+    console.log(districtCode, 'districtNamedistrictNamedistrictName')
     TotalLiveKhatedar()
     TotalLiveDemandDetails()
     getTargetData()
@@ -170,7 +183,7 @@ const Dashboard = () => {
           marginBottom: 10,
         }}
       >
-        <Section1 setDropdownVal={setDropdownVal} dropdownVal={dropdownVal} />
+        {/* <Section1 setDropdownVal={setDropdownVal} dropdownVal={dropdownVal} /> */}
         <Section2
           count1A={AugPin1}
           count1B={totalLiveKhatedar}

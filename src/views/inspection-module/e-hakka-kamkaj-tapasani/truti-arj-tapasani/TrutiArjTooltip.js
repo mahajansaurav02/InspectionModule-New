@@ -31,7 +31,8 @@ navigate('/e-hakka-kamkaj-tapasani/truti-applications')  };
    <CContainer className="mt-4">
   <CCard className="shadow-lg border-0">
     <CCardHeader className="bg-primary text-white fs-5 fw-bold">
-      📄 PDE  (ई- हक्क)
+      📄 इ - हक्क
+
 
     </CCardHeader>
     <CCardBody>

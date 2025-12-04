@@ -1,0 +1,168 @@
+.village-btn {
+  background: linear-gradient(135deg, #2b2570, #1e0dab, #00c6ff);
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  padding: 6px 16px;
+  font-size: 0.95rem;
+  border-radius: 25px;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+}
+
+.village-btn:hover {
+  background: linear-gradient(135deg, #1e0dab, #00c6ff, #2b2570);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.2);
+}
+
+.custom-modal .modal-content {
+  border-radius: 18px;
+  border: none;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.custom-modal .modal-header {
+  background: linear-gradient(90deg, #2b2570, #1e0dab);
+  color: #fff;
+  border-radius: 18px 18px 0 0;
+}
+
+.custom-modal .modal-title {
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+.custom-modal .modal-body {
+  padding: 1.5rem;
+}
+
+.custom-modal label {
+  font-weight: 600;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+  display: block;
+  color: #2b2570;
+}
+
+.custom-modal select {
+  border-radius: 10px;
+  padding: 0.5rem 0.75rem;
+  border: 1.5px solid #d1d1d1;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+.custom-modal select:focus {
+  border-color: #1e0dab;
+  box-shadow: 0 0 0 3px rgba(30, 13, 171, 0.2);
+}
+
+.custom-modal .btn-primary {
+  background: linear-gradient(135deg, #00c6ff, #1e0dab);
+  border: none;
+  border-radius: 25px;
+  padding: 0.45rem 1.2rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.custom-modal .btn-primary:hover {
+  background: linear-gradient(135deg, #1e0dab, #00c6ff);
+  transform: translateY(-2px);
+}
+
+.custom-modal .btn-secondary {
+  border-radius: 25px;
+  font-weight: 500;
+}
+
+
+.header {
+  background: rgba(255, 255, 255, 0.9); 
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid #e5e7eb;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.headerContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.leftSection {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.toggler {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #1b1833;
+  font-size: 1.4rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+}
+
+.brand .brandText {
+  font-size: 1.4rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+
+  background: linear-gradient(90deg, #2b2570, #1e0dab, #00c6ff);
+  -webkit-text-fill-color: transparent;
+
+  position: relative;
+  padding-bottom: 4px;
+}
+
+.brand .brandText::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 60%;
+  height: 3px;
+  background: linear-gradient(90deg, #2b2570, #00c6ff);
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.brand .brandText:hover::after {
+  width: 100%;
+}
+
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.header .village-btn {
+  padding: 0.45rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+    background: linear-gradient(90deg, #16987e, #8db3bd);
+
+  color: #fff;
+  border-radius: 6px;
+  border: none;
+  transition: all 0.3s ease;
+}
+
+.header .village-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(90deg, #90ecff, #a9a5c5);
+
+}

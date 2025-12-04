@@ -1,111 +1,232 @@
-/* EChawadiKamkajTap.css */
+/* Importing Google Font for a modern look */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+:root {
+  --primary-color: #3f51b5;
+  --secondary-color: #f44336;
+  --accent-color: #ff9800;
+  --background-light: #f5f7fa;
+  --card-bg: #ffffff;
+  --text-dark: #212121;
+  --text-light: #757575;
+  --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--background-light);
+  margin: 0;
+  padding: 0;
+}
 
 .echawadi-container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 2rem 1rem;
 }
 
-.echawadi-title {
+.echawadi-title-wrapper {
   text-align: center;
-  margin-bottom: 2.5rem;
-  color: #2c3e50;
+  margin-bottom: 3rem;
+}
+
+.echawadi-title {
   font-size: clamp(1.8rem, 4vw, 2.5rem);
-  font-weight: 500;
+  font-weight: 700;
+  color: var(--text-dark);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 0.75rem;
+}
+
+.echawadi-title::after {
+  content: "";
+  position: absolute;
+  width: 50%;
+  height: 5px;
+  left: 25%;
+  bottom: 0;
+  background-color: var(--primary-color);
+  border-radius: 2px;
 }
 
 .cards-wrapper {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 2rem;
-  justify-content: center;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2.5rem;
+  padding: 1rem;
 }
 
 .echawadi-card {
-  min-height: 100px;  /* Reduced from 200px */
-  aspect-ratio: 1/0.5; /* Changed from 1/0.8 to make slightly less tall */
+  background: var(--card-bg);
   border-radius: 16px;
-  padding: 1.5rem;    /* Reduced from 2rem */
-  background: #ffffff;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  transition: all 0.3s ease;
+  box-shadow: var(--shadow-light);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 2rem;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  min-height: 220px;
+  position: relative;
+  overflow: hidden;
 }
 
 .echawadi-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-10px);
+  box-shadow: var(--shadow-hover);
+}
+
+.echawadi-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #3f51b5, #ff9800);
+  z-index: 1;
+}
+
+/* New header for the card, wrapping the title and info icon */
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
 }
 
 .card-title {
-  font-size: clamp(1.3rem, 2vw, 1.8rem);
-  color: #3498db;
-  margin-bottom: 1.5rem;
-  font-weight: 500;
-  line-height: 1.3;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  color: var(--text-dark);
+  margin: 0;
+  font-weight: 600;
+  line-height: 1.4;
+  flex-grow: 1;
+  text-align: left; /* Align title to the left */
+  padding-right: 10px; /* Space between title and icon */
 }
 
-.card-description {
-  color: #555;
-  line-height: 1.7;
-  margin-bottom: auto;
-  font-size: clamp(1rem, 1.2vw, 1.1rem);
-  flex-grow: 1;
+/* Tooltip container and icon */
+.tooltip-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.info-icon {
+  font-size: 1.25rem;
+  color: var(--text-light);
+  transition: color 0.3s ease;
+}
+
+.info-icon:hover {
+  color: var(--primary-color);
+}
+
+/* Tooltip text */
+.tooltip-text {
+  visibility: hidden;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 10px 15px;
+  position: absolute;
+  z-index: 10;
+  bottom: 120%; /* Position above the icon */
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  transition: opacity 0.3s ease, visibility 0.3s ease;
+  width: 280px;
+  font-size: 0.85rem;
+  line-height: 1.4;
+  white-space: normal;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+/* Triangle for the tooltip */
+.tooltip-text::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
+}
+
+/* Show tooltip on hover */
+.tooltip-container:hover .tooltip-text {
+  visibility: visible;
+  opacity: 1;
 }
 
 .paha-button {
-  background-color: #3498db;
+  background: var(--primary-color);
   color: white;
   border: none;
-  padding: 0.8rem 1.8rem;
+  padding: 0.9rem 2rem;
   border-radius: 8px;
-  font-size: clamp(0.9rem, 1.1vw, 1.1rem);
+  font-size: clamp(0.9rem, 1.5vw, 1rem);
+  font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.6rem;
-  width: fit-content;
+  gap: 0.75rem;
   margin-top: auto;
+  box-shadow: 0 4px 10px rgba(63, 81, 181, 0.3);
 }
 
 .paha-button:hover {
-  background-color: #2980b9;
-  transform: scale(1.02);
+  background-color: #303f9f;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(63, 81, 181, 0.4);
 }
 
-.paha-button i {
-  font-size: 1.2rem;
+.paha-button svg {
+  font-size: 1.25rem;
 }
 
-/* Responsive adjustments */
 @media (max-width: 768px) {
   .cards-wrapper {
-    grid-template-columns: 1fr;
     gap: 1.5rem;
-  }
-  
-  .echawadi-card {
-    min-height: 280px;
-    aspect-ratio: unset;
-    padding: 1.5rem;
+    padding: 0.5rem;
   }
 }
 
-@media (max-width: 480px) {
-  .echawadi-container {
-    padding: 1.5rem 0.5rem;
-  }
-  
-  .echawadi-card {
-    min-height: 250px;
-    padding: 1.2rem;
-  }
-  
-  .paha-button {
-    width: 100%;
-    padding: 0.8rem;
-  }
+/* ... (existing styles like .echawadi-container, .cards-wrapper, etc.) ... */
+
+/* New CSS for the global tooltip */
+.global-tooltip {
+  position: fixed; /* Renders it relative to the viewport */
+  transform: translate(-50%, -100%); /* Centers it horizontally and positions it above the icon */
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 8px;
+  padding: 10px 15px;
+  z-index: 1000; /* Ensures it is always on top */
+  font-size: 0.85rem;
+  line-height: 1.4;
+  white-space: normal;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  pointer-events: none; /* Prevents it from blocking clicks on elements below */
+}
+
+.global-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -8px;
+  border-width: 8px;
+  border-style: solid;
+  border-color: #333 transparent transparent transparent;
 }

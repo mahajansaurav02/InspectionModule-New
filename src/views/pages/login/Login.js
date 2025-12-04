@@ -34,6 +34,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { selectState, addHomepageDetails } from '../../../slices/HomepageSlice'
 import { Button } from '@mui/material'
 import { Toast, errorToast } from 'src/views/ui/Toast'
+import ChangePasswordModal from 'src/views/ui/ChangePasswordModal/ChangePasswordModal'
 
 const baseURL = 'https://localhost:9092/inspection/getRoles'
 
@@ -46,7 +47,6 @@ const Login = () => {
   let logoutTimer
   let toastTimerL
   let initialToken
-  //const history = useHistory()
   const navigate = useNavigate()
   const [loginValue, setLoginValue] = useState({
     userName: '',
@@ -63,13 +63,11 @@ const Login = () => {
   const [warnpassword, setwarnpassword] = useState(false)
   const [eye, seteye] = useState(true)
   const [password, setpassword] = useState('password')
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false)
   const [type, settype] = useState(false)
 
   const [toastTimer, setToastTimer] = useState(false)
   const [passwordType, setPasswordType] = useState('password')
-
-  // const { authLogin } = useState('Auth');
-  // const { details } = useState('details');
 
   const [loadings, setLoadings] = useState([])
 
@@ -85,26 +83,18 @@ const Login = () => {
     }
   }
   const calculateRemainingTime = (expiryDate) => {
-    // console.log(expiryDate, 'expiryDate==>');
     const currentTime = new Date().getTime()
-    // console.log('currentTime', currentTime);
     const adjExpirationTime = new Date(expiryDate).getTime()
-    // console.log('adjExpirationTime', adjExpirationTime);
     const remainingDuration = adjExpirationTime - currentTime
-    // console.log('remainingDuration', remainingDuration);
     return 300000000
   }
 
   const retrieveStoredToken = () => {
     const storedToken = localStorage.getItem('token')
     const storedExpirationDate = localStorage.getItem('expiryDate')
-    // console.log('retrieveStoredToken-->>', storedToken, storedExpirationDate);
 
     const remainingTime = calculateRemainingTime(+storedExpirationDate)
-    // console.log('retrieveStoredToken-remainingTime-->>', remainingTime);
     if (new Date().getTime() + remainingTime <= 30000) {
-      //  localStorage.removeItem('token');
-      // localStorage.removeItem('expiryDate');
       return null
     }
     return {
@@ -115,15 +105,11 @@ const Login = () => {
   const [token, setToken] = useState(initialToken)
   const tokenData = retrieveStoredToken()
 
-  //let initialToastTimer;
-  // initialToastTimer = tokenData.duration - 900000;
-
   if (tokenData) {
     initialToken = tokenData.token
   }
   useEffect(() => {
     if (tokenData) {
-      //   console.log('Use Effect Log for Token.Duration', tokenData.duration);
       logoutTimer = setTimeout(logout, tokenData.duration)
     }
   }, [tokenData])
@@ -135,28 +121,18 @@ const Login = () => {
     localStorage.clear()
     localStorage.removeItem('token')
     localStorage.removeItem('expiryDate')
-
-    // if (logoutTimer) {
-    //   clearTimeout(logoutTimer)
-    // }
-    // if (toastTimerL) {
-    //   clearTimeout(toastTimerL)
-    // }
   }
 
   const toastTimerF = () => {
     setToastTimer(true)
   }
   const authLogin = (tokenAfterLogin, expiryDate) => {
-    // if (logoutTimer) {
-    //   clearTimeout(logoutTimer)
-    // }
-    // if (toastTimerL) {
-    //   clearTimeout(toastTimerL)
-    // }
     setToastTimer(false)
     setToken(tokenAfterLogin)
     localStorage.setItem('token', tokenAfterLogin)
+
+    localStorage.setItem('expiryDate', expiryDate)
+
     const remainingTime = calculateRemainingTime(expiryDate)
 
     logoutTimer = setTimeout(logout, remainingTime)
@@ -168,7 +144,6 @@ const Login = () => {
 
     sessionStorage.setItem('token', tokenAfterLogin)
     sessionStorage.setItem('expiryDate', expiryDate)
-    //toastTimerL = setTimeout(toastTimerF, 20000)
   }
 
   const handleLogin = async (e) => {
@@ -182,10 +157,7 @@ const Login = () => {
     setValidated(true)
 
     if (validateCaptcha(loginValue.captcha) == true) {
-      // navigate('/reports/auditForm')
-      //history.push(`/reports/auditForm`)
     } else {
-      //alert('Captch not match')
       setShowToast(true)
       setToastMsg('Captcha does not match.')
     }
@@ -198,23 +170,18 @@ const Login = () => {
     // handleSubmit()
   }
 
-  const getData = () => {
-    axios
-      // .get('https://fakestoreapi.com/products')
-      .get('https://localhost:7254/api/Question')
-      //.get(`http://localhost:9092/inspection/getRoles`)
-      .then((res) => {
-        console.log(res.data, 'hnhhn')
-      })
-      .catch((err) => {
-        console.error(err)
-      })
+  const handlePasswordChange = async (userId, newPassword) => {
+    console.log('password change Succesfully')
   }
-
   const handleSubmit = async (values) => {
-    // let user_captcha_value = document.getElementById('userCaptcha').value
-    // var username = document.getElementById('userId').value
+    if (validateCaptcha(loginValue.captcha) == false) {
+      console.log('captcha doest matcha')
+      setToastMsg('Captcha does not match.')
+      setShowToast(true)
+      setLoginValue({ ...loginValue, captcha: '' })
 
+      return
+    }
     const role = localStorage.getItem('roles')
     //--for encrypted password
     const key = 'wXhN%8T@hS$Z@Q'
@@ -239,52 +206,74 @@ const Login = () => {
         let testStatus = res.status
 
         if (testStatus === 200 && validateCaptcha(loginValue.captcha) == true) {
-          // console.log(res, 'status-----')
-          //--Setting the value to local storage
-          localStorage.setItem('challanHeads', JSON.stringify(res?.data?.challanHeads))
-          localStorage.setItem('servarthId', res?.data?.servarthId)
-          localStorage.setItem('districtCode', res?.data?.districtCode)
-          localStorage.setItem('districtName', res?.data?.districtName)
-          localStorage.setItem('talukaCode', res?.data?.talukaCode)
-          localStorage.setItem('talukaName', res?.data?.talukaName)
-          localStorage.setItem('marathiName', res?.data?.marathiName)
-          localStorage.setItem('desg', res?.data?.desg)
-          localStorage.setItem('echDbName', res?.data?.echDbName)
-          localStorage.setItem('echSchemaName', res?.data?.echSchemaName)
-          localStorage.setItem('mhrDbName', res?.data?.mhrDbName)
-          localStorage.setItem('mhrSchemaName', res?.data?.mhrSchemaName)
-          localStorage.setItem('echHost', res?.data?.echHost)
-          localStorage.setItem('mhrHost', res?.data?.mhrHost)
-          localStorage.setItem('revenueYear', JSON.stringify(res?.data?.revenueYear))
-          localStorage.setItem('roles', res?.data?.roles)
-          localStorage.setItem('niranks', res?.data?.niranks)
-          localStorage.setItem('villageData', JSON.stringify(res?.data?.villages))
+          const data = res.data
+
+          let firstLogin = false // Assuming this flag will come from the actual response data if needed
+          if (firstLogin) {
+            // Open the password change modal and don't navigate away
+            setShowChangePasswordModal(true)
+            return // Stop further execution
+          }
+
+          localStorage.setItem('token', data.token) // Explicitly setting token from response
+          localStorage.setItem('expiryDate', data.expiryTime) // New field for expiration
+
+          const rolesToStore = Array.isArray(data.roles)
+            ? data.roles[0]
+            : JSON.stringify(data.roles)
+
+          localStorage.setItem('fullName', data.fullName)
+          localStorage.setItem('servarthId', data.servarthId)
+          localStorage.setItem('districtCode', data.districtCode)
+          localStorage.setItem('districtName', data.districtName)
+          localStorage.setItem('talukaCode', data.talukaCode)
+          localStorage.setItem('talukaName', data.talukaName) // Null in sample, but stored for consistency
+          localStorage.setItem('marathiName', data.marathiName)
+          localStorage.setItem('desg', data.desg) // Null in sample, but stored for consistency
+          localStorage.setItem('echDbName', data.echDbName)
+          localStorage.setItem('echSchemaName', data.echSchemaName)
+          localStorage.setItem('mhrDbName', data.mhrDbName)
+          localStorage.setItem('mhrSchemaName', data.mhrSchemaName)
+          localStorage.setItem('echHost', data.echHost)
+          localStorage.setItem('mhrHost', data.mhrHost)
+
+          // Arrays stored as JSON strings
+          localStorage.setItem('revenueYear', JSON.stringify(data.revenueYear))
+          localStorage.setItem('villageForInspection', JSON.stringify(data.villageForInspection)) // NEW
+          localStorage.setItem('challanHeads', JSON.stringify(data.challanHeads))
+          localStorage.setItem(
+            'selectedVillageData',
+            JSON.stringify([{ ...data.villageForInspection[0] }]),
+          )
+          // Storing the processed role string
+          localStorage.setItem('roles', rolesToStore)
+
+          // Data not in the new response (like niranks) is removed or set to null
+          localStorage.removeItem('niranks')
+          // If you need to store niranks, ensure the key is correct in the API response.
+
+          // --------------------------------------------------------------------------
+          // --- UPDATING REDUX STATE ---
+          // --------------------------------------------------------------------------
 
           dispatch(
             addHomepageDetails({
               ...homepageState,
-              servarthId: res?.data?.servarthId,
-              districtCode: res?.data?.districtCode,
-              districtName: res?.data?.districtName,
-              talukaCode: res?.data?.talukaCode,
-              talukaName: res?.data?.talukaName,
-              marathiName: res?.data?.marathiName,
-              desg: res?.data?.desg,
-              revenueYear1: res?.data?.revenueYear,
-              villageData: res?.data?.villages,
+              servarthId: data.servarthId,
+              districtCode: data.districtCode,
+              districtName: data.districtName,
+              talukaCode: data.talukaCode,
+              talukaName: data.talukaName,
+              marathiName: data.marathiName,
+              desg: data.desg,
+              revenueYear1: data.revenueYear,
+              villageData: data.villageForInspection, // Updated to use villageForInspection
             }),
           )
-          // authLogin(res.data.token, 3600000);
-          authLogin(res.data.token, 3600000)
-          // console.log(details, 'status-----')
-          // token, authLogin, logout, toastTimer
-          //console.log(token, '--------1')
-          //console.log(authLogin, '--------2')
-          // console.log(logout,'--------3');
-          //console.log(toastTimer, '--------4')
 
-          //console.log(res, 'status-----')
-          // navigate('/reports/auditForm')
+          // --------------------------------------------------------------------------
+
+          authLogin(data.token, data.expiryTime)
           navigate('/dashboard')
           setLoginstatus(true)
         } else {
@@ -292,14 +281,20 @@ const Login = () => {
           setShowToast(true)
           setToastMsg('Captcha does not match.')
           setLoginValue({ ...loginValue, captcha: '' })
+          loadCaptchaEnginge(6, 'skyblue') // Reload captcha on failure
         }
       })
       .catch((err) => {
         console.log(err)
-        if (err.status == 'FAILURE') {
-          //errorToast('Bad credentials')
-          setToastMsg('Bad credentials')
+        // Check for specific error response status code or message if available
+        if (err.response && err.response.status === 401) {
+          setToastMsg('Bad credentials. Please check username or password.')
+        } else {
+          setToastMsg('An error occurred during login.')
         }
+        setShowToast(true)
+        // Reload captcha on failed API call
+        loadCaptchaEnginge(6, 'skyblue')
       })
   }
   const togglePassword = () => {
@@ -311,7 +306,7 @@ const Login = () => {
   }
 
   // useEffect(() => {
-  //   handleSubmit()
+  //   handleSubmit()
   // }, [])
   useEffect(() => {
     loadCaptchaEnginge(6, 'skyblue')
@@ -321,6 +316,13 @@ const Login = () => {
     <>
       {/* <CContainer fluid> */}
       {/* <LanguageSelector /> */}
+      {showChangePasswordModal && (
+        <ChangePasswordModal
+          userId={loginValue.userName}
+          onClose={() => setShowChangePasswordModal(false)}
+          onPasswordChange={handlePasswordChange}
+        />
+      )}
       <Toast />
 
       <CRow className="loginscreen">
@@ -329,7 +331,7 @@ const Login = () => {
             className="bg-light min-vh-100 d-flex flex-row align-items-center justify-content-end"
             style={{
               backgroundImage: `url(${Background})`,
-              //  width: '3105.7817',
+              //  width: '3105.7817',
               // height: '2453.0112',
               // width: '100vw',
               // height: '50vh',
@@ -356,15 +358,15 @@ const Login = () => {
                   //onSubmit={handleLogin}
                 >
                   {/* <h2> Inspection Module e-Chawadi </h2> */}
-                  <h2> {t('title')} </h2>
-                  <p className="text-medium-emphasis"> {t('signInTitle')} </p>
+                  <h2> Inspection Module e-Chawadi </h2>
+                  <p className="text-medium-emphasis"> Sign In to your account </p>
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
                     <CFormInput
                       id="userId"
-                      placeholder={t('UsernamePlaceholder')}
+                      placeholder={t('Username')}
                       autoComplete="username"
                       name="userName"
                       className={` ${warnpassword ? 'warning' : ''} ${type ? 'type_password' : ''}`}
@@ -383,7 +385,7 @@ const Login = () => {
                       //type="password"
                       type={passwordType}
                       id="userPassword"
-                      placeholder={t('PasswordPlaceholder')}
+                      placeholder={t('Password')}
                       autoComplete="current-password"
                       name="password"
                       value={loginValue.password}
@@ -410,14 +412,14 @@ const Login = () => {
                     <CFormInput
                       type="text"
                       id="userCaptcha"
-                      placeholder={t('CaptchaPlaceholder')}
+                      placeholder={t('Captcha')}
                       name="captcha"
                       value={loginValue.captcha}
                       onChange={handleChange}
                       // feedbackInvalid={
-                      //   validateCaptcha(loginValue.captcha) == true
-                      //     ? 'please write same captcha'
-                      //     : 'Please provide a captcha.'
+                      //   validateCaptcha(loginValue.captcha) == true
+                      //     ? 'please write same captcha'
+                      //     : 'Please provide a captcha.'
                       // }
                       required
                       // tooltipFeedback

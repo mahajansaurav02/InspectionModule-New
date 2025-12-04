@@ -1,6 +1,10 @@
 /* FerfarDetailsTabs.css */
 
 /* Main Card Styles */
+.container{
+      min-width: -webkit-fill-available;
+    margin: 20px;
+}
 .ferfar-details-card {
   background-color: #f0f4f8;
   border: none;
@@ -250,4 +254,37 @@
     position: relative;
     max-width: 100%;
     max-height: 90%;
+}
+
+
+
+.priority-selection .priority-label {
+    font-weight: 600;
+    color: var(--primary-color); /* Deep Navy/Charcoal */
+    margin-bottom: 0;
+}
+
+.priority-btn {
+    min-width: 100px;
+    font-weight: 500;
+    border: 1px solid #ccc !important; 
+}
+
+
+.priority-btn.active-low {
+    background-color: #28a745 !important;
+    border-color: #28a745 !important;
+    color: white !important;
+}
+
+.priority-btn.active-medium {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+    color: var(--text-dark) !important;
+}
+
+.priority-btn.active-high {
+    background-color: #dc3545 !important;
+    border-color: #dc3545 !important;
+    color: white !important;
 }

@@ -1,0 +1,67 @@
+/* Container for the spinner and message */
+.spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  padding: 1rem;
+}
+
+/* Fullscreen overlay effect */
+.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+/* Spinner dots container */
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+}
+
+/* Style for each dot */
+.spinner > div {
+  width: 15px;
+  height: 15px;
+  background-color: #2e66b4; /* A dark blue color for the dots */
+  border-radius: 50%;
+  animation: bounce 1.4s infinite ease-in-out both;
+}
+
+/* Animation delay for a staggered effect */
+.dot-1 {
+  animation-delay: -0.32s;
+}
+
+.dot-2 {
+  animation-delay: -0.16s;
+}
+
+/* Bouncing animation keyframes */
+@keyframes bounce {
+  0%, 80%, 100% {
+    transform: scale(0);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+/* Styling for the loading message */
+.spinner-message {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #555;
+  letter-spacing: 0.5px;
+}
