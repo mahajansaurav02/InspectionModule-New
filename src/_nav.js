@@ -2,13 +2,15 @@ import React from 'react'
 import CIcon from '@coreui/icons-react'
 import { 
   cilSpeedometer,        // Dashboard
-  cilFile,             // Ferfar Nondvahi (Ledger/Document)
-  cilLayers,           // E-Hakka Pranali (System/Layer)
-  cilCloudDownload,    // ODC Ahval (Download/Report)
-  cilLaptop,           // E-Chawadi (Digital Terminal)
-  cilBook,             // General Description/Module
-  cilWindowMaximize,   // Inspection Module Group
-  cilListRich          // Module Group (Alternate)
+  cilFile,             
+  cilLayers,           
+  cilCloudDownload,   
+  cilLaptop,           
+  cilBook,            
+  cilWindowMaximize,  
+  cilListRich ,
+  cilNewspaper,
+  cilNotes         
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -65,6 +67,25 @@ const _nav = [
         to: '/inspection-module/E-chawadi-kamkaj-tapasani/EChawadiKamkajTap',
         icon: <CIcon icon={cilLaptop} customClassName="nav-icon" />,
       },
+    ],
+  },
+  {
+    component: CNavGroup,
+    name: 'अहवाल', // Using a generic name shown in one of your screenshots
+    icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
+    
+    // Add an item to represent the main module entry if needed (like the "संक्षिप्त दफ्तर तपासणी" text)
+    // If your screenshots show a top-level link, add it here:
+    // to: '/inspection-module', 
+
+    items: [
+      {
+        component: CNavItem,
+        name: 'तपासणी अहवाल ',
+        to: '/reports/Inspection-report/InspectionReport',
+        icon: <CIcon icon={cilNewspaper} customClassName="nav-icon" />,
+      },
+
     ],
   },
   // You can add the rest of your commented-out modules (OCR, Mandal Office, Taluka Office) 

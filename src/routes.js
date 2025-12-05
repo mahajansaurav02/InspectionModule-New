@@ -1,5 +1,7 @@
 import React from 'react'
 import EChawadiKamkajTap from './views/inspection-module/E-chawadi-kamkaj-tapasani/EChawadiKamkajTap'
+import InspectionReport from './views/reports/Inspection-report/InspectionReport'
+
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 // Reports
@@ -115,6 +117,11 @@ const routes = [
     path: '/inspection-module/E-chawadi-kamkaj-tapasani/EChawadiKamkajTap',
     name: 'EChawadiKamkajTap',
     element: EChawadiKamkajTap,
+  },
+  {
+    path: '/reports/Inspection-report/InspectionReport',
+    name: 'InspectionReport',
+    element: InspectionReport,
   },
   // {
   //   path: '/inspection-module/ODC-ahval-tapasani/OdcAhvalTapasani',
