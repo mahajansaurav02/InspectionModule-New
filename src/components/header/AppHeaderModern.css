@@ -1,4 +1,6 @@
-
+/* =========================================
+   1. MAIN HEADER CONTAINER
+   ========================================= */
 .modern-app-header {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   border-bottom: none;
@@ -7,21 +9,23 @@
   padding: 0;
   position: relative;
   backdrop-filter: blur(10px);
+  animation: fadeIn 0.6s ease-out;
 }
 
 .modern-header-container {
   display: flex;
-  justify-content: space-between;
+  /* Keeps everything aligned to the start (Left) */
+  justify-content: flex-start; 
   align-items: center;
   width: 100%;
   height: 100%;
-  padding-right: 2rem;
-  padding-left: 1.5rem;
+  padding-right: 1.5rem;
+  padding-left: 1rem;
   position: relative;
   z-index: 1000;
 }
 
-
+/* Accent Line Animation */
 .header-accent {
   position: absolute;
   bottom: 0;
@@ -38,11 +42,15 @@
   50% { background-position: 200% 0; }
 }
 
+/* =========================================
+   2. LEFT SECTION (Logo & Title)
+   ========================================= */
 .modern-left-section {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  width: 280px;
+  width: auto; 
+  margin-right: 0px; /* No gap between Title and Boxes */
 }
 
 .modern-toggler {
@@ -58,6 +66,7 @@
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   backdrop-filter: blur(10px);
   color: white;
+  cursor: pointer;
 }
 
 .modern-toggler:hover {
@@ -90,27 +99,16 @@
   border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.modern-brand-text {
-  font-weight: 800;
-  font-size: 1.1rem;       
-  color: #ffffff;        
+.main-text {
+  margin: 0;
+  font-weight: 700;
+  font-size: 1.4rem;
+  line-height: 1.4;
+  letter-spacing: 0.5px;
+  color: white;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
   white-space: nowrap;
-  margin-right: 12px;
-  text-shadow: 2px 2px 4px rgba(41, 11, 91, 0.4); 
-  letter-spacing: 1px;   
-  border: black;
 }
-.main-text{
-      margin: 0;
-    /* font-family: "Roboto","Helvetica","Arial",sans-serif; */
-    font-weight: 600;
-    font-size: 1 rem;
-    line-height: 1.6;
-    letter-spacing: 0.0075em;
-    color: white
-}
-
-
 
 .brand-subtitle {
   color: rgba(255, 255, 255, 0.8);
@@ -120,59 +118,74 @@
   padding: 2px 8px;
   border-radius: 12px;
   backdrop-filter: blur(10px);
+  margin-left: 8px;
 }
 
+/* =========================================
+   3. CENTER SECTION (The Boxes)
+   ========================================= */
 .modern-center-section {
-  flex-grow: 1;
+  flex-grow: 0; 
   display: flex;
-  justify-content: center;
+  justify-content: flex-start; 
   align-items: center;
   height: 100%;
-  margin-left: 100px;
+  margin-left: 10px;
+  margin-right: 0px; 
 }
 
 .compact-form-container {
   display: flex;
   align-items: center;
-  gap: 8px; 
-}
-
-
-.compact-form-container .StyledPaper, 
-.compact-form-container > div {
-  background: transparent !important;
-  box-shadow: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
+  width: auto;
+  max-width: 100%;
 }
 
 .compact-form-container .MuiGrid-container {
-  margin: -4px !important;
+  flex-wrap: nowrap !important;
+  margin: 0 !important;
+  width: 100% !important;
+  justify-content: center !important;
 }
 
 .compact-form-container .MuiGrid-item {
-  padding: 4px !important;
+  padding: 2px !important; 
+  flex-shrink: 1 !important; 
+  flex-grow: 0 !important;
+  width: auto !important;
 }
 
+
 .compact-form-container .MuiFormControl-root {
-  margin-bottom: 0 !important;
+  margin: 0 !important;
+  min-width: 140px !important;  
+  width: 160px !important;      /* Increased from 130px to 160px */
 }
 
 .compact-form-container .MuiInputBase-root {
   background: rgba(255, 255, 255, 0.1) !important;
   color: white !important;
-  border-radius: 12px !important;
+  border-radius: 10px !important;
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  height: 42px !important;
-  font-size: 0.875rem !important;
+  height: 38px !important;       
+  font-size: 0.85rem !important;  
+}
+
+.compact-form-container .MuiOutlinedInput-notchedOutline {
+  border: none !important;
+}
+
+.compact-form-container .MuiInputBase-input.Mui-disabled {
+  -webkit-text-fill-color: #ffffff !important; 
+  color: #ffffff !important;                   
+  opacity: 1 !important;                       
 }
 
 .compact-form-container .MuiInputLabel-root {
   color: rgba(255, 255, 255, 0.9) !important;
-  font-size: 0.875rem !important; 
-  transform: translate(14px, 13px) scale(1) !important; 
+  font-size: 0.8rem !important; 
+  transform: translate(12px, 11px) scale(1) !important; 
 }
 
 .compact-form-container .MuiInputLabel-shrink {
@@ -180,59 +193,22 @@
 }
 
 .compact-form-container .MuiSelect-select {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-  padding-left: 14px !important;
+  padding: 6px 10px !important;
 }
 
-.compact-form-container .MuiInputBase-root:hover {
-  background: rgba(255, 255, 255, 0.15) !important;
-  border-color: rgba(255, 255, 255, 0.3) !important;
-}
-
-.compact-form-container .MuiInputBase-root.Mui-focused {
-  background: rgba(255, 255, 255, 0.2) !important;
-  border-color: rgba(255, 255, 255, 0.5) !important;
-  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
-}
-
-.compact-form-container .MuiSelect-icon {
-  color: rgba(255, 255, 255, 0.8) !important;
-}
-
-.compact-form-container .MuiOutlinedInput-notchedOutline {
-  border: none !important;
-}
-
-.compact-form-container .MuiTextField-root .MuiInputBase-root {
-  height: 42px !important;
-  padding-top: 0 !important;
-  padding-bottom: 0 !important;
-}
-
-.compact-form-container .MuiInputBase-input {
-  padding-top: 10px !important;
-  padding-bottom: 10px !important;
-}
-
-.compact-form-container .MuiMenu-paper {
-  background: rgba(255, 255, 255, 0.95) !important;
-  backdrop-filter: blur(20px) !important;
-  border-radius: 12px !important;
-  border: 1px solid rgba(255, 255, 255, 0.3) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
-}
-
-.compact-form-container .MuiFormControl-root {
-  margin: 0 !important;
-}
-
+/* =========================================
+   4. RIGHT SECTION (User Profile)
+   ========================================= */
 .modern-right-section {
   display: flex;
   align-items: center;
   flex-shrink: 0;
-  justify-content: flex-end;
-  gap: 15px;
+  justify-content: flex-start;
+  
+  /* Removed 'auto' to close the gap */
+  margin-left: 10px !important;  /* Changed from 'auto' to 10px */
+  padding-left: 0 !important;
+  gap: 8px;
 }
 
 .user-welcome {
@@ -243,6 +219,7 @@
   padding: 6px 12px;
   border-radius: 10px;
   backdrop-filter: blur(10px);
+  white-space: nowrap;
 }
 
 .modern-right-section .dropdown-toggle {
@@ -254,22 +231,34 @@
   transition: all 0.3s ease;
 }
 
-.modern-right-section .dropdown-toggle:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
-  transform: translateY(-1px);
+/* =========================================
+   5. RESPONSIVE FIXES
+   ========================================= */
+@media (max-width: 1450px) {
+  .modern-left-section {
+    margin-right: 0px; 
+  }
+  .main-text {
+    font-size: 1.2rem; 
+  }
+  
+  /* Adjusted responsive width */
+  .compact-form-container .MuiFormControl-root {
+     min-width: 110px !important;
+     width: 130px !important;
+  }
 }
 
 @media (max-width: 1200px) {
-  .modern-left-section {
-    width: 250px;
+  .user-welcome {
+    display: none; 
   }
-  
-  .modern-right-section {
-    width: 180px;
+  .main-text {
+    font-size: 1.1rem; 
   }
-  
-  .compact-form-container {
-    max-width: 700px;
+  .compact-form-container .MuiFormControl-root {
+     min-width: 100px !important;
+     width: 110px !important;
   }
 }
 
@@ -278,57 +267,25 @@
     display: none; 
   }
   
-  .modern-left-section {
-    width: auto;
-    flex-grow: 1;
-  }
-  
+  /* On Mobile, push Profile back to far right */
   .modern-right-section {
-    width: auto;
+    margin-left: auto !important; 
   }
-  
-  .user-welcome {
-    display: none;
+
+  .modern-left-section {
+    flex-grow: 1;
+    margin-right: 0;
   }
-  
+  .main-text {
+    font-size: 1.1rem;
+    white-space: normal; 
+  }
   .modern-app-header {
     height: 70px;  
   }
 }
 
-@media (max-width: 768px) {
-  .modern-header-container {
-    padding-right: 1rem;
-    padding-left: 1rem;
-  }
-  
-  .brand-subtitle {
-    display: none;
-  }
-  
-  .modern-brand-text {
-    font-size: 1.1rem;
-
-  }
-}
-
 @keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modern-app-header {
-  animation: fadeIn 0.6s ease-out;
-}
-
-.modern-toggler,
-.compact-form-container .MuiInputBase-root,
-.modern-right-section .dropdown-toggle {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

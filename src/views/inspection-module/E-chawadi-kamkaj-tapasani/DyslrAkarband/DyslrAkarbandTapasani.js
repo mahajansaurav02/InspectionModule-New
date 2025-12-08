@@ -467,7 +467,7 @@ let VillageData= localStorage.getItem('selectedVillageData')
                   <table ref={rejectedTableRef} className={styles.report_table}>
                     <thead>
                       <tr style={{ backgroundColor: '#add8e6', border: '1px solid black' }}>
-                        <th colSpan="7" style={{ backgroundColor: '#add8e6', width: '100%' }}>
+                        <th colSpan="13" style={{ backgroundColor: '#add8e6', width: '100%' }}>
                           <h3 style={{ color: 'red' }}>
                             <b>गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक</b>
                           </h3>

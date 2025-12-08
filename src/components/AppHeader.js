@@ -8,6 +8,7 @@ import { selectState } from '../slices/HomepageSlice';
 import { AppHeaderDropdown } from './header';
 import Section1 from 'src/views/dashboard/Sections/Section1';
 import './header/AppHeaderModern.css';
+import { Heading4 } from 'lucide-react';
 
 const AppHeader = () => {
     const dispatch = useDispatch();
@@ -24,7 +25,7 @@ const AppHeader = () => {
     return (
         <CHeader position="sticky" className="modern-app-header">
             <CContainer fluid className="modern-header-container">
-                
+
                 {/* Left Section: Brand & Toggler */}
                 <div className="modern-left-section">
 
@@ -36,6 +37,7 @@ const AppHeader = () => {
                         </h4>
                     </CHeaderBrand>
                 </div>
+                
 
                 {/* Center Section: Compact Section1 Form */}
                 <div className="modern-center-section">

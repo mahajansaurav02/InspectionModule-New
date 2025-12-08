@@ -15,6 +15,14 @@ const store = configureStore({
 
 export default store
 
+
+
+
+
+
+
+
+
 //---------------------------------------------------------default
 // import { createStore } from 'redux'
 
@@ -33,3 +41,4 @@ export default store
 
 // const store = createStore(changeState)
 // export default store
+
