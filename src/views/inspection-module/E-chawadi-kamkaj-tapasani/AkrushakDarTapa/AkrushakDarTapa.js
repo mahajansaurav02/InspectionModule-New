@@ -25,10 +25,9 @@ const AkrushakDarTapa = () => {
   const [error, setError] = useState(null)
 
   const [remark, setRemark] = useState('')
- let VillageData= localStorage.getItem('selectedVillageData')
+  let VillageData = localStorage.getItem('selectedVillageData')
 
- let selectedVillageData=JSON.parse(VillageData)
-
+  let selectedVillageData = JSON.parse(VillageData)
 
   let {
     cCode,
@@ -47,17 +46,13 @@ const AkrushakDarTapa = () => {
   const getAkurhsakDar = async () => {
     setIsLoading(true)
     try {
-
-         if (!cCode) {
+      if (!cCode) {
         alert('Village code not found....Please Select Village First')
         return
       }
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getAkrushakDar?ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+      const res = await axios.get(`${URLS.BaseURL}/inpsection/getAkrushakDar?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
       setAkrushakRateList(res.data || [])
     } catch (err) {
       setError('डेटा मिळू शकला नाही')
@@ -89,7 +84,7 @@ const AkrushakDarTapa = () => {
         <h4 className="mb-4 text-center text-primary fw-bold border-bottom pb-2">
           📋 अकृषक दर नमूद केल्याची तपासणी
         </h4>
-      <VillageDetailsList />
+        <VillageDetailsList />
 
         <CAlert color="info" className="modern-alert">
           <strong>टीप:</strong>

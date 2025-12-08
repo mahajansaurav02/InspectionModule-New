@@ -27,10 +27,9 @@ export const NirankGavNamunaTapa = () => {
   const [remark, setRemark] = useState('') // New state for remark
   const apiCalled = useRef(false)
   const navigate = useNavigate()
- let VillageData= localStorage.getItem('selectedVillageData')
+  let VillageData = localStorage.getItem('selectedVillageData')
 
- let selectedVillageData=JSON.parse(VillageData)
-
+  let selectedVillageData = JSON.parse(VillageData)
 
   let {
     cCode,
@@ -44,7 +43,7 @@ export const NirankGavNamunaTapa = () => {
   const getVillageForms = async () => {
     try {
       const response = await axios.get(`${URLS.BaseURL}/restservice/getAllVillageForm`, {
-        headers: reqHeaders
+        headers: reqHeaders,
       })
 
       setVillageForms(
@@ -65,7 +64,6 @@ export const NirankGavNamunaTapa = () => {
   const getNirankandCompleted = async () => {
     setLoading(true)
     try {
-      
       if (!cCode) {
         console.error('Village code not found')
         return
@@ -74,7 +72,7 @@ export const NirankGavNamunaTapa = () => {
       const response = await axios.get(
         `${URLS.BaseURL}/restservice/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`,
         {
-        headers: reqHeaders
+          headers: reqHeaders,
         },
       )
 
@@ -107,7 +105,7 @@ export const NirankGavNamunaTapa = () => {
       const response = await axios.get(
         `${URLS.BaseURL}/form17NoKaJaPa/getReportForm17NoKaJaPa?cCode=${cCode}`,
         {
-          headers: reqHeaders
+          headers: reqHeaders,
         },
       )
 
@@ -149,9 +147,11 @@ export const NirankGavNamunaTapa = () => {
       }
 
       const response = await axios.get(
-        `${URLS.BaseURL}/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${'2025-26'}`,
+        `${
+          URLS.BaseURL
+        }/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${'2025-26'}`,
         {
-          headers: reqHeaders
+          headers: reqHeaders,
         },
       )
 
@@ -190,7 +190,7 @@ export const NirankGavNamunaTapa = () => {
       const response = await axios.get(
         `${URLS.BaseURL}/otherEndpoint/getOtherData?cCode=${ccode}`,
         {
-         headers: reqHeaders
+          headers: reqHeaders,
         },
       )
 
@@ -250,7 +250,10 @@ export const NirankGavNamunaTapa = () => {
     // Reset remark when a new form is selected or if the form is 'वाढीव जमीन महसूल'
     if (selectedForm) {
       setRemark('')
-      if (selectedForm.formName.includes('वाढीव जमीन महसूल') || selectedForm.formId === 'addlandlr') {
+      if (
+        selectedForm.formName.includes('वाढीव जमीन महसूल') ||
+        selectedForm.formId === 'addlandlr'
+      ) {
         getAddlrData()
       }
     }
@@ -281,7 +284,7 @@ export const NirankGavNamunaTapa = () => {
     // Placeholder for API call to submit the remark
     console.log(`Submitting remark for form: ${selectedForm.formName}`)
     console.log(`Remark: ${remark}`)
-    
+
     // Logic to send data to the backend would go here
     // Example: axios.post(`${URLS.BaseURL}/restservice/submitRemark`, { formId: selectedForm.formId, remark: remark, ... })
 
@@ -294,7 +297,7 @@ export const NirankGavNamunaTapa = () => {
   const renderReportTable = () => {
     if (!selectedForm) return null
 
-    // Pass an empty object for now as 'showControls' is handled outside, but for future proofing of components, 
+    // Pass an empty object for now as 'showControls' is handled outside, but for future proofing of components,
     // it's good practice to pass props for what they display.
     const tableProps = {
       formName: selectedForm.formName,
@@ -305,100 +308,108 @@ export const NirankGavNamunaTapa = () => {
       return <KajapaReportTable data={kajapaData} {...tableProps} />
     } else if (selectedForm.formName.includes('निरंक') || selectedForm.formId === 'NIRANK_FORM') {
       return <NirankReportTable data={tableData} {...tableProps} />
-    } else if (selectedForm.formName.includes('वाढीव जमीन महसूल') || selectedForm.formId === 'addlandlr') {
-    return <AddLandRevenueReport data={addLandRevenueData} {...tableProps} />
+    } else if (
+      selectedForm.formName.includes('वाढीव जमीन महसूल') ||
+      selectedForm.formId === 'addlandlr'
+    ) {
+      return <AddLandRevenueReport data={addLandRevenueData} {...tableProps} />
     } else {
       return <DefaultReportTable data={otherTableData} {...tableProps} />
     }
   }
 
   return (
-<>
-          <VillageDetailsList />
+    <>
+      <VillageDetailsList />
 
-    <div className="main-container">
-      
-      <div className="content-panel">
-        <h2 className="main-title">निरंक गाव व कामकाज पुर्ण असलेले नमुने</h2>
-        <div className="info-alert">
-          <strong>टीप:</strong> सदर गावातील गाव नमुने भरण्याचे काम पूर्ण झाल्याची घोषणा करण्यात
-          आलेली आहे. घोषणेशी संबंधित नमुन्यांची माहिती तपासणीसाठी सादर करण्यात आलेली आहे. यामध्ये
-          निरंक नमुने व काम पूर्ण झाल्याच्या घोषणांची नोंद समाविष्ट आहे.
-        </div>
-
-        {loading ? (
-          <div className="loading-state">
-            <LoadingSpinner message="Loading...." />
+      <div className="main-container">
+        <div className="content-panel">
+          <h2 className="main-title">निरंक गाव व कामकाज पुर्ण असलेले नमुने</h2>
+          <div className="info-alert">
+            <strong>टीप:</strong> सदर गावातील गाव नमुने भरण्याचे काम पूर्ण झाल्याची घोषणा करण्यात
+            आलेली आहे. घोषणेशी संबंधित नमुन्यांची माहिती तपासणीसाठी सादर करण्यात आलेली आहे. यामध्ये
+            निरंक नमुने व काम पूर्ण झाल्याच्या घोषणांची नोंद समाविष्ट आहे.
           </div>
-        ) : (
-          <div className="form-grid">
-            {villageForms.length > 0 ? (
-              villageForms.slice(1).map((record) => (
-                <div
-                  key={record.id || record.index}
-                  className={`form-card ${selectedForm?.formId === record.formId ? 'selected' : ''}`}
-                  onClick={() => setSelectedForm(record)}
-                >
-                  <div className="form-card-inner">
-                    <h4 className="form-title">{record.formName}</h4>
-                    <div className="status-section">
-                      <div className="status-item">
-                        <span className="status-label">निरंक</span>
-                        <div className="status-icon-container">
-                          {renderStatusIcon(record.isNirank)}
+
+          {loading ? (
+            <div className="loading-state">
+              <LoadingSpinner message="Loading...." />
+            </div>
+          ) : (
+            <div className="form-grid">
+              {villageForms.length > 0 ? (
+                villageForms.slice(1).map((record) => (
+                  <div
+                    key={record.id || record.index}
+                    className={`form-card ${
+                      selectedForm?.formId === record.formId ? 'selected' : ''
+                    }`}
+                    onClick={() => setSelectedForm(record)}
+                  >
+                    <div className="form-card-inner">
+                      <h4 className="form-title">{record.formName}</h4>
+                      <div className="status-section">
+                        <div className="status-item">
+                          <span className="status-label">निरंक</span>
+                          <div className="status-icon-container">
+                            {renderStatusIcon(record.isNirank)}
+                          </div>
                         </div>
-                      </div>
-                      <div className="status-item">
-                        <span className="status-label">कामकाज पूर्ण</span>
-                        <div className="status-icon-container">
-                          {renderStatusIcon(record.isCompleted)}
+                        <div className="status-item">
+                          <span className="status-label">कामकाज पूर्ण</span>
+                          <div className="status-icon-container">
+                            {renderStatusIcon(record.isCompleted)}
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              ))
-            ) : (
-              <div className="no-data-found">No data found.</div>
-            )}
-          </div>
-        )}
-      </div>
-
-      <div className="report-panel">
-        {selectedForm ? (
-          <>
-            {renderReportTable()}
-
-            {/* Remark and Control Section */}
-            <div className="remark-section mt-4">
-              <h4 className="remark-title">निरंक/तपासणी शेरा (Remark)</h4>
-              <textarea
-                className="form-control"
-                rows="3"
-                value={remark}
-                onChange={(e) => setRemark(e.target.value)}
-                placeholder="येथे आपला शेरा/तपासणी नोंदवा..."
-              ></textarea>
+                ))
+              ) : (
+                <div className="no-data-found">No data found.</div>
+              )}
             </div>
+          )}
+        </div>
 
-            <div className="button-container">
-              <button className="cancel-button" onClick={handleCancel}>
-                रद्द करा (Cancel)
-              </button>
-              <button className="submit-button" onClick={handleRemarkSubmit} disabled={!remark.trim()}>
-                शेरा जमा करा (Submit Remark)
-              </button>
+        <div className="report-panel">
+          {selectedForm ? (
+            <>
+              {renderReportTable()}
+
+              {/* Remark and Control Section */}
+              <div className="remark-section mt-4">
+                <h4 className="remark-title">निरंक/तपासणी शेरा (Remark)</h4>
+                <textarea
+                  className="form-control"
+                  rows="3"
+                  value={remark}
+                  onChange={(e) => setRemark(e.target.value)}
+                  placeholder="येथे आपला शेरा/तपासणी नोंदवा..."
+                ></textarea>
+              </div>
+
+              <div className="button-container">
+                <button className="cancel-button" onClick={handleCancel}>
+                  रद्द करा (Cancel)
+                </button>
+                <button
+                  className="submit-button"
+                  onClick={handleRemarkSubmit}
+                  disabled={!remark.trim()}
+                >
+                  शेरा जमा करा (Submit Remark)
+                </button>
+              </div>
+              {/* End Remark and Control Section */}
+            </>
+          ) : (
+            <div className="report-placeholder">
+              <p>Please select a card from the left panel to view its report.</p>
             </div>
-            {/* End Remark and Control Section */}
-          </>
-        ) : (
-          <div className="report-placeholder">
-            <p>Please select a card from the left panel to view its report.</p>
-          </div>
-        )}
+          )}
+        </div>
       </div>
-    </div>
     </>
   )
 }

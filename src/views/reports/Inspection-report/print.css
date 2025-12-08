@@ -1,0 +1,44 @@
+@media print {
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  .report-container {
+    width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+    page-break-inside: avoid !important;
+  }
+
+  tr {
+    page-break-inside: avoid !important;
+    page-break-after: auto !important;
+  }
+
+  td, th {
+    padding: 6px !important;
+    border: 1px solid black !important;
+  }
+
+  .page-break {
+    page-break-before: always !important;
+  }
+
+  /* FIX repeated header pushing content down */
+  header, footer {
+    display: none !important;
+  }
+
+  /* CoreUI columns break pages: STOP IT */
+  [class*="col"] {
+    float: none !important;
+    display: block !important;
+    page-break-inside: avoid !important;
+  }
+}

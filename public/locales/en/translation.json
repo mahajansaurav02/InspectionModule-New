@@ -1,6 +1,6 @@
 {
   "greeting": "Hello, Welcome!",
-  "title":"Inspection Module e-Chawadi",
+  "title": "Inspection Module e-Chawadi",
   "description": {
     "line1": "You're watching <1>{{channel}}</1> YouTube Channel",
     "line2": "This is an Internationalisation Tutorial"

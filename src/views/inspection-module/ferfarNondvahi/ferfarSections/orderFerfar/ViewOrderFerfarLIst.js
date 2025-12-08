@@ -49,7 +49,6 @@ function ViewOrderFerfarList() {
 
   let selectedVillageData = JSON.parse(VillageData)
 
-
   let {
     cCode,
     distMarathiName,
@@ -67,9 +66,8 @@ function ViewOrderFerfarList() {
   }, [])
 
   const getAdeshFerfarList = async () => {
-
-    console.log(selectedVillageData, "checkkkkkkk")
-    console.log(selectedVillageData[0], "checkkkkkkk2222222222")
+    console.log(selectedVillageData, 'checkkkkkkk')
+    console.log(selectedVillageData[0], 'checkkkkkkk2222222222')
     setIsLoading(true)
     try {
       console.log(cCode)

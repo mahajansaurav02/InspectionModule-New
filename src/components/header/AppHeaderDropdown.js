@@ -1,10 +1,5 @@
 import React from 'react'
-import {
-  CDropdown,
-  CDropdownHeader,
-  CDropdownMenu,
-  CDropdownToggle,
-} from '@coreui/react'
+import { CDropdown, CDropdownHeader, CDropdownMenu, CDropdownToggle } from '@coreui/react'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Logout from '../logout'
 
@@ -27,8 +22,8 @@ const AppHeaderDropdown = () => {
           justifyContent: 'center',
           transition: 'transform 0.2s',
         }}
-        onMouseEnter={e => (e.currentTarget.style.transform = 'scale(1.1)')}
-        onMouseLeave={e => (e.currentTarget.style.transform = 'scale(1)')}
+        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
+        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
       >
         <AccountCircleIcon style={{ color: '#fff', fontSize: '28px' }} />
       </CDropdownToggle>
@@ -60,13 +55,16 @@ const AppHeaderDropdown = () => {
           >
             <AccountCircleIcon style={{ color: '#007bff', fontSize: '28px' }} />
           </div>
-          <h6 className="mb-0">{fullName ? fullName : 'NA'}</h6><br/>
-          <h6 style={{fontSize:'15px'}} className="mb-0" >{userName ? userName : 'User'}</h6>
+          <h6 className="mb-0">{fullName ? fullName : 'NA'}</h6>
+          <br />
+          <h6 style={{ fontSize: '15px' }} className="mb-0">
+            {userName ? userName : 'User'}
+          </h6>
           <small className="text-muted">Welcome back!</small>
         </div>
 
         <div className="d-flex justify-content-center mt-3">
-          <Logout  />
+          <Logout />
         </div>
       </CDropdownMenu>
     </CDropdown>

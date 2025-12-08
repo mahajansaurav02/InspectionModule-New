@@ -21,59 +21,60 @@ const VillageYearSelector = ({ villages = [], years = [], onSubmit }) => {
 
   return (
     <>
-    <CButton
-  className="village-btn"
-  onClick={() => setVisible(true)}
->
-  गाव / वर्ष निवडा
-</CButton>
+      <CButton className="village-btn" onClick={() => setVisible(true)}>
+        गाव / वर्ष निवडा
+      </CButton>
 
-<CModal
-  visible={visible}
-  onClose={() => setVisible(false)}
-  alignment="center"
-  className="custom-modal"
->
-  <CModalHeader closeButton>
-    <CModalTitle>गाव आणि राजस्व वर्ष निवडा</CModalTitle>
-  </CModalHeader>
-  <CModalBody>
-    <div className="mb-3">
-      <label>गाव निवडा</label>
-      <CFormSelect
-        value={selectedVillage}
-        onChange={(e) => setSelectedVillage(e.target.value)}
+      <CModal
+        visible={visible}
+        onClose={() => setVisible(false)}
+        alignment="center"
+        className="custom-modal"
       >
-        <option value="">गाव निवडा</option>
-        {villages.map((v, idx) => (
-          <option key={idx} value={v}>{v}</option>
-        ))}
-      </CFormSelect>
-    </div>
+        <CModalHeader closeButton>
+          <CModalTitle>गाव आणि राजस्व वर्ष निवडा</CModalTitle>
+        </CModalHeader>
+        <CModalBody>
+          <div className="mb-3">
+            <label>गाव निवडा</label>
+            <CFormSelect
+              value={selectedVillage}
+              onChange={(e) => setSelectedVillage(e.target.value)}
+            >
+              <option value="">गाव निवडा</option>
+              {villages.map((v, idx) => (
+                <option key={idx} value={v}>
+                  {v}
+                </option>
+              ))}
+            </CFormSelect>
+          </div>
 
-    <div>
-      <label>राजस्व वर्ष निवडा</label>
-      <CFormSelect
-        value={selectedYear}
-        onChange={(e) => setSelectedYear(e.target.value)}
-      >
-        <option value="">राजस्व वर्ष निवडा</option>
-        {years.map((y, idx) => (
-          <option key={idx} value={y}>{y}</option>
-        ))}
-      </CFormSelect>
-    </div>
-  </CModalBody>
-  <CModalFooter>
-    <CButton color="secondary" onClick={() => setVisible(false)}>
-      बंद
-    </CButton>
-    <CButton color="primary" onClick={handleSubmit} disabled={!selectedVillage || !selectedYear}>
-      सबमिट
-    </CButton>
-  </CModalFooter>
-</CModal>
-
+          <div>
+            <label>राजस्व वर्ष निवडा</label>
+            <CFormSelect value={selectedYear} onChange={(e) => setSelectedYear(e.target.value)}>
+              <option value="">राजस्व वर्ष निवडा</option>
+              {years.map((y, idx) => (
+                <option key={idx} value={y}>
+                  {y}
+                </option>
+              ))}
+            </CFormSelect>
+          </div>
+        </CModalBody>
+        <CModalFooter>
+          <CButton color="secondary" onClick={() => setVisible(false)}>
+            बंद
+          </CButton>
+          <CButton
+            color="primary"
+            onClick={handleSubmit}
+            disabled={!selectedVillage || !selectedYear}
+          >
+            सबमिट
+          </CButton>
+        </CModalFooter>
+      </CModal>
     </>
   )
 }

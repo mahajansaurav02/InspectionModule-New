@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'
 
 const VillageDetailsList = () => {
   // State to manage the selected values (optional, but good practice for forms)
-  const [district, setDistrict] = useState('');
-  const [taluka, setTaluka] = useState('');
-  const [village, setVillage] = useState('');
-  const [revenueYear, setRevenueYear] = useState('');
+  const [district, setDistrict] = useState('')
+  const [taluka, setTaluka] = useState('')
+  const [village, setVillage] = useState('')
+  const [revenueYear, setRevenueYear] = useState('')
 
+  let VillageData = localStorage.getItem('selectedVillageData')
 
-let VillageData= localStorage.getItem('selectedVillageData')
-
- let selectedVillageData=JSON.parse(VillageData)
-
+  let selectedVillageData = JSON.parse(VillageData)
 
   let {
     cCode,
@@ -23,46 +21,48 @@ let VillageData= localStorage.getItem('selectedVillageData')
     villageName,
   } = selectedVillageData[0]
 
-
-return (
+  return (
     <div className="village-details-container" style={{ padding: '5px' }}>
-      
-      <div 
+      <div
         style={{
           display: 'flex',
-          gap: '15px', 
-          alignItems: 'flex-start', 
-          marginBottom: '20px'
+          gap: '15px',
+          alignItems: 'flex-start',
+          marginBottom: '20px',
         }}
       >
         <div style={{ flex: 1, minWidth: '150px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#555' }}>
-            जिल्हा 
+          <label
+            style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#555' }}
+          >
+            जिल्हा
           </label>
-          <div 
-            style={{ 
-              padding: '8px', 
-              border: '1px solid #ddd', 
-              borderRadius: '4px', 
+          <div
+            style={{
+              padding: '8px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
               backgroundColor: '#f9f9f9',
-              minHeight: '20px' 
+              minHeight: '20px',
             }}
           >
-            {distMarathiName || '---'} 
+            {distMarathiName || '---'}
           </div>
         </div>
 
         <div style={{ flex: 1, minWidth: '150px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#555' }}>
-            तालुका 
+          <label
+            style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#555' }}
+          >
+            तालुका
           </label>
-          <div 
-            style={{ 
-              padding: '8px', 
-              border: '1px solid #ddd', 
-              borderRadius: '4px', 
+          <div
+            style={{
+              padding: '8px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
               backgroundColor: '#f9f9f9',
-              minHeight: '20px' 
+              minHeight: '20px',
             }}
           >
             {talukaMarathiName || '---'}
@@ -70,16 +70,18 @@ return (
         </div>
 
         <div style={{ flex: 1, minWidth: '150px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#555' }}>
-            गाव 
+          <label
+            style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#555' }}
+          >
+            गाव
           </label>
-          <div 
-            style={{ 
-              padding: '8px', 
-              border: '1px solid #ddd', 
-              borderRadius: '4px', 
+          <div
+            style={{
+              padding: '8px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
               backgroundColor: '#f9f9f9',
-              minHeight: '20px' 
+              minHeight: '20px',
             }}
           >
             {/* Display the value passed via props */}
@@ -88,16 +90,18 @@ return (
         </div>
 
         <div style={{ flex: 1, minWidth: '150px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#555' }}>
-            महसूल वर्ष 
+          <label
+            style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold', color: '#555' }}
+          >
+            महसूल वर्ष
           </label>
-          <div 
-            style={{ 
-              padding: '8px', 
-              border: '1px solid #ddd', 
-              borderRadius: '4px', 
+          <div
+            style={{
+              padding: '8px',
+              border: '1px solid #ddd',
+              borderRadius: '4px',
               backgroundColor: '#f9f9f9',
-              minHeight: '20px' 
+              minHeight: '20px',
             }}
           >
             {'2024-25' || '---'}
@@ -105,7 +109,7 @@ return (
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default VillageDetailsList;
+export default VillageDetailsList

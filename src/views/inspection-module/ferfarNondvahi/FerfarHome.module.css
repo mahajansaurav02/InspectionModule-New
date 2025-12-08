@@ -39,7 +39,7 @@ body {
 }
 
 .header::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 50%;
   height: 5px;

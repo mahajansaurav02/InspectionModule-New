@@ -1,49 +1,65 @@
-
 /* InspectionReport.css */
 .inspection-container {
-  padding: 20px;
+  padding: 2 px;
   background-color: #f8f9fa;
 }
 
 /* PDF मध्ये मार्जिनसह रिपोर्टचा बॅकग्राउंड व्यवस्थित दिसावा यासाठी */
 .card {
-    border: 1px solid #ccc;
+  border: 1px solid #ccc;
+}
+.headerName {
+  background-color: #0d6efd; /* CoreUI primary color */
+  color: white;
+  justify-content: center ;
+  text-align: center  ;
+  align-items: center;
+  /* padding-left: 340px; */
+
+
 }
 
 /* रिपोर्टचा मजकूर आणि बॅकग्राउंड पांढरा ठेवा */
 .report-content {
-    background-color: white; 
-    color: black; 
-    padding: 1rem; /* CoreUI CardBody चा पॅडिंग */
+  background-color: white;
+  color: black;
+  padding: 1rem; /* CoreUI CardBody चा पॅडिंग */
 }
 
 /* CoreUI च्या Tables साठी custom style निश्चित करा */
-.table th, .table td {
+.table th,
+.table td {
   vertical-align: middle;
 }
 
 /* टेबल बॉर्डर निश्चित करण्यासाठी */
-.table.table-bordered th, .table.table-bordered td {
-    border: 1px solid #dee2e6 !important;
+.table.table-bordered th,
+.table.table-bordered td {
+  border: 1px solid #dee2e6 !important;
 }
 
 /* रंगीत घटक PDF मध्ये दिसण्यासाठी */
-.bg-info, .bg-warning, .text-primary {
-    /* हे CSS प्रॉपर्टी प्रिंट करताना रंग आणि बॅकग्राउंड रेंडर करण्यासाठी महत्त्वाची आहे */
-    -webkit-print-color-adjust: exact;
-    color-adjust: exact;
+.bg-info,
+.bg-warning,
+.text-primary {
+  /* हे CSS प्रॉपर्टी प्रिंट करताना रंग आणि बॅकग्राउंड रेंडर करण्यासाठी महत्त्वाची आहे */
+  -webkit-print-color-adjust: exact;
+  color-adjust: exact;
 }
 
 .bg-info {
-    background-color: #39f !important; /* CoreUI info color */
-    color: white !important;
+  background-color: #39f !important; /* CoreUI info color */
+  color: white !important;
 }
 
 .bg-warning {
-    background-color: #ffc107 !important; /* CoreUI warning color */
+  background-color: #ffc107 !important; /* CoreUI warning color */
 }
 
 .text-primary {
-    color: #0d6efd !important;
+  color: #0d6efd !important;
 }
 
+.signature{
+    margin-bottom: 130px;
+}

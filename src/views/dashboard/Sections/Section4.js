@@ -8,13 +8,13 @@ import { cilMedicalCross, cilViewStream } from '@coreui/icons'
 
 const Section4 = ({ count4A, count4B, count4C }) => {
   return (
-    <CContainer fluid style={{ marginTop: 10, marginBottom: 10}}>
-      <Paper elevation={4} style={{ padding: 10,paddingBottom:20}}>
+    <CContainer fluid style={{ marginTop: 10, marginBottom: 10 }}>
+      <Paper elevation={4} style={{ padding: 10, paddingBottom: 20 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-around' }}>
           <CCol md={4}>
             <DetailsCard label="वसूल झालेली रक्कम" count={count4A} icon={<DescriptionIcon />} />
           </CCol>
-          <CButton color="light" >
+          <CButton color="light">
             <CIcon icon={cilViewStream} title="Download file" />
           </CButton>
           <CCol md={3}>

@@ -55,12 +55,9 @@ function ViewNiyantritFerfar() {
     setIsLoading(true)
     const cCode = '272400110296420000'
     try {
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getWarg2FherfarData?ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+      const res = await axios.get(`${URLS.BaseURL}/inpsection/getWarg2FherfarData?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
       setFerfarList1(res.data)
     } catch (err) {
       console.error(err)
@@ -100,7 +97,9 @@ function ViewNiyantritFerfar() {
       <FerfarNavbar />
       <CCard className="mb-4 custom-card">
         <CCardHeader className="d-flex justify-content-between align-items-center bg-primary text-white">
-          <h4 className="mb-0">📋 नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार </h4>
+          <h4 className="mb-0">
+            📋 नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार{' '}
+          </h4>
           <div className="d-flex align-items-center">
             <CTooltip content="Search ferfar">
               <div className="position-relative">
@@ -122,9 +121,8 @@ function ViewNiyantritFerfar() {
             </CTooltip>
           </div>
         </CCardHeader>
- <div style={{paddingLeft:'80px',paddingRight:'80px'}}>
-                  <VillageDetailsList />
-
+        <div style={{ paddingLeft: '80px', paddingRight: '80px' }}>
+          <VillageDetailsList />
         </div>
         <CCardBody>
           {isLoading ? (
@@ -140,7 +138,6 @@ function ViewNiyantritFerfar() {
                 </CAlert>
               ) : (
                 <>
-                
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
                       <CTableHead className="table-dark">

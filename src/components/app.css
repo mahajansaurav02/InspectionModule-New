@@ -78,9 +78,8 @@
   font-weight: 500;
 }
 
-
 .header {
-  background: rgba(255, 255, 255, 0.9); 
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
@@ -127,7 +126,7 @@
 }
 
 .brand .brandText::after {
-  content: "";
+  content: '';
   position: absolute;
   left: 0;
   bottom: 0;
@@ -142,7 +141,6 @@
   width: 100%;
 }
 
-
 .rightSection {
   display: flex;
   align-items: center;
@@ -153,7 +151,7 @@
   padding: 0.45rem 1rem;
   font-size: 0.9rem;
   font-weight: 600;
-    background: linear-gradient(90deg, #16987e, #8db3bd);
+  background: linear-gradient(90deg, #16987e, #8db3bd);
 
   color: #fff;
   border-radius: 6px;
@@ -163,6 +161,5 @@
 
 .header .village-btn:hover {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    background: linear-gradient(90deg, #90ecff, #a9a5c5);
-
+  background: linear-gradient(90deg, #90ecff, #a9a5c5);
 }

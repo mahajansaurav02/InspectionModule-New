@@ -2,7 +2,6 @@ import React from 'react'
 import EChawadiKamkajTap from './views/inspection-module/E-chawadi-kamkaj-tapasani/EChawadiKamkajTap'
 import InspectionReport from './views/reports/Inspection-report/InspectionReport'
 
-
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 // Reports
 const InspectionOffline = React.lazy(() =>
@@ -130,7 +129,7 @@ const routes = [
   // },
 
   //ocr trial
- 
+
   { path: '/Mandal_Office/circular-form-1', name: 'Circular Form', element: CircularForm1 },
   { path: '/Mandal_Office/circular-form-2', name: 'Circular Form', element: CircularForm2 },
   { path: '/Mandal_Office/circular-form-3', name: 'Circular Form', element: CircularForm3 },

@@ -23,7 +23,7 @@
 
 .formContainer {
   width: 100%;
-  max-width: 800px; 
+  max-width: 800px;
   margin: 0 auto;
 }
 
@@ -31,7 +31,7 @@
   background-color: #e8f5f9;
   border-radius: 8px;
   overflow: hidden;
-  margin-bottom: 0 !important; 
+  margin-bottom: 0 !important;
 }
 
 .formControl .MuiFilledInput-root {
@@ -39,7 +39,7 @@
 }
 
 .formControl .MuiInputBase-input {
-  padding: 8px 12px; 
+  padding: 8px 12px;
 }
 
 .formControl .MuiInputLabel-root {

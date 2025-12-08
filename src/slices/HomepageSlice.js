@@ -11,7 +11,7 @@ const HomepageSlice = createSlice({
     marathiName: '',
     desg: '',
     revenueYear1: [],
-    villageData: [], 
+    villageData: [],
   },
   reducers: {
     addHomepageDetails: (state, { payload }) => {
@@ -21,6 +21,6 @@ const HomepageSlice = createSlice({
 })
 export const { addHomepageDetails } = HomepageSlice?.actions
 
-export const selectState = (state) => state?.homepage  
+export const selectState = (state) => state?.homepage
 
 export default HomepageSlice.reducer

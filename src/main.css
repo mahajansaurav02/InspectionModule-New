@@ -1,13 +1,26 @@
-
-html, body {
-  font-family: "Tinos", "Tiro Devanagari Sanskrit", serif;
+html,
+body {
+  font-family: 'Tinos', 'Tiro Devanagari Sanskrit', serif;
 }
 
-h1, h2, h3, h4, h5, h6,p,span,div,li,ol,ul
-button, input, textarea, select {
-  font-family: "Tinos", "Tiro Devanagari Sanskrit", serif;
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+li,
+ol,
+ul button,
+input,
+textarea,
+select {
+  font-family: 'Tinos', 'Tiro Devanagari Sanskrit', serif;
 }
 
 .devanagari-text {
-  font-family: "Tiro Devanagari Sanskrit", serif;
+  font-family: 'Tiro Devanagari Sanskrit', serif;
 }

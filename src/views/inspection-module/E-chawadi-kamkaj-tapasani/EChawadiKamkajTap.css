@@ -41,7 +41,7 @@ body {
 }
 
 .echawadi-title::after {
-  content: "";
+  content: '';
   position: absolute;
   width: 50%;
   height: 5px;
@@ -145,12 +145,12 @@ body {
   line-height: 1.4;
   white-space: normal;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+  z-index: 1000;
 }
 
 /* Triangle for the tooltip */
 .tooltip-text::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 100%;
   left: 50%;
@@ -221,7 +221,7 @@ body {
 }
 
 .global-tooltip::after {
-  content: "";
+  content: '';
   position: absolute;
   top: 100%;
   left: 50%;

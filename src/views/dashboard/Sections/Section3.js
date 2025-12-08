@@ -74,7 +74,7 @@ const Section3 = ({
           </CCol>
         </CRow>
         <CRow>
-        {/* <CCol md={1}></CCol> */}
+          {/* <CCol md={1}></CCol> */}
           <CCol md={6}>
             <Paper
               elevation={7}
@@ -83,7 +83,7 @@ const Section3 = ({
               <CChart type="pie" data={pieChart1} />
             </Paper>
           </CCol>
-         
+
           <CCol md={6}>
             <Paper
               elevation={7}

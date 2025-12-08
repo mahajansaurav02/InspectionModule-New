@@ -1,44 +1,43 @@
-import React, { useState, useRef } from 'react';
-import { Tabs, Tab } from 'react-bootstrap';
-import { Card, Button, Spinner } from 'react-bootstrap';
-import { DownloadTableExcel } from 'react-export-table-to-excel';
-import styles from './DyslrAkarbandTapasani.module.css';
-import LoadingSpinner from 'src/Models/LoadingSpinner';
-import { CAlert } from '@coreui/react';
-import axios from 'axios';
-import URLS from 'src/URLS';
-import reqHeaders from 'src/instance/headers';
-import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList';
+import React, { useState, useRef } from 'react'
+import { Tabs, Tab } from 'react-bootstrap'
+import { Card, Button, Spinner } from 'react-bootstrap'
+import { DownloadTableExcel } from 'react-export-table-to-excel'
+import styles from './DyslrAkarbandTapasani.module.css'
+import LoadingSpinner from 'src/Models/LoadingSpinner'
+import { CAlert } from '@coreui/react'
+import axios from 'axios'
+import URLS from 'src/URLS'
+import reqHeaders from 'src/instance/headers'
+import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 
 // Add the new functions from the second code snippet
 var prevTotalArea = 0.0,
   prevAssessment = 0,
   prevNetCultiArea = 0,
-  prevTotalPotKharabArea = 0;
+  prevTotalPotKharabArea = 0
 
 function getTotalAreaAssess(totalAreaH, cultivableAreaInt, netCultiAreaH, assessment) {
-  prevTotalArea += parseFloat(totalAreaH);
-  prevTotalPotKharabArea += parseFloat(cultivableAreaInt);
-  prevNetCultiArea += parseFloat(netCultiAreaH);
-  prevAssessment += parseFloat(assessment);
+  prevTotalArea += parseFloat(totalAreaH)
+  prevTotalPotKharabArea += parseFloat(cultivableAreaInt)
+  prevNetCultiArea += parseFloat(netCultiAreaH)
+  prevAssessment += parseFloat(assessment)
 }
 
 const DyslrAkarbandTapasani = () => {
-  const [activeTab, setActiveTab] = useState('akarband');
-  const [loading, setLoading] = useState(false);
-  const [loadingRejected, setLoadingRejected] = useState(false);
-  const [tableData, setTableData] = useState([]);
-  const [rejectedTableData, setRejectedTableData] = useState([]);
-  const tableRef = useRef(null);
-  const rejectedTableRef = useRef(null);
-  const token = localStorage.getItem('token');
+  const [activeTab, setActiveTab] = useState('akarband')
+  const [loading, setLoading] = useState(false)
+  const [loadingRejected, setLoadingRejected] = useState(false)
+  const [tableData, setTableData] = useState([])
+  const [rejectedTableData, setRejectedTableData] = useState([])
+  const tableRef = useRef(null)
+  const rejectedTableRef = useRef(null)
+  const token = localStorage.getItem('token')
   // const [districtCode, setDistrictCode] = useState('24'); // Replace with actual state management
   // const [talukaCode, setTalukaCode] = useState('11'); // Replace with actual state management
-  const [villageCode, setVillageCode] = useState('270900130113130000'); // Replace with actual state management
-let VillageData= localStorage.getItem('selectedVillageData')
+  const [villageCode, setVillageCode] = useState('270900130113130000') // Replace with actual state management
+  let VillageData = localStorage.getItem('selectedVillageData')
 
- let selectedVillageData=JSON.parse(VillageData)
-
+  let selectedVillageData = JSON.parse(VillageData)
 
   let {
     cCode,
@@ -51,20 +50,19 @@ let VillageData= localStorage.getItem('selectedVillageData')
   } = selectedVillageData[0]
 
   const getAkarbandDiffData = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-
       // reqHeaders.token=''
-           if (!cCode) {
+      if (!cCode) {
         alert('Village code not found....Please Select Village First')
         return
       }
       const response = await axios.get(
         `${URLS.BaseURL}/inpsection/form1OdcDiff?districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${cCode}`,
         {
-         headers: reqHeaders
+          headers: reqHeaders,
         },
-      );
+      )
 
       if (response.data) {
         const filteredData = response.data.filter((r) => {
@@ -75,8 +73,8 @@ let VillageData= localStorage.getItem('selectedVillageData')
             r.form1NetCultiArea !== r.form7NetCultiArea ||
             r.form1Assessment !== r.form7Assessment ||
             r.form1TenureCode !== r.form7TenureCode
-          );
-        });
+          )
+        })
 
         const mappedData = filteredData.map((r) => ({
           surveyNumber: r.pin,
@@ -154,11 +152,12 @@ let VillageData= localStorage.getItem('selectedVillageData')
                 </button>
               </span>
             ),
-          potKharabaTypeFlag: r.form1PotType === r.form7PotType ? (
-            <span style={{ color: 'green' }}>नाही</span>
-          ) : (
-            <span style={{ color: 'red' }}>होय</span>
-          ),
+          potKharabaTypeFlag:
+            r.form1PotType === r.form7PotType ? (
+              <span style={{ color: 'green' }}>नाही</span>
+            ) : (
+              <span style={{ color: 'red' }}>होय</span>
+            ),
           netCultiAreaFlag:
             r.form1NetCultiArea === r.form7NetCultiArea ? (
               <span style={{ color: 'green' }}>नाही</span>
@@ -271,67 +270,71 @@ let VillageData= localStorage.getItem('selectedVillageData')
                 </button>
               </span>
             ),
-        }));
-        setTableData(mappedData);
+        }))
+        setTableData(mappedData)
       }
     } catch (error) {
-      console.error('Error fetching data:', error);
-      setTableData([]);
+      console.error('Error fetching data:', error)
+      setTableData([])
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const getAkarbandRejectedData = async () => {
     // Corrected to use separate assignment statements
-    prevTotalArea = 0;
-    prevAssessment = 0;
-    prevNetCultiArea = 0;
-    prevTotalPotKharabArea = 0;
+    prevTotalArea = 0
+    prevAssessment = 0
+    prevNetCultiArea = 0
+    prevTotalPotKharabArea = 0
 
-    setLoadingRejected(true);
+    setLoadingRejected(true)
     try {
       const response = await axios.get(
         `${URLS.BaseURL}/inpsection/getFormDyslrDeleteEntries?cCode=${cCode}
 `,
         {
-          headers: reqHeaders
+          headers: reqHeaders,
         },
-      );
+      )
       if (response.data && response.data.form1DyslrData) {
         const mappedData = response.data.form1DyslrData.map((r) => {
-          getTotalAreaAssess(r.totalAreaH, r.cultivableAreaInt, r.netCultiAreaH, r.assessment);
+          getTotalAreaAssess(r.totalAreaH, r.cultivableAreaInt, r.netCultiAreaH, r.assessment)
           return {
-            surveyHissaNo: r.hissaNo == null || r.hissaNo.trim() == '' ? r.pin : r.pin + '/' + r.hissaNo,
+            surveyHissaNo:
+              r.hissaNo == null || r.hissaNo.trim() == '' ? r.pin : r.pin + '/' + r.hissaNo,
             designation: r.designation,
             totalAreaH: r.totalAreaH,
             tenureName: r.tenureName,
             potkharabaType: r.potkharabaType,
             cultivableAreaInt: r.cultivableAreaInt,
             netCultiAreaH: r.netCultiAreaH,
-            naAssessment: r.naAssessment != null || r.naAssessment > 0 ? r.naAssessment : r.assessment,
+            naAssessment:
+              r.naAssessment != null || r.naAssessment > 0 ? r.naAssessment : r.assessment,
             assessment: r.assessment,
             publicRightsOfWayAndEasements: r.publicRightsOfWayAndEasements,
             particularsOfAlteration: r.particularsOfAlteration,
             orderSanctioningChanges: r.orderNo,
             orderDate: r.orderDate,
             remarks: r.remarks,
-          };
-        });
-        setRejectedTableData(mappedData);
+          }
+        })
+        setRejectedTableData(mappedData)
       }
     } catch (error) {
-      console.error('Error fetching rejected data:', error);
-      setRejectedTableData([]);
+      console.error('Error fetching rejected data:', error)
+      setRejectedTableData([])
     } finally {
-      setLoadingRejected(false);
+      setLoadingRejected(false)
     }
-  };
+  }
 
   return (
     <div className={styles.wrapper}>
-      <h4 className="text-center fw-bold mb-4 text-primary">उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील</h4>
-                <VillageDetailsList/>
+      <h4 className="text-center fw-bold mb-4 text-primary">
+        उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील
+      </h4>
+      <VillageDetailsList />
 
       <Tabs
         activeKey={activeTab}
@@ -345,13 +348,23 @@ let VillageData= localStorage.getItem('selectedVillageData')
               <strong>टीप:</strong>
               <ul className="mt-2 mb-0 text-start">
                 <li>उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद भरलेला आहे.</li>
-                <li>सदर विसंगतीचे तपशीलवार निरीक्षण करत, त्या भूमापन क्रमांकांची यादी तपासणीसाठी उपलब्ध करून देण्यात आलेली आहे.</li>
-                <li>ग्राम महसूल अधिकारी यांच्या आकारबंदमधील असलेले काही भूमापन क्रमांक, उप-अधीक्षक भूमिअभिलेख यांच्या आकारबंदात नमूद नाहीत.ते तपासून खात्री करा.</li>
+                <li>
+                  सदर विसंगतीचे तपशीलवार निरीक्षण करत, त्या भूमापन क्रमांकांची यादी तपासणीसाठी
+                  उपलब्ध करून देण्यात आलेली आहे.
+                </li>
+                <li>
+                  ग्राम महसूल अधिकारी यांच्या आकारबंदमधील असलेले काही भूमापन क्रमांक, उप-अधीक्षक
+                  भूमिअभिलेख यांच्या आकारबंदात नमूद नाहीत.ते तपासून खात्री करा.
+                </li>
               </ul>
             </CAlert>
 
             <div className={styles.controls}>
-              <Button onClick={getAkarbandDiffData} disabled={loading} className={styles.customButton}>
+              <Button
+                onClick={getAkarbandDiffData}
+                disabled={loading}
+                className={styles.customButton}
+              >
                 {loading ? <Spinner size="sm" /> : 'माहिती मिळवा'}
               </Button>
             </div>
@@ -363,7 +376,11 @@ let VillageData= localStorage.getItem('selectedVillageData')
             ) : tableData.length > 0 ? (
               <Card className={styles.reportCard}>
                 <div className={styles.exportControls}>
-                  <DownloadTableExcel filename="akarband-report" sheet="akarband" currentTableRef={tableRef.current}>
+                  <DownloadTableExcel
+                    filename="akarband-report"
+                    sheet="akarband"
+                    currentTableRef={tableRef.current}
+                  >
                     <Button variant="success" className={styles.downloadButton}>
                       Download as XLS
                     </Button>
@@ -437,16 +454,28 @@ let VillageData= localStorage.getItem('selectedVillageData')
           </div>
         </Tab>
 
-        <Tab eventKey="akarbandRejected" title="गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक">
+        <Tab
+          eventKey="akarbandRejected"
+          title="गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक"
+        >
           <div className={styles.tabContent}>
             <CAlert color="info" className="modern-alert">
               <strong>टीप:</strong>
               <ul className="mt-2 mb-0 text-start">
-                <li>उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद मध्ये ग्राम महसूल अधिकारी यांच्या कडील आकारबंद live नुसार उपलब्ध नसलेले भूमापन क्रमांक कमी करण्यात आले आहे. त्याचा अहवाल उपलब्ध करून देण्यात आला आहे.</li>
+                <li>
+                  उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद मध्ये ग्राम महसूल अधिकारी
+                  यांच्या कडील आकारबंद live नुसार उपलब्ध नसलेले भूमापन क्रमांक कमी करण्यात आले आहे.
+                  त्याचा अहवाल उपलब्ध करून देण्यात आला आहे.
+                </li>
               </ul>
             </CAlert>
             <div className={styles.controls}>
-              <Button onClick={getAkarbandRejectedData} disabled={loadingRejected} variant="primary" className={styles.customButton}>
+              <Button
+                onClick={getAkarbandRejectedData}
+                disabled={loadingRejected}
+                variant="primary"
+                className={styles.customButton}
+              >
                 {loadingRejected ? <Spinner size="sm" /> : 'माहिती मिळवा'}
               </Button>
             </div>
@@ -457,7 +486,11 @@ let VillageData= localStorage.getItem('selectedVillageData')
             ) : rejectedTableData.length > 0 ? (
               <Card className={styles.reportCard}>
                 <div className={styles.exportControls}>
-                  <DownloadTableExcel filename="rejected-report" sheet="rejected" currentTableRef={rejectedTableRef.current}>
+                  <DownloadTableExcel
+                    filename="rejected-report"
+                    sheet="rejected"
+                    currentTableRef={rejectedTableRef.current}
+                  >
                     <Button variant="success" className={styles.downloadButton}>
                       Download as XLS
                     </Button>
@@ -496,7 +529,9 @@ let VillageData= localStorage.getItem('selectedVillageData')
                           <td>{r.designation}</td>
                           <td>{r.totalAreaH}</td>
                           <td>{r.tenureName}</td>
-                          <td>{r.cultivableAreaInt} ({r.potkharabaType})</td>
+                          <td>
+                            {r.cultivableAreaInt} ({r.potkharabaType})
+                          </td>
                           <td>{r.netCultiAreaH}</td>
                           <td>{r.assessment}</td>
                           <td>{r.naAssessment}</td>
@@ -518,7 +553,7 @@ let VillageData= localStorage.getItem('selectedVillageData')
         </Tab>
       </Tabs>
     </div>
-  );
-};
+  )
+}
 
-export default DyslrAkarbandTapasani;
+export default DyslrAkarbandTapasani

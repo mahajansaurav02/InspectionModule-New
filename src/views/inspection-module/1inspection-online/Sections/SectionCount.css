@@ -12,7 +12,6 @@
   transition: all 0.3s ease 0s;
   background-image: linear-gradient(to bottom right, #e8eff3, #aeb2dc);
   height: 250px;
-  
 }
 .example_d:hover {
   /* color: #494949 !important; */
@@ -21,6 +20,6 @@
   transition: all 0.3s ease 0s;
 }
 
-.col_height{
+.col_height {
   height: 374px !important;
 }

@@ -9,7 +9,6 @@ import LanguageSelector from '../../../components/language-selector'
 import { Trans, useTranslation } from 'react-i18next'
 
 const Section2 = ({ count1A, count1B, count2A, count2B, count3A, count3B }) => {
-
   const { t } = useTranslation('dashboard')
   return (
     <CContainer fluid style={{ justifyContent: 'space-evenly', padding: 10 }}>
@@ -20,7 +19,7 @@ const Section2 = ({ count1A, count1B, count2A, count2B, count3A, count3B }) => {
         >
           <CRow className="example_d" md={12}>
             {/* एकूण खातेदार संख्या */}
-            {t("t1")}
+            {t('t1')}
           </CRow>
           <CRow>
             <CCol md={6}>

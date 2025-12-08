@@ -7,7 +7,7 @@ import reportWebVitals from './reportWebVitals'
 import { Provider } from 'react-redux'
 import store from './store'
 import '../src/main.css'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import 'bootstrap/dist/css/bootstrap.min.css'
 
 // import './i18n/i18n.js'
 import { I18nextProvider } from 'react-i18next'

@@ -1,16 +1,16 @@
 import React from 'react'
 import CIcon from '@coreui/icons-react'
-import { 
-  cilSpeedometer,        // Dashboard
-  cilFile,             
-  cilLayers,           
-  cilCloudDownload,   
-  cilLaptop,           
-  cilBook,            
-  cilWindowMaximize,  
-  cilListRich ,
+import {
+  cilSpeedometer, // Dashboard
+  cilFile,
+  cilLayers,
+  cilCloudDownload,
+  cilLaptop,
+  cilBook,
+  cilWindowMaximize,
+  cilListRich,
   cilNewspaper,
-  cilNotes         
+  cilNotes,
 } from '@coreui/icons'
 import { CNavGroup, CNavItem, CNavTitle } from '@coreui/react'
 
@@ -22,7 +22,7 @@ const _nav = [
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
     // Added a custom class for styling the active/hover state
-    className: 'nav-item-active-accent', 
+    className: 'nav-item-active-accent',
   },
 
   // ------------------------- 2. MODULE TITLE -------------------------
@@ -31,16 +31,16 @@ const _nav = [
     name: 'MODULE',
     className: 'nav-title-custom',
   },
-  
+
   // ------------------------- 3. INSPECTION MODULE GROUP -------------------------
   {
     component: CNavGroup,
     name: 'निरिक्षण मॉड्यूल', // Using a generic name shown in one of your screenshots
     icon: <CIcon icon={cilWindowMaximize} customClassName="nav-icon" />,
-    
+
     // Add an item to represent the main module entry if needed (like the "संक्षिप्त दफ्तर तपासणी" text)
     // If your screenshots show a top-level link, add it here:
-    // to: '/inspection-module', 
+    // to: '/inspection-module',
 
     items: [
       {
@@ -73,10 +73,10 @@ const _nav = [
     component: CNavGroup,
     name: 'अहवाल', // Using a generic name shown in one of your screenshots
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
-    
+
     // Add an item to represent the main module entry if needed (like the "संक्षिप्त दफ्तर तपासणी" text)
     // If your screenshots show a top-level link, add it here:
-    // to: '/inspection-module', 
+    // to: '/inspection-module',
 
     items: [
       {
@@ -85,10 +85,9 @@ const _nav = [
         to: '/reports/Inspection-report/InspectionReport',
         icon: <CIcon icon={cilNewspaper} customClassName="nav-icon" />,
       },
-
     ],
   },
-  // You can add the rest of your commented-out modules (OCR, Mandal Office, Taluka Office) 
+  // You can add the rest of your commented-out modules (OCR, Mandal Office, Taluka Office)
   // following this improved structure with relevant icons.
 ]
 

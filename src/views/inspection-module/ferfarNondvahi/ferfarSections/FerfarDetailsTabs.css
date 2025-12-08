@@ -1,9 +1,9 @@
 /* FerfarDetailsTabs.css */
 
 /* Main Card Styles */
-.container{
-      min-width: -webkit-fill-available;
-    margin: 20px;
+.container {
+  min-width: -webkit-fill-available;
+  margin: 20px;
 }
 .ferfar-details-card {
   background-color: #f0f4f8;
@@ -50,7 +50,7 @@
   border-radius: 0.375rem;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
-.tabscard{
+.tabscard {
   background-color: rgb(214, 239, 255);
 }
 /* Document Viewer Styles */
@@ -121,11 +121,11 @@
 @media (max-width: 576px) {
   .d-flex.gap-2 {
     flex-direction: column;
-  }}
+  }
+}
 .submit-button:hover {
   background-color: #4f46e5;
 }
-
 
 /* Spinner Animation */
 @keyframes spin {
@@ -229,12 +229,12 @@
     flex-direction: column;
     align-items: center;
   }
-  
+
   .document-column {
     max-width: 100%;
     width: 100%;
   }
-  
+
   .swap-button {
     margin: 15px 0;
     transform: rotate(90deg);
@@ -251,40 +251,37 @@
 }
 
 .modal-content {
-    position: relative;
-    max-width: 100%;
-    max-height: 90%;
+  position: relative;
+  max-width: 100%;
+  max-height: 90%;
 }
 
-
-
 .priority-selection .priority-label {
-    font-weight: 600;
-    color: var(--primary-color); /* Deep Navy/Charcoal */
-    margin-bottom: 0;
+  font-weight: 600;
+  color: var(--primary-color); /* Deep Navy/Charcoal */
+  margin-bottom: 0;
 }
 
 .priority-btn {
-    min-width: 100px;
-    font-weight: 500;
-    border: 1px solid #ccc !important; 
+  min-width: 100px;
+  font-weight: 500;
+  border: 1px solid #ccc !important;
 }
 
-
 .priority-btn.active-low {
-    background-color: #28a745 !important;
-    border-color: #28a745 !important;
-    color: white !important;
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
 }
 
 .priority-btn.active-medium {
-    background-color: #ffc107 !important;
-    border-color: #ffc107 !important;
-    color: var(--text-dark) !important;
+  background-color: #ffc107 !important;
+  border-color: #ffc107 !important;
+  color: var(--text-dark) !important;
 }
 
 .priority-btn.active-high {
-    background-color: #dc3545 !important;
-    border-color: #dc3545 !important;
-    color: white !important;
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: white !important;
 }

@@ -18,25 +18,20 @@ const ReusableDependencyQue = ({
   const customTooltipStyle = {
     '--cui-tooltip-bg': 'var(--cui-primary)',
     '--cui-tooltip-max-width': '1050px', // Set max width as per requirement
-    
   }
   return (
     <>
       <tr>
-        
         <th rowSpan={state == 'होय' ? 2 : 1}>{queNo}</th>
         <th rowSpan={state == 'होय' ? 2 : 1}>
           <span>{queTitle} </span>
           <br /> <span>{queTitleDesc == null ? '' : `(${queTitleDesc})`}</span>
         </th>
         <td style={{ width: '30vw' }} rowSpan={state == 'होय' ? 2 : 1}>
-          {queDescription}  
+          {queDescription}
           <CTooltip content={tooltipContent} placement="left" style={customTooltipStyle}>
-          <InfoIcon/>
-
+            <InfoIcon />
           </CTooltip>
-
-
         </td>
         <td style={{ textAlign: 'left' }}>
           <span style={{ display: 'flex', justifyContent: 'space-around' }}>
@@ -46,7 +41,6 @@ const ReusableDependencyQue = ({
           </span>
         </td>
         <td>
-          
           <CFormCheck
             type="radio"
             name={showTable}
@@ -72,16 +66,16 @@ const ReusableDependencyQue = ({
       {state == 'होय' && (
         <tr>
           {/* <CTooltip content={tooltipContent} placement="left" style={customTooltipStyle}> */}
-            <td colSpan={3}>
-              <CFormTextarea
-                type="text"
-                placeholder="शेरा..."
-                name={remarksName}
-                rows={3}
-                value={remarks}
-                onChange={handleChange}
-              />
-            </td>
+          <td colSpan={3}>
+            <CFormTextarea
+              type="text"
+              placeholder="शेरा..."
+              name={remarksName}
+              rows={3}
+              value={remarks}
+              onChange={handleChange}
+            />
+          </td>
           {/* </CTooltip> */}
         </tr>
       )}

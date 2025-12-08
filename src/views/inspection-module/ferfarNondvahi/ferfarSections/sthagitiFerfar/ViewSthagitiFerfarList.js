@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react'
 import {
   CCard,
@@ -46,10 +45,9 @@ function ViewSthagitiFerfarList() {
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const itemsPerPage = 10
- let VillageData= localStorage.getItem('selectedVillageData')
+  let VillageData = localStorage.getItem('selectedVillageData')
 
- let selectedVillageData=JSON.parse(VillageData)
-
+  let selectedVillageData = JSON.parse(VillageData)
 
   let {
     cCode,
@@ -67,14 +65,15 @@ function ViewSthagitiFerfarList() {
 
   const getStayFerfarForInspection = async () => {
     setIsLoading(true)
-   if (!cCode) {
-        alert('Village code not found....Please Select Village First')
-        return
-      }    try {
+    if (!cCode) {
+      alert('Village code not found....Please Select Village First')
+      return
+    }
+    try {
       const res = await axios.get(
         `${URLS.BaseURL}/inpsection/getStayFerfarForInspection?ccode=${cCode}`,
         {
-           headers: reqHeaders
+          headers: reqHeaders,
         },
       )
       setFerfarList1(res.data)
@@ -138,9 +137,8 @@ function ViewSthagitiFerfarList() {
             </CTooltip>
           </div>
         </CCardHeader>
- <div style={{paddingLeft:'80px',paddingRight:'80px'}}>
-                  <VillageDetailsList />
-
+        <div style={{ paddingLeft: '80px', paddingRight: '80px' }}>
+          <VillageDetailsList />
         </div>
         <CCardBody>
           {isLoading ? (
@@ -156,7 +154,6 @@ function ViewSthagitiFerfarList() {
                 </CAlert>
               ) : (
                 <>
-                
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
                       <CTableHead className="table-dark">

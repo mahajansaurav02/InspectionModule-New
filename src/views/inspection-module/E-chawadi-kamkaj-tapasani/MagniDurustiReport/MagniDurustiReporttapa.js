@@ -19,19 +19,12 @@ export const MagniDurustiReporttapa = () => {
   const [khatedarList, setKhatedarList] = useState([])
   const [remark, setRemark] = useState('')
   const [loading, setLoading] = useState(false)
- let VillageData= localStorage.getItem('selectedVillageData')
+  let VillageData = localStorage.getItem('selectedVillageData')
 
- let selectedVillageData=JSON.parse(VillageData)
+  let selectedVillageData = JSON.parse(VillageData)
 
-
-  let {
-    cCode,
-    distMarathiName,
-    lgdCode,
-    talukaCode,
-    talukaMarathiName,
-    villageName,
-  } = selectedVillageData[0]
+  let { cCode, distMarathiName, lgdCode, talukaCode, talukaMarathiName, villageName } =
+    selectedVillageData[0]
   const navigate = useNavigate()
 
   const tableHeaderMap = {
@@ -90,9 +83,11 @@ export const MagniDurustiReporttapa = () => {
       }
 
       const response = await axios.get(
-        `${URLS.BaseURL}/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${'11'}&cCode=${cCode}&activeFlag=E&revenueYear=2025-26`,
+        `${
+          URLS.BaseURL
+        }/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${'11'}&cCode=${cCode}&activeFlag=E&revenueYear=2025-26`,
         {
-          headers:reqHeaders,
+          headers: reqHeaders,
         },
       )
 
@@ -266,32 +261,28 @@ export const MagniDurustiReporttapa = () => {
       </div>
 
       <div className="remark-controls-section">
-                {/* Remark Section */}
-                <div className="remark-section">
-                    <h4 className="remark-title">तपासणी शेरा (Remark)</h4>
-                    <textarea
-                        className="form-control"
-                        rows="3"
-                        value={remark}
-                        onChange={(e) => setRemark(e.target.value)}
-                        placeholder="येथे आपला शेरा/तपासणी नोंदवा..."
-                    ></textarea>
-                </div>
+        {/* Remark Section */}
+        <div className="remark-section">
+          <h4 className="remark-title">तपासणी शेरा (Remark)</h4>
+          <textarea
+            className="form-control"
+            rows="3"
+            value={remark}
+            onChange={(e) => setRemark(e.target.value)}
+            placeholder="येथे आपला शेरा/तपासणी नोंदवा..."
+          ></textarea>
+        </div>
 
-                {/* Button Container */}
-                <div className="button-container">
-                    <button className="cancel-button" onClick={handleCancel}>
-                        रद्द करा (Cancel)
-                    </button>
-                    <button 
-                        className="submit-button" 
-                        onClick={handleRemarkSubmit}
-                        disabled={!remark?.trim()} 
-                    >
-                        शेरा जमा करा (Submit Remark)
-                    </button>
-                </div>
-            </div>
+        {/* Button Container */}
+        <div className="button-container">
+          <button className="cancel-button" onClick={handleCancel}>
+            रद्द करा (Cancel)
+          </button>
+          <button className="submit-button" onClick={handleRemarkSubmit} disabled={!remark?.trim()}>
+            शेरा जमा करा (Submit Remark)
+          </button>
+        </div>
+      </div>
     </div>
   )
 }

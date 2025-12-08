@@ -155,14 +155,14 @@
 
 /* Right report panel */
 .report-panel {
-    flex: 7;
-    /* ... other styles (background-color, border-radius, box-shadow) ... */
-    padding: 2rem;
-    display: flex;
-    flex-direction: column; 
-    max-height: 110vh; /* Or adjust this to fit your screen better */
-    overflow: hidden; /* Crucial: Keeps the panel static, allowing children to scroll */
-    gap: 1.5rem; /* Add some spacing between the main report and remark/buttons */
+  flex: 7;
+  /* ... other styles (background-color, border-radius, box-shadow) ... */
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  max-height: 110vh; /* Or adjust this to fit your screen better */
+  overflow: hidden; /* Crucial: Keeps the panel static, allowing children to scroll */
+  gap: 1.5rem; /* Add some spacing between the main report and remark/buttons */
 }
 
 .report-placeholder {
@@ -178,11 +178,11 @@
 
 /* Table Container Styles */
 .table-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1; /* This ensures it takes the available space above the remark section */
-    min-height: 0; /* Important for flex items with scrolling content */
-    gap: 1rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* This ensures it takes the available space above the remark section */
+  min-height: 0; /* Important for flex items with scrolling content */
+  gap: 1rem;
 }
 
 .table-header {
@@ -214,10 +214,10 @@
 }
 
 .table-wrapper {
-    flex-grow: 1; /* Take up all remaining space within .table-container */
-    overflow-y: auto; /* Enables vertical scrolling for the table content */
-    border: 1px solid #e0e0e0;
-    border-radius: 8px;
+  flex-grow: 1; /* Take up all remaining space within .table-container */
+  overflow-y: auto; /* Enables vertical scrolling for the table content */
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
 }
 /* Report Table Styles */
 .report-table {
@@ -341,100 +341,97 @@
   width: 120px; /* Survey hissa */
 }
 
-
 .remark-section {
-    margin-top: 0; /* Remove redundant margin-top now that gap is used on .report-panel */
-    flex-shrink: 0; /* Prevent it from shrinking */
+  margin-top: 0; /* Remove redundant margin-top now that gap is used on .report-panel */
+  flex-shrink: 0; /* Prevent it from shrinking */
 }
 
 .button-container {
-    flex-shrink: 0; /* Prevent it from shrinking */
-    padding-top: 15px; /* Increase padding for separation */
-    /* border-top: 1px solid #e0e0e0; - Keep your existing border */
+  flex-shrink: 0; /* Prevent it from shrinking */
+  padding-top: 15px; /* Increase padding for separation */
+  /* border-top: 1px solid #e0e0e0; - Keep your existing border */
 }
 
-
 .remark-title {
-    font-size: 1.15rem;
-    font-weight: 600;
-    margin-bottom: 10px;
-    color: #333;
-    border-bottom: 2px solid #007bff; /* Highlight */
-    padding-bottom: 5px;
-    display: inline-block;
+  font-size: 1.15rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #333;
+  border-bottom: 2px solid #007bff; /* Highlight */
+  padding-bottom: 5px;
+  display: inline-block;
 }
 
 .remark-section .form-control {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ced4da;
-    border-radius: 4px;
-    resize: vertical; /* Allow vertical resizing */
-    font-size: 1rem;
-    line-height: 1.5;
-    transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  resize: vertical; /* Allow vertical resizing */
+  font-size: 1rem;
+  line-height: 1.5;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
 
 .remark-section .form-control:focus {
-    border-color: #80bdff;
-    outline: 0;
-    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: #80bdff;
+  outline: 0;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
 }
 
 /* Button Alignment and Styling */
 
-
 .cancel-button,
 .submit-button {
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease-in-out;
-    min-width: 120px; /* Uniform width for better look */
-    text-align: center;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  min-width: 120px; /* Uniform width for better look */
+  text-align: center;
 }
 
 .cancel-button {
-    background-color: #6c757d; /* Grey color for secondary action */
-    color: white;
-    border: 1px solid #6c757d;
+  background-color: #6c757d; /* Grey color for secondary action */
+  color: white;
+  border: 1px solid #6c757d;
 }
 
 .cancel-button:hover {
-    background-color: #5a6268;
-    border-color: #545b62;
+  background-color: #5a6268;
+  border-color: #545b62;
 }
 
 .submit-button {
-    background-color: #007bff; /* Primary color (Blue) */
-    color: white;
-    border: 1px solid #007bff;
+  background-color: #007bff; /* Primary color (Blue) */
+  color: white;
+  border: 1px solid #007bff;
 }
 
 .submit-button:hover:not(:disabled) {
-    background-color: #0056b3;
-    border-color: #004085;
+  background-color: #0056b3;
+  border-color: #004085;
 }
 
 .submit-button:disabled {
-    background-color: #a0c3e7; /* Lighter blue for disabled state */
-    border-color: #a0c3e7;
-    cursor: not-allowed;
-    opacity: 0.7;
+  background-color: #a0c3e7; /* Lighter blue for disabled state */
+  border-color: #a0c3e7;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
 /* Media Query for smaller screens */
 @media (max-width: 992px) {
-    .main-container {
-        flex-direction: column;
-    }
+  .main-container {
+    flex-direction: column;
+  }
 
-    .report-panel {
-        flex: 1 1 100%; /* Take full width on smaller screens */
-    }
+  .report-panel {
+    flex: 1 1 100%; /* Take full width on smaller screens */
+  }
 
-    .button-container {
-        justify-content: space-between; /* Spread buttons out */
-    }
+  .button-container {
+    justify-content: space-between; /* Spread buttons out */
+  }
 }

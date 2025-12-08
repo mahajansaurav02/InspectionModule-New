@@ -200,12 +200,8 @@ const Login = () => {
     // handleSubmit()
   }
 
-  
-
-
-const handlePasswordChange = async (userId, newPassword) => {
-   console.log("password change Succesfully")
-    
+  const handlePasswordChange = async (userId, newPassword) => {
+    console.log('password change Succesfully')
   }
   const handleSubmit = async (values) => {
     // let user_captcha_value = document.getElementById('userCaptcha').value
@@ -234,15 +230,13 @@ const handlePasswordChange = async (userId, newPassword) => {
         //alert('fetch data from api')
         let testStatus = res.status
 
-
-
         if (testStatus === 200 && validateCaptcha(loginValue.captcha) == true) {
-let firstLogin=false
-            if (firstLogin) {
-                    // Open the password change modal and don't navigate away
-                    setShowChangePasswordModal(true);
-                    return; // Stop further execution
-                }
+          let firstLogin = false
+          if (firstLogin) {
+            // Open the password change modal and don't navigate away
+            setShowChangePasswordModal(true)
+            return // Stop further execution
+          }
           // console.log(res, 'status-----')
           //--Setting the value to local storage
           localStorage.setItem('challanHeads', JSON.stringify(res?.data?.challanHeads))
@@ -279,7 +273,6 @@ let firstLogin=false
             }),
           )
           // authLogin(res.data.token, 3600000);
-
 
           authLogin(res.data.token, 3600000)
           // console.log(details, 'status-----')
@@ -328,12 +321,12 @@ let firstLogin=false
       {/* <CContainer fluid> */}
       {/* <LanguageSelector /> */}
       {showChangePasswordModal && (
-            <ChangePasswordModal 
-                userId={loginValue.userName} 
-                onClose={() => setShowChangePasswordModal(false)} 
-                onPasswordChange={handlePasswordChange}
-            />
-        )}
+        <ChangePasswordModal
+          userId={loginValue.userName}
+          onClose={() => setShowChangePasswordModal(false)}
+          onPasswordChange={handlePasswordChange}
+        />
+      )}
       <Toast />
 
       <CRow className="loginscreen">

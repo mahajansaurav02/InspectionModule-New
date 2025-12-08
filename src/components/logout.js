@@ -8,9 +8,8 @@ const Logout = () => {
   const navigate = useNavigate()
 
   const handleLogout = () => {
-    
-   localStorage.clear();
-  sessionStorage.clear(); 
+    localStorage.clear()
+    sessionStorage.clear()
 
     navigate('/Login')
   }
@@ -38,10 +37,9 @@ const Logout = () => {
       <CIcon
         icon={cilAccountLogout}
         className="me-2"
-        style={{ fontSize: '18px',marginRight:'5px' }}
+        style={{ fontSize: '18px', marginRight: '5px' }}
       />
       Logout
-      
     </CDropdownItem>
   )
 }

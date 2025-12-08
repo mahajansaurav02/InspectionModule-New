@@ -1,11 +1,10 @@
 {
   "greeting": "Hello, Welcome!",
-  "title":"Inspection Module e-Chawadi",
-  "signInTitle":"Sign In to your account",
-  "reloadcaptch":"Reload Captcha",
-  "login":"Login",
-  "UsernamePlaceholder":"Username",
-  "PasswordPlaceholder":"Password",
-  "CaptchaPlaceholder":"Captcha"
-  }
-  
+  "title": "Inspection Module e-Chawadi",
+  "signInTitle": "Sign In to your account",
+  "reloadcaptch": "Reload Captcha",
+  "login": "Login",
+  "UsernamePlaceholder": "Username",
+  "PasswordPlaceholder": "Password",
+  "CaptchaPlaceholder": "Captcha"
+}

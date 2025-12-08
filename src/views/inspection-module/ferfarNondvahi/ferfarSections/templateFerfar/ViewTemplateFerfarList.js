@@ -38,10 +38,9 @@ function ViewTemplateFerfarList() {
   const [isLoading, setIsLoading] = useState(false)
   const [ferfarList, setFerfarList] = useState([])
   const [dropdownVal, setDropdownVal] = useState()
- let VillageData= localStorage.getItem('selectedVillageData')
+  let VillageData = localStorage.getItem('selectedVillageData')
 
- let selectedVillageData=JSON.parse(VillageData)
-
+  let selectedVillageData = JSON.parse(VillageData)
 
   let {
     cCode,
@@ -58,13 +57,13 @@ function ViewTemplateFerfarList() {
 
   const getTemplateFerfar = async () => {
     setIsLoading(true)
-   if (!cCode) {
-        alert('Village code not found....Please Select Village First')
-        return
-      }    
+    if (!cCode) {
+      alert('Village code not found....Please Select Village First')
+      return
+    }
     try {
       const res = await axios.get(`${URLS.BaseURL}/inpsection/getTemplateFerfar?ccode=${cCode}`, {
-        headers:reqHeaders,
+        headers: reqHeaders,
       })
       setFerfarList(res.data)
     } catch (err) {
@@ -79,9 +78,8 @@ function ViewTemplateFerfarList() {
   }, [])
 
   // Filter data based on search term
-  const filteredData = ferfarList.filter(
-    (ferfar) =>
-      String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredData = ferfarList.filter((ferfar) =>
+    String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase()),
   )
 
   // Calculate paginated data
@@ -134,10 +132,9 @@ function ViewTemplateFerfarList() {
             </CTooltip>
           </div>
         </CCardHeader>
-         <div style={{paddingLeft:'80px',paddingRight:'80px'}}>
-                          <VillageDetailsList />
-        
-                </div>
+        <div style={{ paddingLeft: '80px', paddingRight: '80px' }}>
+          <VillageDetailsList />
+        </div>
         <br />
         <CCardBody>
           {isLoading ? (
@@ -153,8 +150,6 @@ function ViewTemplateFerfarList() {
                 </CAlert>
               ) : (
                 <>
-
-                
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
                       <CTableHead className="table-dark">
@@ -168,7 +163,9 @@ function ViewTemplateFerfarList() {
                       <CTableBody>
                         {paginatedData.map((ferfar, index) => (
                           <CTableRow key={ferfar.mutNo || index}>
-                            <CTableDataCell className="text-center">{(currentPage - 1) * itemsPerPage + index + 1}</CTableDataCell>
+                            <CTableDataCell className="text-center">
+                              {(currentPage - 1) * itemsPerPage + index + 1}
+                            </CTableDataCell>
                             <CTableDataCell className="text-center">
                               <button
                                 className="btn btn-link text-primary text-decoration-underline p-0"
@@ -196,31 +193,31 @@ function ViewTemplateFerfarList() {
                       </small>
                     </CCol>
                     <CCol md={6} className="d-flex justify-content-end">
-                    <CPagination align="end" size="sm" className="mb-0">
-                      <CPaginationItem
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                      >
-                        Previous
-                      </CPaginationItem>
-                    
-                      {Array.from({ length: totalPages }, (_, i) => (
+                      <CPagination align="end" size="sm" className="mb-0">
                         <CPaginationItem
-                          key={i + 1}
-                          active={i + 1 === currentPage}
-                          onClick={() => setCurrentPage(i + 1)}
+                          disabled={currentPage === 1}
+                          onClick={() => setCurrentPage(currentPage - 1)}
                         >
-                          {i + 1}
+                          Previous
                         </CPaginationItem>
-                      ))}
-                    
-                      <CPaginationItem
-                        disabled={currentPage === totalPages}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                      >
-                        Next
-                      </CPaginationItem>
-                    </CPagination>
+
+                        {Array.from({ length: totalPages }, (_, i) => (
+                          <CPaginationItem
+                            key={i + 1}
+                            active={i + 1 === currentPage}
+                            onClick={() => setCurrentPage(i + 1)}
+                          >
+                            {i + 1}
+                          </CPaginationItem>
+                        ))}
+
+                        <CPaginationItem
+                          disabled={currentPage === totalPages}
+                          onClick={() => setCurrentPage(currentPage + 1)}
+                        >
+                          Next
+                        </CPaginationItem>
+                      </CPagination>
                     </CCol>
                   </CRow>
                 </>

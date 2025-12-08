@@ -4,11 +4,9 @@ import { CFooter } from '@coreui/react'
 const AppFooter = () => {
   return (
     <CFooter>
-      <div className='ms-auto'>
-        <span className='me-1'>&copy; २०२५ महसूल विभाग, महाराष्ट्र</span>
-       
+      <div className="ms-auto">
+        <span className="me-1">&copy; २०२५ महसूल विभाग, महाराष्ट्र</span>
       </div>{' '}
-     
     </CFooter>
   )
 }

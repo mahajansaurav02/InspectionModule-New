@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react'
 import {
   CCard,
   CCardBody,
@@ -17,31 +17,30 @@ import {
   CFormInput,
   CAlert,
   CTooltip,
-  CPaginationItem
-} from '@coreui/react';
-import CIcon from '@coreui/icons-react';
-import { cilSearch, cilInfo } from '@coreui/icons';
-import FerfarNavbar from '../FerfarNavbar';
-import { useNavigate } from 'react-router-dom';
-import URLS from 'src/URLS';
-import axios from 'axios';
-import moment from 'moment';
-import LoadingSpinner from 'src/Models/LoadingSpinner';
-import reqHeaders from 'src/instance/headers';
-import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList';
+  CPaginationItem,
+} from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilSearch, cilInfo } from '@coreui/icons'
+import FerfarNavbar from '../FerfarNavbar'
+import { useNavigate } from 'react-router-dom'
+import URLS from 'src/URLS'
+import axios from 'axios'
+import moment from 'moment'
+import LoadingSpinner from 'src/Models/LoadingSpinner'
+import reqHeaders from 'src/instance/headers'
+import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 
 function ViewOtherFerfarList() {
-  const navigate = useNavigate();
-  const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [ferfarList1, setFerfarList1] = useState([]);
-  const token = localStorage.getItem('token');
-  const itemsPerPage = 20;
+  const navigate = useNavigate()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const [ferfarList1, setFerfarList1] = useState([])
+  const token = localStorage.getItem('token')
+  const itemsPerPage = 20
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)
-
 
   let {
     cCode,
@@ -54,56 +53,54 @@ function ViewOtherFerfarList() {
   } = selectedVillageData[0]
 
   const getOtherFerfarList = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
     if (!cCode) {
       alert('Village code not found....Please Select Village First')
       return
-    } try {
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getItarFerfar?ccode=${cCode}`,
-        {
-          headers: reqHeaders
-        }
-      );
-      setFerfarList1(res.data);
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoading(false);
     }
-  };
+    try {
+      const res = await axios.get(`${URLS.BaseURL}/inpsection/getItarFerfar?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
+      setFerfarList1(res.data)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   useEffect(() => {
-    getOtherFerfarList();
-  }, []);
+    getOtherFerfarList()
+  }, [])
 
   // Filter data based on search term
-  const filteredData = ferfarList1?.filter(ferfar =>
-    String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredData = ferfarList1?.filter((ferfar) =>
+    String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase()),
+  )
 
   // Calculate paginated data
-  const totalItems = filteredData.length;
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const totalItems = filteredData.length
+  const totalPages = Math.ceil(totalItems / itemsPerPage)
   const paginatedData = filteredData.slice(
     (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+    currentPage * itemsPerPage,
+  )
 
   const handleFerfarClick = (ferfar) => {
-    navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } });
-  };
+    navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } })
+  }
 
   const getStatusBadge = (status) => {
     switch (status) {
       case true:
-        return <CBadge color="success">अभिप्राय दिलेला आहे</CBadge>;
+        return <CBadge color="success">अभिप्राय दिलेला आहे</CBadge>
       case false:
-        return <CBadge color="danger">अभिप्राय दिलेला नाही</CBadge>;
+        return <CBadge color="danger">अभिप्राय दिलेला नाही</CBadge>
       default:
-        return <CBadge color="warning">प्रलंबित</CBadge>;
+        return <CBadge color="warning">प्रलंबित</CBadge>
     }
-  };
+  }
 
   return (
     <>
@@ -114,15 +111,18 @@ function ViewOtherFerfarList() {
           <div className="d-flex align-items-center">
             <CTooltip content="Search ferfar">
               <div className="position-relative">
-                <CIcon icon={cilSearch} className="position-absolute top-50 start-0 translate-middle-y ms-2" />
+                <CIcon
+                  icon={cilSearch}
+                  className="position-absolute top-50 start-0 translate-middle-y ms-2"
+                />
                 <CFormInput
                   type="text"
                   placeholder="शोधा..."
                   className="ps-5"
                   value={searchTerm}
                   onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
+                    setSearchTerm(e.target.value)
+                    setCurrentPage(1)
                   }}
                 />
               </div>
@@ -141,7 +141,7 @@ function ViewOtherFerfarList() {
                   <CIcon icon={cilInfo} className="me-2" />
                   कोणतेही फेरफार सापडले नाहीत
                 </CAlert>
-              ) : (   
+              ) : (
                 <>
                   <VillageDetailsList />
 
@@ -158,7 +158,9 @@ function ViewOtherFerfarList() {
                       <CTableBody>
                         {paginatedData?.map((ferfar, index) => (
                           <CTableRow key={ferfar.mutNo || index}>
-                            <CTableDataCell className="text-center">{((currentPage - 1) * itemsPerPage) + index + 1}</CTableDataCell>
+                            <CTableDataCell className="text-center">
+                              {(currentPage - 1) * itemsPerPage + index + 1}
+                            </CTableDataCell>
                             <CTableDataCell className="text-center">
                               <button
                                 className="btn btn-link text-primary text-decoration-underline p-0"
@@ -182,7 +184,8 @@ function ViewOtherFerfarList() {
                   <CRow>
                     <CCol md={6} className="d-flex align-items-center">
                       <small className="text-muted">
-                        Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+                        Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
+                        {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
                       </small>
                     </CCol>
                     <CCol md={6} className="d-flex justify-content-end">
@@ -220,7 +223,7 @@ function ViewOtherFerfarList() {
         </CCardBody>
       </CCard>
     </>
-  );
+  )
 }
 
-export default ViewOtherFerfarList;
+export default ViewOtherFerfarList

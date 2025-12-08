@@ -1,31 +1,31 @@
-import React from 'react';
-import styles from './ProgressCircle.module.css';
+import React from 'react'
+import styles from './ProgressCircle.module.css'
 
 const ProgressCircle = ({ progress, total }) => {
-  const radius = 50; // Radius of the circle
-  const circumference = 2 * Math.PI * radius; // Full circumference
+  const radius = 50 // Radius of the circle
+  const circumference = 2 * Math.PI * radius // Full circumference
 
   // Calculate percentage
-  const percentage = total === 0 ? 0 : (progress / total) * 100;
+  const percentage = total === 0 ? 0 : (progress / total) * 100
 
   // Calculate the visible portion of the stroke
   // The progress circle stroke will start from the top and fill clockwise
-  const strokeDashoffset = circumference - (percentage / 100) * circumference;
+  const strokeDashoffset = circumference - (percentage / 100) * circumference
 
   // Function to determine color based on percentage
   const getColorForProgress = (value) => {
     if (value < 25) {
-      return '#f44336'; // Red
+      return '#f44336' // Red
     } else if (value < 50) {
-      return '#ff9800'; // Orange
+      return '#ff9800' // Orange
     } else if (value < 75) {
-      return '#ffeb3b'; // Yellow
+      return '#ffeb3b' // Yellow
     } else {
-      return '#4caf50'; // Green
+      return '#4caf50' // Green
     }
-  };
+  }
 
-  const statusColor = getColorForProgress(percentage);
+  const statusColor = getColorForProgress(percentage)
 
   return (
     <div className={styles.progressContainer}>
@@ -60,7 +60,7 @@ const ProgressCircle = ({ progress, total }) => {
         <div className={styles.progressCount}>{`${progress} of ${total}`}</div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ProgressCircle;
+export default ProgressCircle

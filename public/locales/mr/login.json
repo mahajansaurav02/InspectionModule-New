@@ -1,11 +1,10 @@
 {
-    "greeting": "नमस्ते, आपका स्वागत है!",
-    "title":"निरीक्षण मॉड्युल ई-चावडी",
-    "signInTitle":"तुमच्या खात्यात साइन इन करा",
-    "reloadcaptch":"कॅप्चा रीलोड करा",
-    "login":"लॉगिन",
-    "UsernamePlaceholder":"वापरकर्तानाव",
-    "PasswordPlaceholder":"पासवर्ड",
-    "CaptchaPlaceholder":"कॅप्चा"
-  }
-  
+  "greeting": "नमस्ते, आपका स्वागत है!",
+  "title": "निरीक्षण मॉड्युल ई-चावडी",
+  "signInTitle": "तुमच्या खात्यात साइन इन करा",
+  "reloadcaptch": "कॅप्चा रीलोड करा",
+  "login": "लॉगिन",
+  "UsernamePlaceholder": "वापरकर्तानाव",
+  "PasswordPlaceholder": "पासवर्ड",
+  "CaptchaPlaceholder": "कॅप्चा"
+}

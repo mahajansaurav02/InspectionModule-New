@@ -110,9 +110,8 @@ const FerfarDetailsTabs = ({ ferfar }) => {
 
             // live api key and secret key
             'API-KEY': URLS.ApiKey,
-            'SECRET-KEY':URLS.SecretKey,
-            'X-Forwarded-For': "115.124.110.193"
-
+            'SECRET-KEY': URLS.SecretKey,
+            'X-Forwarded-For': '115.124.110.193',
 
             // 'API-KEY': 'f3c040ae-4264-f1d1-ac58-486e2453',
             // 'SECRET-KEY': '9z3g7YaHCzwj4diHacM2Cdt8Cg1FOYVLjh2nOtRjGBz67Ygh3UiYzwcOe5By',
@@ -341,7 +340,6 @@ const FerfarDetailsTabs = ({ ferfar }) => {
                 ))}
               </div>
             </div>
-
             <CFormTextarea
               rows={4}
               className="remark-textarea mb-3"
@@ -349,7 +347,6 @@ const FerfarDetailsTabs = ({ ferfar }) => {
               value={remark}
               onChange={(e) => setRemark(e.target.value)}
             />
-
             <div className="d-flex align-items-center gap-2 mb-3">
               <input
                 type="file"
@@ -363,44 +360,47 @@ const FerfarDetailsTabs = ({ ferfar }) => {
               </CButton>
               {attachedFile && <span className="text-success small">{attachedFile.name}</span>}
             </div>
-  <div className="priority-selection mb-4">
-        <h6 className="priority-label mb-2">अभिप्रायाचे प्राधान्य प्रकार :</h6>
-        <div className="d-flex gap-4">
-          
-          {/* Low Priority Radio */}
-          <CFormCheck 
-            type="radio" 
-            id="priority-low"
-            name="priorityType"
-            value="Low"
-            label="अतीगंभीर "
-            checked={priority === 'Low'}
-            onChange={() => setPriority('Low')}
-          />
-
-          {/* Medium Priority Radio */}
-          <CFormCheck 
-            type="radio" 
-            id="priority-medium"
-            name="priorityType"
-            value="Medium"
-            label="गंभीर"
-            checked={priority === 'Medium'}
-            onChange={() => setPriority('Medium')}
-          />
-
-          {/* High Priority Radio */}
-          <CFormCheck 
-            type="radio" 
-            id="priority-high"
-            name="priorityType"
-            value="High"
-            label="साधारण"
-            checked={priority === 'High'}
-            onChange={() => setPriority('High')}
-          />
-        </div>
-      </div>
+             {' '}
+            <div className="priority-selection mb-4">
+                      <h6 className="priority-label mb-2">अभिप्रायाचे प्राधान्य प्रकार :</h6>       {' '}
+              <div className="d-flex gap-4">
+                                    {/* Low Priority Radio */}
+                         {' '}
+                <CFormCheck
+                  type="radio"
+                  id="priority-low"
+                  name="priorityType"
+                  value="Low"
+                  label="अतीगंभीर "
+                  checked={priority === 'Low'}
+                  onChange={() => setPriority('Low')}
+                />
+                          {/* Medium Priority Radio */}
+                         {' '}
+                <CFormCheck
+                  type="radio"
+                  id="priority-medium"
+                  name="priorityType"
+                  value="Medium"
+                  label="गंभीर"
+                  checked={priority === 'Medium'}
+                  onChange={() => setPriority('Medium')}
+                />
+                          {/* High Priority Radio */}
+                         {' '}
+                <CFormCheck
+                  type="radio"
+                  id="priority-high"
+                  name="priorityType"
+                  value="High"
+                  label="साधारण"
+                  checked={priority === 'High'}
+                  onChange={() => setPriority('High')}
+                />
+                       {' '}
+              </div>
+                   {' '}
+            </div>
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
                 Clear Remarks
