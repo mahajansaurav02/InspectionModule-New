@@ -66,7 +66,9 @@ export const MagniDurustiReporttapa = () => {
   }, [])
 
   const handleRemarkSubmit = () => {
-    alert.apply('submitted')
+
+    console.log('remark-submiteed============')
+    alert('शेरा यशस्वीपणे सादर केला गेला आहे.')
   }
 
   const handleCancel = () => {

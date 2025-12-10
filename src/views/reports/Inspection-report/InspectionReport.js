@@ -1,623 +1,1017 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef } from 'react';
 import {
-  CContainer,
-  CRow,
-  CCol,
-  CCard,
-  CCardHeader,
-  CCardBody,
-  CTable,
-  CTableHead,
-  CTableRow,
-  CTableHeaderCell,
-  CTableBody,
-  CTableDataCell,
-  CButton,
-  CSpinner,
-  CAlert,
-} from '@coreui/react'
-import '@coreui/coreui/dist/css/coreui.min.css'
-import html2canvas from 'html2canvas'
-import { jsPDF } from 'jspdf'
-import './InspectionReport.css'
-import PrintWrapper from 'src/components/PrintWrapper'
-import './print.css'
+    CContainer,
+    CRow,
+    CCol,
+    CCard,
+    CCardHeader,
+    CCardBody,
+    CTable,
+    CTableHead,
+    CTableRow,
+    CTableHeaderCell,
+    CTableBody,
+    CTableDataCell,
+    CButton,
+    CSpinner,
+    CAlert,
+    CModal,
+    CModalHeader,
+    CModalBody,
+    CModalFooter,
+    CModalTitle,
+} from '@coreui/react';
+import '@coreui/coreui/dist/css/coreui.min.css';
+import html2canvas from 'html2canvas';
+import { jsPDF } from 'jspdf';
+import './InspectionReport.css';
 
+// Import new components
+import InspectionPrint from '../InspectionPrint/InspectionPrint';
+import PrintUtility from '../InspectionPrint/PrintUtility';
+
+// Your existing mock data remains the same...
 const mockApiData = {
-  tapasaniAdhikariName: 'श्री. रमेश पाटील',
-  tapasaniAdhikariPadnam: 'उप विभागीय अधिकारी',
-  tapasaniDinanck: '05/12/2025',
-  sajacheNaw: 'शिवनगर',
-  gramMahsulAdhikariName: 'श्रीमती. अंजली कुलकर्णी',
-  gawacheNaw: 'रामपूर',
-  ferfarData: [
-    { kramank: 1, tapshil: 'आदेश फेरफार', sherat: 'फेरफार क्र. 456' },
-    { kramank: 2, tapshil: 'कलम 155 नुसार केलेले फेरफार', sherat: 'निरंक' },
-    {
-      kramank: 3,
-      tapshil: 'इतर फेरफार या टेम्प्लेटने केलेले फेरफार',
-      sherat: 'फेरफार क्र. 12, 13, 14',
+    tapasaniAdhikariName: 'श्री. रमेश पाटील',
+    tapasaniAdhikariPadnam: 'उप विभागीय अधिकारी',
+    tapasaniDinanck: '05/12/2025',
+    sajacheNaw: 'शिवनगर',
+    gramMahsulAdhikariName: 'श्रीमती. अंजली कुलकर्णी',
+    gawacheNaw: 'रामपूर',
+    ferfarData: [
+        { kramank: 1, tapshil: 'आदेश फेरफार', sherat: 'फेरफार क्र. 324/456/789/101/112' },
+        { kramank: 2, tapshil: 'कलम 155 नुसार केलेले फेरफार', sherat: 'निरंक' },
+        {
+            kramank: 3,
+            tapshil: 'इतर फेरफार या टेम्प्लेटने केलेले फेरफार',
+            sherat: 'फेरफार क्र. 545/767',
+        },
+        { kramank: 4, tapshil: 'तांत्रिक कारणास्तव नामंजूर केलेले फेरफार', sherat: 'फेरफार क्र. 23/98' },
+        { kramank: 5, tapshil: 'रि-एन्ट्री केलेले फेरफार', sherat: 'फेरफार क्र. 876/434' },
+        {
+            kramank: 6,
+            tapshil: 'नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार',
+            sherat: 'फेरफार क्र. 324/456',
+        },
+        { kramank: 7, tapshil: 'स्थगिती असलेले फेरफार', sherat: 'फेरफार क्र. 324/456' },
+        { kramank: 8, tapshil: 'टेंप्लेट फेरफार', sherat: 'निरंक' },
+    ],
+    eHakkArjData: {
+        trutiPurttaArj: '789',
+        pralambitArj: {
+            '180 दिवसापेक्षा जास्त': 0,
+            '90 ते 180 दिवसातील': 2,
+            '30 ते 90 दिवसातील': 5,
+            '30 दिवसा पेक्षा कमी': 10,
+        },
     },
-    { kramank: 4, tapshil: 'तांत्रिक कारणास्तव नामंजूर केलेले फेरफार', sherat: 'संख्या 2' },
-    { kramank: 5, tapshil: 'रि-एन्ट्री केलेले फेरफार', sherat: 'संख्या 1' },
-    {
-      kramank: 6,
-      tapshil: 'नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार',
-      sherat: 'संख्या 3',
+    eChawadiData: {
+        gawNamunaPurna: { nirank: 3, kamkajPurna: 7, aghoshanaKeliNaslele: 2 },
+        mangniRakkamKamiKhatedar: 5,
+        akrushakDarBharlaKay: 'होय',
+        akrushakDarRakkam: '10 पैसे',
+        akarbandTapshil: { upAdhikshakNotAvail: 3 },
     },
-    { kramank: 7, tapshil: 'स्थगिती असलेले फेरफार', sherat: 'निरंक' },
-    { kramank: 8, tapshil: 'टेंप्लेट फेरफार', sherat: 'संख्या 5' },
-  ],
-  eHakkArjData: {
-    trutiPurttaArj: 'अर्ज क्र. 789',
-    pralambitArj: {
-      '180 दिवसापेक्षा जास्त': 0,
-      '90 ते 180 दिवसातील': 2,
-      '30 ते 90 दिवसातील': 5,
-      '30 दिवसा पेक्षा कमी': 10,
+    vasuliData: {
+        jaminMahsul029: { mangni: 150000, vasuli: 145000, percentage: 96.67 },
+        itarMahsul045: { mangni: 50000, vasuli: 48000, percentage: 96.0 },
+        uddishtanusar: { mangni: 200000, vasuli: 193000, percentage: 96.5 },
+        ekun: { mangni: 400000, vasuli: 386000, percentage: 96.5 },
     },
-  },
-  eChawadiData: {
-    gawNamunaPurna: { nirank: 3, kamkajPurna: 7, aghoshanaKeliNaslele: 2 },
-    mangniRakkamKamiKhatedar: 5,
-    akrushakDarBharlaKay: 'होय',
-    akrushakDarRakkam: '10 पैसे',
-    akarbandTapshil: { upAdhikshakNotAvail: 3 },
-  },
-  vasuliData: {
-    jaminMahsul029: { mangni: 150000, vasuli: 145000, percentage: 96.67 },
-    itarMahsul045: { mangni: 50000, vasuli: 48000, percentage: 96.0 },
-    uddishtanusar: { mangni: 200000, vasuli: 193000, percentage: 96.5 },
-    ekun: { mangni: 400000, vasuli: 386000, percentage: 96.5 },
-  },
-  sarvSadharanShera: ':-  सोबत सलग्न करण्यात आले आहे.',
-  purttatekkaritaMudde:
-    '1. ई-हक्क प्रणालीतील 90 दिवसांपेक्षा जास्त प्रलंबित असलेले अर्ज तत्काळ निकाली काढावे.',
-}
+    sarvSadharanShera: ':-  सोबत सलग्न करण्यात आले आहे.',
+    purttatekkaritaMudde:
+        '1. ई-हक्क प्रणालीतील 90 दिवसांपेक्षा जास्त प्रलंबित असलेले अर्ज तत्काळ निकाली काढावे.',
+};
 
+const mockRemarkData = {
+    adeshFerfarRemark: [
+        {
+            mutNo: 324,
+            remark: "अधिक तपासणी आवश्यक आहे."
+        },
+        {
+            mutNo: 456,
+            remark: "सर्व फेरफार योग्य आहेत."
+        },
+        {
+            mutNo: 789,
+            remark: "काही फेरफार चुकीचे आहेत, दुरुस्ती करा."
+        },
+        {
+            mutNo: 101,
+            remark: "फेरफारांची नोंदणी वेळेवर झाली नाही."
+        },
+        {
+            mutNo: 112,
+            remark: "फेरफारांसाठी आवश्यक कागदपत्रे सादर करा."
+        }
+    ],
+    kalam155FerfarRemark: [
+        {
+            mutNo: 545,
+            remark: "अधिक तपासणी आवश्यक आहे."
+        },
+        {
+            mutNo: 767,
+            remark: "सर्व फेरफार योग्य आहेत."
+        },
+    ],
+    reEntryFerfarRemark: [
+        {
+            mutNo: 876,
+            remark: "अधिक तपासणी आवश्यक आहे."
+        },
+        {
+            mutNo: 434,
+            remark: "सर्व फेरफार योग्य आहेत."
+        },
+    ],
+    rejectedFerfarRemark: [
+        {
+            mutNo: 23,
+            remark: "अधिक तपासणी आवश्यक आहे."
+        },
+        {
+            mutNo: 98,
+            remark: "सर्व फेरफार योग्य आहेत."
+        },
+    ],
+    itarFerfarRemark: [
+        {
+            mutNo: 125,
+            remark: "अधिक तपासणी आवश्यक आहे."
+        },
+        {
+            mutNo: 675,
+            remark: "सर्व फेरफार योग्य आहेत."
+        },
+    ],
+    niyantritFerfarRemark: [
+        {
+            mutNo: 324,
+            remark: "अधिक तपासणी आवश्यक आहे."
+        },
+        {
+            mutNo: 456,
+            remark: "सर्व फेरफार योग्य आहेत."
+        },
+    ],
+    sthagitiFerfarRemark: [
+        {
+            mutNo: 324,
+            remark: "अधिक तपासणी आवश्यक आहे."
+        },
+        {
+            mutNo: 456,
+            remark: "सर्व फेरफार योग्य आहेत."
+        },
+    ],
+    templateFerfarRemark: [],
+};
 
 const fetchInspectionData = () => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve(mockApiData)
-    }, 1500)
-  })
-}
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(mockApiData);
+        }, 1500);
+    });
+};
+
+const fetchFerfarInspectionData = () => {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve(mockRemarkData);
+        }, 1500);
+    });
+};
 
 const InspectionReport = () => {
-  const [reportData, setReportData] = useState({})
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(null)
-  const componentRef = useRef()
+    const [reportData, setReportData] = useState({});
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const componentRef = useRef();
+    const printComponentRef = useRef();
 
-   let VillageData = localStorage.getItem('selectedVillageData')
-
-  let selectedVillageData = JSON.parse(VillageData)
-  const fullName = localStorage.getItem('fullName')
-
-  let {
-    cCode,
-    distMarathiName,
-    districtCode,
-    lgdCode,
-    talukaCode,
-    talukaMarathiName,
-    villageName,
-  } = selectedVillageData[0]
-  
-  const handleGetData = async () => {
-    setLoading(true)
-    setError(null)
-    setReportData({})
-    try {
-      const data = await fetchInspectionData()
-      setReportData(data)
-    } catch (apiError) {
-      console.error('Error fetching inspection data:', apiError)
-      setError('डेटा मिळवण्यात त्रुटी आली. कृपया नंतर प्रयत्न करा.')
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  
-//   const handleDownloadPdf = () => {
-//     const input = componentRef.current
-//     if (!input) {
-//       setError('रिपोर्ट कॉम्पोनेंट लोड झालेला नाही. कृपया प्रयत्न करा.')
-//       return
-//     }
-
-//     setLoading(true)
-
+    const [ferfarRemarkList, setFerfarRemarkList] = useState({});
+    const [eChawadiRemarks, setEChawadiRemarks] = useState({});
+    const [vasuliRemarks, setVasuliRemarks] = useState("");
+    const [eHakkRemarks, setEHakkRemarks] = useState({});
     
-//     const MARGIN = 10
-//     const A4_WIDTH_MM = 210
-//     const A4_HEIGHT_MM = 297
-//     const CONTENT_WIDTH_MM = A4_WIDTH_MM - 2 * MARGIN // 190mm
-//     const PAGE_CONTENT_HEIGHT = A4_HEIGHT_MM - 2 * MARGIN // 277mm
+    const [showAbhiprayModal, setShowAbhiprayModal] = useState(false);
+    const [activeRemarkType, setActiveRemarkType] = useState(null);
+    const [activeRemarkData, setActiveRemarkData] = useState([]);
 
-//     html2canvas(input, { scale: 2, useCORS: true })
-//       .then((canvas) => {
-//         const imgData = canvas.toDataURL('image/png')
-//         const pdf = new jsPDF('p', 'mm', 'a4')
+    let VillageData = localStorage.getItem('selectedVillageData');
+    let selectedVillageData = JSON.parse(VillageData);
+    const fullName = localStorage.getItem('fullName');
 
+    let {
+        cCode,
+        distMarathiName,
+        districtCode,
+        lgdCode,
+        talukaCode,
+        talukaMarathiName,
+        villageName,
+    } = selectedVillageData[0];
+
+    const handleGetData = async () => {
+        setLoading(true);
+        setError(null);
+        setReportData({});
         
-//         const imgHeightMM = (canvas.height * CONTENT_WIDTH_MM) / canvas.width
-//         const totalPages = Math.ceil(imgHeightMM / PAGE_CONTENT_HEIGHT)
+        try {
+            const data = await fetchInspectionData();
+            const remarkData = await fetchFerfarInspectionData();
+            
+            // Organize ferfar remarks by kramank
+            const organizedFerfarRemarks = {};
+            const remarkKeys = [
+                'adeshFerfarRemark',
+                'kalam155FerfarRemark', 
+                'itarFerfarRemark',
+                'rejectedFerfarRemark',
+                'reEntryFerfarRemark',
+                'niyantritFerfarRemark',
+                'sthagitiFerfarRemark',
+                'templateFerfarRemark'
+            ];
+            
+            remarkKeys.forEach((key, index) => {
+                if (remarkData[key]) {
+                    organizedFerfarRemarks[index + 1] = remarkData[key];
+                }
+            });
+            
+            setReportData(data);
+            setFerfarRemarkList(organizedFerfarRemarks);
+            
+            // Set mock remarks for other sections
+            setEChawadiRemarks({
+                gawNamunaPurna: {
+                    nirank: "निरंक केलेले नमुने योग्यरित्या प्रक्रिया झाले आहेत.",
+                    kamkajPurna: "कामकाज पूर्ण नमुन्यांवर योग्य कारवाई करण्यात आली आहे.",
+                    aghoshanaKeliNaslele: "काही नमुन्यांवर घोषणा करण्यात विलंब आहे."
+                },
+                mangniRakkamKamiKhatedar: "मागणी निश्चितीनंतरच्या दुरुस्ती योग्य आहेत.",
+                akrushakDarBharlaKay: "अकृषक दर योग्यरित्या भरला आहे.",
+                akarbandTapshil: "आकारबंद तपशीलात काही विसंगती आढळल्या."
+            });
+            
+            setVasuliRemarks("वसुली प्रक्रिया यशस्वीरित्या पार पाडली गेली आहे. टक्केवारी योग्य आहे.");
+            
+            setEHakkRemarks({
+                trutiPurtta: "त्रुटीपूर्ततेसाठी परत पाठवलेले अर्ज योग्यरित्या हाताळले गेले.",
+                pralambitArj: "प्रलंबित अर्जांवर लक्ष केंद्रित करून लवकर निकाल काढावेत."
+            });
+            
+        } catch (apiError) {
+            console.error('Error fetching inspection data:', apiError);
+            setError('डेटा मिळवण्यात त्रुटी आली. कृपया नंतर प्रयत्न करा.');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-//         for (let i = 0; i < totalPages; i++) {
-//           // प्रत्येक पानासाठी Y-अक्ष (Y-axis) ऑफसेट
-//           const offset = -(i * PAGE_CONTENT_HEIGHT)
+    const handleViewFerfarRemark = (kramank) => {
+        setActiveRemarkType(`ferfar-${kramank}`);
+        setActiveRemarkData(ferfarRemarkList[kramank] || []);
+        setShowAbhiprayModal(true);
+    };
 
-//           if (i > 0) {
-//             pdf.addPage()
-//           }
+    const handleViewAbhipray = (section) => {
+        switch(section) {
+            case 'ehakk':
+                setActiveRemarkType('ehakk');
+                setActiveRemarkData([{ remark: eHakkRemarks.pralambitArj }]);
+                break;
+            case 'echawadi':
+                setActiveRemarkType('echawadi');
+                setActiveRemarkData([
+                    { remark: eChawadiRemarks?.gawNamunaPurna?.nirank || "शेरा उपलब्ध नाही" }
+                ]);
+                break;
+            case 'vasuli':
+                setActiveRemarkType('vasuli');
+                setActiveRemarkData([{ remark: vasuliRemarks }]);
+                break;
+            default:
+                if (section?.vasuliData) {
+                    setActiveRemarkType('vasuli');
+                    setActiveRemarkData([{ remark: vasuliRemarks }]);
+                }
+        }
+        setShowAbhiprayModal(true);
+    };
+const handleDownloadPdf = () => {
+    if (!printComponentRef.current) {
+        setError('रिपोर्ट कॉम्पोनेंट लोड झालेला नाही.');
+        return;
+    }
 
-          
-//           pdf.addImage(
-//             imgData,
-//             'PNG',
-//             MARGIN,
-//             offset + MARGIN,
-//             CONTENT_WIDTH_MM,
-//             imgHeightMM, 
-//           )
-//         }
+    setLoading(true);
 
-//         pdf.autoPrint()
+    const element = printComponentRef.current;
 
-//         window.open(pdf.output('bloburl'), '_blank')
+    html2canvas(element, {
+        scale: 2,
+        useCORS: true,
+        backgroundColor: '#ffffff',
+        logging: false,
+    })
+    .then((canvas) => {
 
-//         setLoading(false)
-//       })
-//       .catch((err) => {
-//         console.error('PDF Generation Error: ', err)
-//         setError('PDF तयार करताना त्रुटी आली. (कन्सोल पहा)')
-//         setLoading(false)
-//       })
-//   }
+        // ✅ SAFETY CHECK
+        if (!canvas.width || !canvas.height) {
+            throw new Error('Canvas has invalid size');
+        }
 
-  
-  if (!reportData.tapasaniAdhikariName && !loading) {
+        const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+        const pdf = new jsPDF({
+            orientation: 'p',
+            unit: 'mm',
+            format: 'a4'
+        });
+
+        const pageWidth = pdf.internal.pageSize.getWidth();
+        const pageHeight = pdf.internal.pageSize.getHeight();
+
+        // ✅ Always fit width to page
+        const imgWidth = pageWidth;
+        const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+        let heightLeft = imgHeight;
+        let y = 0;
+
+        pdf.addImage(imgData, 'JPEG', 0, y, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+
+        while (heightLeft > 0) {
+            y = heightLeft - imgHeight;
+            pdf.addPage();
+            pdf.addImage(imgData, 'JPEG', 0, y, imgWidth, imgHeight);
+            heightLeft -= pageHeight;
+        }
+
+        pdf.save(`निरीक्षण_रिपोर्ट_${new Date().toLocaleDateString('mr-IN')}.pdf`);
+        setLoading(false);
+    })
+    .catch((err) => {
+        console.error('PDF Generation Error:', err);
+        setError('PDF तयार करताना त्रुटी आली.');
+        setLoading(false);
+    });
+};
+
+
+   const handlePrintDirectly = () => {
+    if (printComponentRef.current) {
+        const printContent = printComponentRef.current.innerHTML;
+        const printWindow = window.open('', '_blank');
+        
+        printWindow.document.write(`
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
+                <style>
+                    /* A4 Page Setup */
+                    @page {
+                        size: A4;
+                        margin: 15mm;
+                    }
+                    
+                    * {
+                        margin: 0;
+                        padding: 0;
+                        box-sizing: border-box;
+                    }
+                    
+                    body {
+                        width: 210mm;
+                        min-height: 297mm;
+                        margin: 0 auto;
+                        padding: 15mm;
+                        background: white;
+                        font-size: 12pt;
+                        line-height: 1.4;
+                        font-family: Arial, sans-serif;
+                    }
+                    
+                    /* Hide non-print elements */
+                    .no-print, .btn, button {
+                        display: none !important;
+                    }
+                    
+                    /* Card styling */
+                    .card {
+                        width: 100%;
+                        border: 1px solid #000;
+                        box-shadow: none;
+                    }
+                    
+                    .card-header {
+                        background-color: #f8f9fa !important;
+                        border-bottom: 2px solid #000;
+                    }
+                    
+                    /* Table styling */
+                    table {
+                        width: 100%;
+                        border: 1px solid #000;
+                        border-collapse: collapse;
+                        font-size: 11pt;
+                        margin: 15px 0;
+                        page-break-inside: avoid;
+                    }
+                    
+                    th, td {
+                        border: 1px solid #000;
+                        padding: 8px 10px;
+                    }
+                    
+                    th {
+                        background-color: #f2f2f2 !important;
+                        font-weight: bold;
+                    }
+                    
+                    /* Ensure proper widths */
+                    .container, .container-fluid {
+                        width: 100% !important;
+                        max-width: 100% !important;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                    }
+                    
+                    /* Page break control */
+                    h1, h2, h3, h4 {
+                        page-break-after: avoid;
+                    }
+                    
+                    /* HR styling */
+                    hr {
+                        border-top: 2px solid #000;
+                        margin: 20px 0;
+                    }
+                    
+                    /* Print color adjustments */
+                    .text-primary {
+                        color: #000 !important;
+                    }
+                    
+                    .bg-light {
+                        background-color: #f2f2f2 !important;
+                    }
+                    
+                    .bg-warning {
+                        background-color: #ffc107 !important;
+                    }
+                </style>
+            </head>
+            <body>
+                ${printContent}
+                <script>
+                    // Auto-print and close
+                    window.onload = function() {
+                        setTimeout(function() {
+                            window.print();
+                            // Close after print
+                            setTimeout(function() {
+                                window.close();
+                            }, 500);
+                        }, 500);
+                    }
+                </script>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+    }
+};
+
+    // Abhipray button cell component
+    const AbhiprayButtonCell = (abhipray, section) => (
+        <CTableDataCell className="text-center">
+            <CButton
+                className='remark-btn no-print'
+                color="primary"
+                size="sm"
+                onClick={() => handleViewAbhipray(section)}
+            >
+                अभिप्राय बघा
+            </CButton>
+        </CTableDataCell>
+    );
+
+    if (!reportData.tapasaniAdhikariName && !loading) {
+        return (
+            <CContainer className="inspection-container">
+                <CCard>
+                    <CCardHeader className="headerName">
+                        <h2 className="mb-0">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी.</h2>
+                    </CCardHeader>
+                    <CCardBody className="text-center p-5">
+                        <CRow className="mb-3 report-header">
+                            <CCol md={6}>
+                                <p>
+                                    <strong>तपासणी अधिकारी यांचे नाव आणि पदनाम:</strong>{' '}
+                                    {fullName}
+                                </p>
+                            </CCol>
+                            <CCol md={6}>
+                                <p>
+                                    <strong>तपासणी दिनांक:</strong> {reportData.tapasaniDinanck}
+                                </p>
+                            </CCol>
+                            <CCol md={6}>
+                                <p>
+                                    <strong>साजाचे नाव:</strong> {villageName}
+                                </p>
+                            </CCol>
+                            <CCol md={6}>
+                                <p>
+                                    <strong>ग्राम महसूल अधिकाऱ्याचे नाव:</strong> {reportData.sajacheNaw}
+                                </p>
+                            </CCol>
+                            <CCol md={6}>
+                                <p>
+                                    <strong>गावाचे नाव:</strong> {villageName}     तालुका - {talukaMarathiName} जिल्हा - {distMarathiName}
+                                </p>
+                            </CCol>
+                        </CRow>
+                        {error && (
+                            <CAlert color="danger" className="mb-3">
+                                {error}
+                            </CAlert>
+                        )}
+
+                        <CButton color="primary" className="remark-btn" onClick={handleGetData}>
+                            अहवाल तयार करा
+                        </CButton>
+                    </CCardBody>
+                </CCard>
+            </CContainer>
+        );
+    }
+
     return (
-      <CContainer className="inspection-container">
-        <CCard>
-          <CCardHeader className="headerName">
-            <h2 className="mb-0">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी.</h2>
-          </CCardHeader>
-          <CCardBody className="text-center p-5">
-            <CRow className="mb-3 report-header">
-              <CCol md={6}>
-                <p>
-                  <strong>तपासणी अधिकारी यांचे नाव आणि पदनाम:</strong>{' '}
-                  {fullName} 
-                </p>
-              </CCol>
-              <CCol md={6}>
-                <p>
-                  <strong>तपासणी दिनांक:</strong> {reportData.tapasaniDinanck}
-                </p>
-              </CCol>
-              <CCol md={6}>
-                <p>
-                  <strong>साजाचे नाव:</strong> {villageName}
-                </p>
-              </CCol>
-              <CCol md={6}>
-                <p>
-                  <strong>ग्राम महसूल अधिकाऱ्याचे नाव:</strong> {reportData.sajacheNaw}
-                </p>
-              </CCol>
-              <CCol md={6}>
-                <p>
-                  <strong>गावाचे नाव:</strong> {villageName}     तालुका - {talukaMarathiName} जिल्हा - {distMarathiName}
-                </p>
-              </CCol>
-            </CRow>
-            {error && (
-              <CAlert color="danger" className="mb-3">
-                {error}
-              </CAlert>
-            )}
+        <>
+            {/* Main Report View */}
+            <CContainer className="inspection-container">
+                <CCard className="shadow-lg" ref={componentRef}>
+                    <CCardHeader className="headerName">
+                        <h2 className="mb-0">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी.</h2>
+                    </CCardHeader>
+                    <CCardBody>
+                        {error && (
+                            <CAlert color="danger" className="mb-3">
+                                {error}
+                            </CAlert>
+                        )}
 
-            <CButton color="primary" onClick={handleGetData}>
-              अहवाल तयार करा
-            </CButton>
-          </CCardBody>
-        </CCard>
-      </CContainer>
-    )
-  }
+                        <div className="p-3 report-content">
+                            {loading ? (
+                                <div className="text-center p-5">
+                                    <CSpinner color="primary" />
+                                    <p className="mt-2">डेटा लोड होत आहे...</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <CRow className="mb-3 report-header">
+                                        <CCol md={6}>
+                                            <p>
+                                                <strong>तपासणी अधिकारी यांचे नाव आणि पदनाम:</strong>{' '}
+                                                {reportData.tapasaniAdhikariName} ({reportData.tapasaniAdhikariPadnam})
+                                            </p>
+                                        </CCol>
+                                        <CCol md={6}>
+                                            <p>
+                                                <strong>तपासणी दिनांक:</strong> {reportData.tapasaniDinanck}
+                                            </p>
+                                        </CCol>
+                                        <CCol md={6}>
+                                            <p>
+                                                <strong>साजाचे नाव:</strong> {reportData.sajacheNaw}
+                                            </p>
+                                        </CCol>
+                                        <CCol md={6}>
+                                            <p>
+                                                <strong>ग्राम महसूल अधिकाऱ्याचे नाव:</strong>{' '}
+                                                {reportData.gramMahsulAdhikariName}
+                                            </p>
+                                        </CCol>
+                                        <CCol md={6}>
+                                            <p>
+                                                <strong>गावाचे नाव:</strong> {reportData.gawacheNaw}
+                                            </p>
+                                            </CCol>
+                                    </CRow>
 
-  return (
-    <>
-             <PrintWrapper>
+                                    <hr />
 
-      <CContainer className="inspection-container">
-        <CCard className="shadow-lg" ref={componentRef}>
-          <CCardHeader className="headerName">
-            <h2 className="mb-0">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी.</h2>
-          </CCardHeader>
-          <CCardBody>
-            {error && (
-              <CAlert color="danger" className="mb-3">
-                {error}
-              </CAlert>
-            )}
+                                    <h4 className="mt-4 text-primary">अ. फेरफार तपासणी</h4>
+                                    <CTable striped bordered responsive className="text-center">
+                                        <CTableHead>
+                                            <CTableRow className="bg-light">
+                                                <CTableHeaderCell scope="col">अ.क्र.</CTableHeaderCell>
+                                                <CTableHeaderCell scope="col" className="text-start">
+                                                    प्रकार
+                                                </CTableHeaderCell>
+                                                <CTableHeaderCell scope="col">तपशील</CTableHeaderCell>
+                                                <CTableHeaderCell scope="col">शेरा</CTableHeaderCell>
+                                            </CTableRow>
+                                        </CTableHead>
+                                        <CTableBody>
+                                            {reportData.ferfarData?.map((item, index) => (
+                                                <CTableRow key={index}>
+                                                    <CTableHeaderCell scope="row">{item.kramank}.</CTableHeaderCell>
+                                                    <CTableDataCell className="text-start">{item.tapshil}</CTableDataCell>
+                                                    <CTableDataCell>{item.sherat}</CTableDataCell>
+                                                    <CTableDataCell>
+                                                        <CButton
+                                                            color="primary"
+                                                            className="remark-btn no-print"
+                                                            size="sm"
+                                                            onClick={() => handleViewFerfarRemark(item.kramank)}
+                                                        >
+                                                            अभिप्राय बघा
+                                                        </CButton>
+                                                    </CTableDataCell>
+                                                </CTableRow>
+                                            ))}
+                                        </CTableBody>
+                                    </CTable>
 
-            <div className="p-3 report-content">
-              {loading ? (
-                <div className="text-center p-5">
-                  <CSpinner color="primary" />
-                  <p className="mt-2">डेटा लोड होत आहे...</p>
+                                    <hr />
+
+                                    <h4 className="mt-4 text-primary">ब. ई-हक्क प्रणाली मधील अर्ज तपासणी</h4>
+                                    <CRow className="mb-3">
+                                        <CCol xs={12}>
+                                            <p>
+                                                <strong>
+                                                    १. त्रुटीपूर्ततेसाठी भूधारकास परत पाठविण्यात आलेल्या अर्जांची तपासणी (अर्ज क्र.):
+                                                </strong>{' '}
+                                                {reportData.eHakkArjData?.trutiPurttaArj}
+                                            </p>
+                                        </CCol>
+                                    </CRow>
+                                    <CRow>
+                                        <CCol xs={12}>
+                                            <p>
+                                                <strong>२. तलाठी स्तरावर फेरफाराकरीता प्रलंबित अर्जांची तपासणी (अर्ज संख्या):</strong>
+                                            </p>
+                                            <CTable bordered className="text-center">
+                                                <CTableHead>
+                                                    <CTableRow className="bg-light">
+                                                        <CTableHeaderCell>१८० दिवसापेक्षा जास्त दिवस प्रलंबित</CTableHeaderCell>
+                                                        <CTableHeaderCell>९० ते १८० दिवसातील प्रलंबित</CTableHeaderCell>
+                                                        <CTableHeaderCell>३० ते ९० दिवसातील प्रलंबित</CTableHeaderCell>
+                                                        <CTableHeaderCell>३० दिवसा पेक्षा कमी दिवस प्रलंबित</CTableHeaderCell>
+                                                        <CTableHeaderCell>शेरा</CTableHeaderCell>
+                                                    </CTableRow>
+                                                </CTableHead>
+                                                <CTableBody>
+                                                    <CTableRow>
+                                                        <CTableDataCell>
+                                                            {reportData.eHakkArjData?.pralambitArj['180 दिवसापेक्षा जास्त']}
+                                                        </CTableDataCell>
+                                                        <CTableDataCell>
+                                                            {reportData.eHakkArjData?.pralambitArj['90 ते 180 दिवसातील']}
+                                                        </CTableDataCell>
+                                                        <CTableDataCell>
+                                                            {reportData.eHakkArjData?.pralambitArj['30 ते 90 दिवसातील']}
+                                                        </CTableDataCell>
+                                                        <CTableDataCell>
+                                                            {reportData.eHakkArjData?.pralambitArj['30 दिवसा पेक्षा कमी']}
+                                                        </CTableDataCell>
+                                                        <CTableDataCell>
+                                                            <CButton
+                                                                color="primary"
+                                                                className="remark-btn no-print"
+                                                                size="sm"
+                                                                onClick={() => handleViewAbhipray('ehakk')}
+                                                            >
+                                                                अभिप्राय बघा
+                                                            </CButton>
+                                                        </CTableDataCell>
+                                                    </CTableRow>
+                                                </CTableBody>
+                                            </CTable>
+                                        </CCol>
+                                    </CRow>
+
+                                    <hr />
+
+                                    <h4 className="mt-4 text-primary">क. ई-चावडी प्रणाली मधील तपासणी</h4>
+                                    <CTable striped bordered responsive className="text-center">
+                                        <CTableHead>
+                                            <CTableRow className="bg-light">
+                                                <CTableHeaderCell style={{ width: '5%' }}>अ.क्र.</CTableHeaderCell>
+                                                <CTableHeaderCell style={{ width: '55%' }} className="text-start">
+                                                    तपशील
+                                                </CTableHeaderCell>
+                                                <CTableHeaderCell style={{ width: '20%' }}>संख्या</CTableHeaderCell>
+                                                <CTableHeaderCell style={{ width: '20%' }}>शेरा</CTableHeaderCell>
+                                            </CTableRow>
+                                        </CTableHead>
+                                        <CTableBody>
+                                            <CTableRow className="bg-light-subtle">
+                                                <CTableHeaderCell scope="row">१.</CTableHeaderCell>
+                                                <CTableDataCell className="text-start fw-bold" colSpan={4}>
+                                                    गावातील गाव नमुना पूर्ण भरण्याची घोषणा केलेले गाव नमुना संख्या:
+                                                </CTableDataCell>
+                                            </CTableRow>
+                                            <CTableRow>
+                                                <CTableDataCell></CTableDataCell>
+                                                <CTableDataCell className="text-start ps-5">
+                                                    I) निरंक केलेले नमुना संख्या:
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.eChawadiData?.gawNamunaPurna.nirank}
+                                                </CTableDataCell>
+                                                {AbhiprayButtonCell(reportData.eChawadiData?.gawNamunaPurna?.nirank, 'echawadi')}
+                                            </CTableRow>
+                                            <CTableRow>
+                                                <CTableDataCell></CTableDataCell>
+                                                <CTableDataCell className="text-start ps-5">
+                                                    II) कामकाज पूर्ण नमुना संख्या:
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.eChawadiData?.gawNamunaPurna.kamkajPurna}
+                                                </CTableDataCell>
+                                                {AbhiprayButtonCell(reportData.eChawadiData?.gawNamunaPurna?.kamkajPurna, 'echawadi')}
+                                            </CTableRow>
+                                            <CTableRow>
+                                                <CTableDataCell></CTableDataCell>
+                                                <CTableDataCell className="text-start ps-5">
+                                                    III) निरंक/कामकाज संपल्याची घोषणा न केलेल्या नमुन्याची संख्या:
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.eChawadiData?.gawNamunaPurna.aghoshanaKeliNaslele}
+                                                </CTableDataCell>
+                                                {AbhiprayButtonCell(reportData.eChawadiData?.gawNamunaPurna?.aghoshanaKeliNaslele, 'echawadi')}
+                                            </CTableRow>
+
+                                            <CTableRow>
+                                                <CTableHeaderCell scope="row">२.</CTableHeaderCell>
+                                                <CTableDataCell className="text-start">
+                                                    गावातील मागणी निश्चिती केल्यानंतर दुरुस्ती करण्यात आलेल्या
+                                                    खातेदारांची संख्या:
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.eChawadiData?.mangniRakkamKamiKhatedar}
+                                                </CTableDataCell>
+                                                {AbhiprayButtonCell(reportData.eChawadiData?.mangniRakkamKamiKhatedar, 'echawadi')}
+                                            </CTableRow>
+
+                                            <CTableRow>
+                                                <CTableHeaderCell scope="row">३.</CTableHeaderCell>
+                                                <CTableDataCell className="text-start">
+                                                    गावाचा अकृषक दर भरला आहे काय ?
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.eChawadiData?.akrushakDarBharlaKay} (दर (प्रति चौ.मी):{' '}
+                                                    {reportData.eChawadiData?.akrushakDarRakkam})
+                                                </CTableDataCell>
+                                                {AbhiprayButtonCell(reportData.eChawadiData?.akrushakDarBharlaKay, 'echawadi')}
+                                            </CTableRow>
+
+                                            <CTableRow>
+                                                <CTableHeaderCell scope="row">४.</CTableHeaderCell>
+                                                <CTableDataCell className="text-start">
+                                                    उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील:
+                                                    <br />
+                                                    **(तलाठी दप्तरात उपलब्ध असलेले भूमापन क्रमांक परंतु उप-अधीक्षक यांच्या
+                                                    आकारबंद मध्ये उपलब्ध नसलेले भूमापन संख्या)**
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.eChawadiData?.akarbandTapshil.upAdhikshakNotAvail}
+                                                </CTableDataCell>
+                                                {AbhiprayButtonCell(reportData.eChawadiData?.akarbandTapshil, 'echawadi')}
+                                            </CTableRow>
+                                        </CTableBody>
+                                    </CTable>
+
+                                    <hr />
+
+                                    <h4 className="mt-4 text-primary">ड. वसुली बाबत तपशील</h4>
+                                    <CTable bordered responsive className="text-center">
+                                        <CTableHead>
+                                            <CTableRow className="bg-light">
+                                                <CTableHeaderCell>तपशील</CTableHeaderCell>
+                                                <CTableHeaderCell>मागणी</CTableHeaderCell>
+                                                <CTableHeaderCell>वसुली</CTableHeaderCell>
+                                                <CTableHeaderCell>टक्केवारी</CTableHeaderCell>
+                                                <CTableHeaderCell>शेरा</CTableHeaderCell>
+                                            </CTableRow>
+                                        </CTableHead>
+                                        <CTableBody>
+                                            <CTableRow>
+                                                <CTableDataCell className="text-start">
+                                                    जमीन महसूल वसुली (०२९)
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.jaminMahsul029.mangni}
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.jaminMahsul029.vasuli}
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.jaminMahsul029.percentage}%
+                                                </CTableDataCell>
+                                                <CTableDataCell rowSpan={3} className="align-middle">
+                                                    <CButton
+                                                        className="remark-btn no-print"
+                                                        color="primary"
+                                                        size="sm"
+                                                        onClick={() => handleViewAbhipray('vasuli')}
+                                                    >
+                                                        अभिप्राय बघा
+                                                    </CButton>
+                                                </CTableDataCell>
+                                            </CTableRow>
+                                            <CTableRow>
+                                                <CTableDataCell className="text-start">
+                                                    इतर जमीन महसूल वसुली (०४५)
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.itarMahsul045.mangni}
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.itarMahsul045.vasuli}
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.itarMahsul045.percentage}%
+                                                </CTableDataCell>
+                                            </CTableRow>
+
+                                            <CTableRow>
+                                                <CTableDataCell className="text-start">
+                                                    उद्दिष्टानुसार वसुली
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.uddishtanusar.mangni}
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.uddishtanusar.vasuli}
+                                                </CTableDataCell>
+                                                <CTableDataCell>
+                                                    {reportData.vasuliData?.uddishtanusar.percentage}%
+                                                </CTableDataCell>
+                                            </CTableRow>
+
+                                            <CTableRow className="bg-warning">
+                                                <CTableHeaderCell className="text-start">एकूण</CTableHeaderCell>
+                                                <CTableHeaderCell>
+                                                    {reportData.vasuliData?.ekun.mangni}
+                                                </CTableHeaderCell>
+                                                <CTableHeaderCell>
+                                                    {reportData.vasuliData?.ekun.vasuli}
+                                                </CTableHeaderCell>
+                                                <CTableHeaderCell colSpan={2}>
+                                                    {reportData.vasuliData?.ekun.percentage}%
+                                                </CTableHeaderCell>
+                                            </CTableRow>
+                                        </CTableBody>
+                                    </CTable>
+
+                                    <hr />
+
+                                    <CRow className="mt-4">
+                                        <CCol xs={12}>
+                                            <p>
+                                                <strong>तपसणी अधिकाऱ्याचा सर्वसाधारण शेरा:</strong>{' '}
+                                                {reportData.sarvSadharanShera}
+                                            </p>
+                                        </CCol>
+                                        <CCol xs={12}>
+                                            <p>
+                                                <strong>पुर्ततेकरिता मुद्दे क्रमांक:</strong>{' '}
+                                                {reportData.purttatekkaritaMudde}
+                                            </p>
+                                        </CCol>
+                                    </CRow>
+                                    <CRow className="mt-5 mb-10 text-end">
+                                        <CCol className='signature' xs={12}>
+                                            <p className="mb-0">
+                                                <strong>तपासणी अधिकाऱ्याचे नाव व पदनाम:</strong>
+                                            </p>
+                                            <p className="mb-0">
+                                                {reportData.tapasaniAdhikariName} ({reportData.tapasaniAdhikariPadnam})
+                                            </p>
+                                        </CCol>
+                                    </CRow>
+                                </>
+                            )}
+                        </div>
+                    </CCardBody>
+                </CCard>
+
+                {/* Print Utility Component */}
+                {reportData.tapasaniAdhikariName && (
+                    <PrintUtility 
+                        onPrint={handlePrintDirectly}
+                        onDownload={handleDownloadPdf}
+                        loading={loading}
+                    />
+                )}
+
+                {/* Hidden Print Component (for PDF generation) */}
+                <div
+  style={{
+     position: 'absolute',
+    left: '-9999px',
+    top: 0,
+    width: '210mm',        // ✅ THIS IS REQUIRED
+    minHeight: '297mm',   // ✅ A4 HEIGHT
+    backgroundColor: '#fff'
+  }}
+>
+
+                    <InspectionPrint 
+                        ref={printComponentRef}
+                        reportData={reportData}
+                        ferfarRemarkList={ferfarRemarkList}
+                        eChawadiRemarks={eChawadiRemarks}
+                        vasuliRemarks={vasuliRemarks}
+                        eHakkRemarks={eHakkRemarks}
+                        printMode={true}
+                    />
                 </div>
-              ) : (
-                <>
-                  <CRow className="mb-3 report-header">
-                    <CCol md={6}>
-                      <p>
-                        <strong>तपासणी अधिकारी यांचे नाव आणि पदनाम:</strong>{' '}
-                        {reportData.tapasaniAdhikariName} ({reportData.tapasaniAdhikariPadnam})
-                      </p>
-                    </CCol>
-                    <CCol md={6}>
-                      <p>
-                        <strong>तपासणी दिनांक:</strong> {reportData.tapasaniDinanck}
-                      </p>
-                    </CCol>
-                    <CCol md={6}>
-                      <p>
-                        <strong>साजाचे नाव:</strong> {reportData.sajacheNaw}
-                      </p>
-                    </CCol>
-                    <CCol md={6}>
-                      <p>
-                        <strong>ग्राम महसूल अधिकाऱ्याचे नाव:</strong>{' '}
-                        {reportData.gramMahsulAdhikariName}
-                      </p>
-                    </CCol>
-                    <CCol md={6}>
-                      <p>
-                        <strong>गावाचे नाव:</strong> {reportData.gawacheNaw}
-                      </p>
-                    </CCol>
-                  </CRow>
+            </CContainer>
 
-                  <hr />
-
-                  <h4 className="mt-4 text-primary">अ. फेरफार तपासणी</h4>
-                  <CTable striped bordered responsive className="text-center">
-                    <CTableHead>
-                      <CTableRow className="bg-light">
-                        <CTableHeaderCell scope="col">अ.क्र.</CTableHeaderCell>
-                        <CTableHeaderCell scope="col" className="text-start">
-                          तपशील
-                        </CTableHeaderCell>
-                        <CTableHeaderCell scope="col">तपासणी शेरा</CTableHeaderCell>
-                      </CTableRow>
-                    </CTableHead>
-                    <CTableBody>
-                      {reportData.ferfarData?.map((item, index) => (
-                        <CTableRow key={index}>
-                          <CTableHeaderCell scope="row">{item.kramank}.</CTableHeaderCell>
-                          <CTableDataCell className="text-start">{item.tapshil}</CTableDataCell>
-                          <CTableDataCell>{item.sherat}</CTableDataCell>
-                        </CTableRow>
-                      ))}
-                    </CTableBody>
-                  </CTable>
-
-                  <hr />
-
-                  <h4 className="mt-4 text-primary">ब. ई-हक्क प्रणाली मधील अर्ज तपासणी</h4>
-                  <CRow className="mb-3">
-                    <CCol xs={12}>
-                      <p>
-                        <strong>
-                          १. त्रुटीपूर्ततेसाठी भूधारकास परत पाठविण्यात आलेल्या अर्जांची तपासणी:
-                        </strong>{' '}
-                        {reportData.eHakkArjData?.trutiPurttaArj}
-                      </p>
-                    </CCol>
-                  </CRow>
-                  <CRow>
-                    <CCol xs={12}>
-                      <p>
-                        <strong>२. तलाठी स्तरावर फेरफाराकरीता प्रलंबित अर्जांची तपासणी:</strong>
-                      </p>
-                      <CTable bordered className="text-center">
-                        <CTableHead>
-                          <CTableRow className="bg-light">
-                            <CTableHeaderCell>१८० दिवसापेक्षा जास्त दिवस प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>९० ते १८० दिवसातील प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>३० ते ९० दिवसातील प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>३० दिवसा पेक्षा कमी दिवस प्रलंबित</CTableHeaderCell>
-                          </CTableRow>
-                        </CTableHead>
-                        <CTableBody>
-                          <CTableRow>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['180 दिवसापेक्षा जास्त']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['90 ते 180 दिवसातील']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['30 ते 90 दिवसातील']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['30 दिवसा पेक्षा कमी']}
-                            </CTableDataCell>
-                          </CTableRow>
-                        </CTableBody>
-                      </CTable>
-                    </CCol>
-                  </CRow>
-
-                  <hr />
-
-                  <h4 className="mt-4 text-primary">ब. ई-हक्क प्रणाली मधील अर्ज तपासणी</h4>
-                  {/* ... (Your previous code for B. E-Hakk) */}
-                  <CRow className="mb-3">
-                    <CCol xs={12}>
-                      <p>
-                        <strong>
-                          १. त्रुटीपूर्ततेसाठी भूधारकास परत पाठविण्यात आलेल्या अर्जांची तपासणी:
-                        </strong>{' '}
-                        {reportData.eHakkArjData?.trutiPurttaArj}
-                      </p>
-                    </CCol>
-                  </CRow>
-                  <CRow>
-                    <CCol xs={12}>
-                      <p>
-                        <strong>२. तलाठी स्तरावर फेरफाराकरीता प्रलंबित अर्जांची तपासणी:</strong>
-                      </p>
-                      <CTable bordered className="text-center">
-                        <CTableHead>
-                          <CTableRow className="bg-light">
-                            <CTableHeaderCell>१८० दिवसापेक्षा जास्त दिवस प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>९० ते १८० दिवसातील प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>३० ते ९० दिवसातील प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>३० दिवसा पेक्षा कमी दिवस प्रलंबित</CTableHeaderCell>
-                          </CTableRow>
-                        </CTableHead>
-                        <CTableBody>
-                          <CTableRow>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['180 दिवसापेक्षा जास्त']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['90 ते 180 दिवसातील']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['30 ते 90 दिवसातील']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['30 दिवसा पेक्षा कमी']}
-                            </CTableDataCell>
-                          </CTableRow>
-                        </CTableBody>
-                      </CTable>
-                    </CCol>
-                  </CRow>
-
-                  <hr />
-
-                  <h4 className="mt-4 text-primary">क. ई-चावडी प्रणाली मधील तपासणी</h4>
-                  <CTable striped bordered responsive className="text-center">
-                    <CTableHead>
-                      <CTableRow className="bg-light">
-                        <CTableHeaderCell style={{ width: '5%' }}>अ.क्र.</CTableHeaderCell>
-                        <CTableHeaderCell style={{ width: '70%' }} className="text-start">
-                          तपशील
-                        </CTableHeaderCell>
-                        <CTableHeaderCell style={{ width: '25%' }}>संख्या/शेरा</CTableHeaderCell>
-                      </CTableRow>
-                    </CTableHead>
-                    <CTableBody>
-                      <CTableRow className="bg-light-subtle">
-                        <CTableHeaderCell scope="row">१.</CTableHeaderCell>
-                        <CTableDataCell
-                          className="text-start"
-                          colSpan={2}
-                          style={{ fontWeight: 'bold' }}
+            {/* Modal for Viewing Remarks */}
+            {showAbhiprayModal && (
+                <CModal
+                    visible={showAbhiprayModal}
+                    onClose={() => {
+                        setShowAbhiprayModal(false);
+                        setActiveRemarkType(null);
+                        setActiveRemarkData([]);
+                    }}
+                    size="lg"
+                    alignment="center"
+                    className="no-print"
+                >
+                    <CModalHeader className="bg-primary text-white">
+                        <CModalTitle>
+                            {activeRemarkType?.startsWith('ferfar') 
+                                ? 'फेरफार तपासणी अभिप्राय' 
+                                : activeRemarkType === 'ehakk'
+                                ? 'ई-हक्क अभिप्राय'
+                                : activeRemarkType === 'echawadi'
+                                ? 'ई-चावडी अभिप्राय'
+                                : activeRemarkType === 'vasuli'
+                                ? 'वसुली अभिप्राय'
+                                : 'अभिप्राय'}
+                        </CModalTitle>
+                    </CModalHeader>
+                    
+                    <CModalBody className="px-4 py-3">
+                        {activeRemarkData?.length > 0 ? (
+                            activeRemarkData.map((item, index) => (
+                                <div key={index} className="d-flex align-items-start gap-3 mb-3 p-3 bg-light rounded">
+                                    {item.mutNo && (
+                                        <div>
+                                            <span className="badge bg-primary">
+                                                फेरफार क्र. {item.mutNo}
+                                            </span>
+                                        </div>
+                                    )}
+                                    <div className="flex-grow-1">
+                                        {item.remark}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center text-muted py-4">
+                                शेरा उपलब्ध नाही
+                            </div>
+                        )}
+                    </CModalBody>
+                    
+                    <CModalFooter>
+                        <CButton
+                            color="secondary"
+                            size="sm"
+                            variant="outline"
+                            onClick={() => {
+                                setShowAbhiprayModal(false);
+                                setActiveRemarkType(null);
+                                setActiveRemarkData([]);
+                            }}
                         >
-                          गावातील गाव नमुना पूर्ण भरण्याची घोषणा केलेले गाव नमुना संख्या:
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell></CTableDataCell>
-                        <CTableDataCell className="text-start ps-5">
-                          I) निरंक केलेले नमुना संख्या:
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.eChawadiData?.gawNamunaPurna.nirank}
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell></CTableDataCell>
-                        <CTableDataCell className="text-start ps-5">
-                          II) कामकाज पूर्ण नमुना संख्या:
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.eChawadiData?.gawNamunaPurna.kamkajPurna}
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell></CTableDataCell>
-                        <CTableDataCell className="text-start ps-5">
-                          III) निरंक किवा कामकाज संपल्याची घोषणा न केलेल्या नमुन्याची संख्या:
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.eChawadiData?.gawNamunaPurna.aghoshanaKeliNaslele}
-                        </CTableDataCell>
-                      </CTableRow>
+                            बंद करा
+                        </CButton>
+                    </CModalFooter>
+                </CModal>
+            )}
+        </>
+    );
+};
 
-                      {/* २. मागणी निश्चिती करताना दुरुस्ती */}
-                      <CTableRow>
-                        <CTableHeaderCell scope="row">२.</CTableHeaderCell>
-                        <CTableDataCell className="text-start">
-                          गावातील मागणी निश्चिती करताना दुरुस्तीद्वारे मागणी रक्कम कमी केलेल्या
-                          खातेदार संख्या:
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.eChawadiData?.mangniRakkamKamiKhatedar}
-                        </CTableDataCell>
-                      </CTableRow>
-
-                      {/* ३. अकृषक दर */}
-                      <CTableRow>
-                        <CTableHeaderCell scope="row">३.</CTableHeaderCell>
-                        <CTableDataCell className="text-start">
-                          गावाचा अकृषक दर भरला आहे. काय ?
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.eChawadiData?.akrushakDarBharlaKay} (दर:{' '}
-                          {reportData.eChawadiData?.akrushakDarRakkam})
-                        </CTableDataCell>
-                      </CTableRow>
-
-                      {/* ४. आकारबंद तपशील */}
-                      <CTableRow>
-                        <CTableHeaderCell scope="row">४.</CTableHeaderCell>
-                        <CTableDataCell className="text-start">
-                          उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील:
-                          <br />
-                          **(तलाठी दप्तरात उपलब्ध असलेले भूमापन क्रमांक परंतु उप-अधीक्षक यांच्या
-                          आकारबंद मध्ये उपलब्ध नसलेले भूमापन संख्या)**
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.eChawadiData?.akarbandTapshil.upAdhikshakNotAvail}
-                        </CTableDataCell>
-                      </CTableRow>
-                    </CTableBody>
-                  </CTable>
-
-                  <hr />
-
-                  {/* ड. वसुली बाबत तपशील */}
-                  <h4 className="mt-4 text-primary">ड. वसुली बाबत तपशील</h4>
-                  <CTable bordered responsive className="text-center">
-                    <CTableHead>
-                      <CTableRow className="bg-light">
-                        <CTableHeaderCell>तपशील</CTableHeaderCell>
-                        <CTableHeaderCell>मागणी</CTableHeaderCell>
-                        <CTableHeaderCell>वसुली</CTableHeaderCell>
-                        <CTableHeaderCell>टक्केवारी</CTableHeaderCell>
-                      </CTableRow>
-                    </CTableHead>
-                    <CTableBody>
-                      <CTableRow>
-                        <CTableDataCell className="text-start">
-                          जमीन महसूल वसुली (०२९)
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.jaminMahsul029.mangni}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.jaminMahsul029.vasuli}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.jaminMahsul029.percentage}%
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell className="text-start">
-                          इतर जमीन महसूल वसुली (०४५)
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.itarMahsul045.mangni}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.itarMahsul045.vasuli}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.itarMahsul045.percentage}%
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow>
-                        <CTableDataCell className="text-start">उद्दिष्टानुसार वसुली</CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.uddishtanusar.mangni}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.uddishtanusar.vasuli}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {reportData.vasuliData?.uddishtanusar.percentage}%
-                        </CTableDataCell>
-                      </CTableRow>
-                      <CTableRow className="bg-warning">
-                        <CTableHeaderCell className="text-start">एकूण</CTableHeaderCell>
-                        <CTableHeaderCell>{reportData.vasuliData?.ekun.mangni}</CTableHeaderCell>
-                        <CTableHeaderCell>{reportData.vasuliData?.ekun.vasuli}</CTableHeaderCell>
-                        <CTableHeaderCell>
-                          {reportData.vasuliData?.ekun.percentage}%
-                        </CTableHeaderCell>
-                      </CTableRow>
-                    </CTableBody>
-                  </CTable>
-
-                  <hr />
-
-                  {/* शेरा आणि स्वाक्षरी */}
-                  <CRow className="mt-4">
-                    <CCol xs={12}>
-                      <p>
-                        <strong>तपसणी अधिकाऱ्याचा सर्वसाधारण शेरा:</strong>{' '}
-                        {reportData.sarvSadharanShera}
-                      </p>
-                    </CCol>
-                    <CCol xs={12}>
-                      <p>
-                        <strong>पुर्ततेकरिता मुद्दे क्रमांक:</strong>{' '}
-                        {reportData.purttatekkaritaMudde}
-                      </p>
-                    </CCol>
-                  </CRow>
-                  <CRow className="mt-5 mb-10 text-end">
-                    <CCol className='signature' xs={12}>
-                      <p className="mb-0">
-                        <strong>तपासणी अधिकाऱ्याचे नाव व पदनाम:</strong>
-                      </p>
-                      <p className="mb-0">
-                        {reportData.tapasaniAdhikariName} ({reportData.tapasaniAdhikariPadnam})
-                      </p>
-                    </CCol>
-                  </CRow>
-                </>
-              )}
-            </div>
-          </CCardBody>
-        </CCard>
-
-        {/* बटणे CCard च्या बाहेर हलवले, जेणेकरून ते PDF मध्ये येणार नाहीत */}
-        {/* <div className="text-center mt-4">
-          <CButton color="info" onClick={handleGetData} className="me-3" disabled={loading}>
-            डेटा रिफ्रेश करा (Refresh Data)
-          </CButton>
-          {reportData.tapasaniAdhikariName && (
-            <CButton color="success" onClick={handleDownloadPdf} disabled={loading}>
-              {loading ? (
-                <>
-                  <CSpinner component="span" size="sm" aria-hidden="true" className="me-2" />
-                  प्रत तयार होत आहे...
-                </>
-              ) : (
-                <>
-                  <span className="me-2">⬇️</span>अहवालाची प्रत काढा ( Print Report)
-                </>
-              )}
-            </CButton>
-          )}
-        </div> */}
-      </CContainer>
-              </PrintWrapper>
-
-    </>
-  )
-}
-
-export default InspectionReport
+export default InspectionReport;

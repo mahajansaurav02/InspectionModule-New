@@ -35,11 +35,11 @@ const CONDITION_MAPPING = {
     title: '१८० दिवसापेक्षा जास्त दिवस प्रलंबित अर्जांची यादी',
   },
   2: {
-    apiUrl: 'inpsection/getPendingApplicationsForTalathiInMidPendingRange',
+    apiUrl: 'inpsection/getPendingApplications90To180Days',
     title: '९० ते १८० दिवसातील प्रलंबित अर्जांची यादी',
   },
   3: {
-    apiUrl: 'inpsection/getPendingApplicationsOver90Days',
+    apiUrl: 'inpsection/getPendingApplicationsForTalathiInMidPendingRange',
     title: '३० ते ९० दिवसातील प्रलंबित अर्जांची यादी',
   },
   4: {
@@ -47,6 +47,10 @@ const CONDITION_MAPPING = {
     title: '३० दिवसा पेक्षा कमी दिवस प्रलंबित अर्जांची यादी',
   },
 }
+// /getPendingApplicationsForTalathiUnderThirtyDays
+//  /getPendingApplicationsForTalathiInMidPendingRange
+//  /getPendingApplicationsOver180Days
+//  /getPendingApplications90To180Days
 // --------------------------------------------------------
 
 function TrutiArjList() {
