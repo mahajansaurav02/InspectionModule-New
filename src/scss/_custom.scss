@@ -61,8 +61,9 @@
 }
 
 .sidebar .nav-group-items .nav-item .nav-link.active {
-  /* Use a simple dot or lighter accent for sub-items */
-  border-left: 5px solid #4caf50; /* A secondary accent color */
+  /* Use a simple dot or lighter accent for sub-items */ 
+  // sejal change below line 
+  border-left: 0px solid #4caf50; /* A secondary accent color */
   background-color: rgba(255, 255, 255, 0.05);
   color: #fff !important;
 }

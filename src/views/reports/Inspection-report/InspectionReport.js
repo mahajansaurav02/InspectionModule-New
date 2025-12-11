@@ -970,29 +970,67 @@ const handleDownloadPdf = () => {
                                 : 'अभिप्राय'}
                         </CModalTitle>
                     </CModalHeader>
-                    
-                    <CModalBody className="px-4 py-3">
-                        {activeRemarkData?.length > 0 ? (
-                            activeRemarkData.map((item, index) => (
-                                <div key={index} className="d-flex align-items-start gap-3 mb-3 p-3 bg-light rounded">
-                                    {item.mutNo && (
-                                        <div>
-                                            <span className="badge bg-primary">
-                                                फेरफार क्र. {item.mutNo}
-                                            </span>
-                                        </div>
-                                    )}
-                                    <div className="flex-grow-1">
-                                        {item.remark}
-                                    </div>
-                                </div>
-                            ))
-                        ) : (
-                            <div className="text-center text-muted py-4">
-                                शेरा उपलब्ध नाही
-                            </div>
+      {/*=============================================sejal change below code =================================================================  */}
+                        <CModalBody className="px-4 py-3">
+
+    {/* 🔷 CONDITIONAL HEADING */}
+    {activeRemarkType?.startsWith("ferfar") ? (
+        //  अ. फेरफार तपासणी — Show फेरफार क्र. + शेरा
+        <div className="d-flex align-items-center gap-3 mb-2 px-3">
+            <div style={{ width: "120px" }}>
+                <strong>फेरफार क्र.</strong>
+            </div>
+            <div className="flex-grow-1">
+                <strong>शेरा</strong>
+            </div>
+        </div>
+    ) : (
+        //  ब., क., ड. — Show ONLY शेरा
+        <div className="mb-2 px-3">
+            <strong>शेरा</strong>
+        </div>
+    )}
+
+    {/* 🔷 CONTENT AREA */}
+    {activeRemarkData?.length > 0 ? (
+        activeRemarkType?.startsWith("ferfar") ? (
+            //  अ. फेरफार तपासणी — Show mutNo + remark
+            activeRemarkData.map((item, index) => (
+                <div
+                    key={index}
+                    className="d-flex align-items-start gap-3 mb-3 p-3 bg-light rounded"
+                >
+                    {/* Number only — no "फेरफार क्र." prefix */}
+                    <div style={{ width: "120px" }}>
+                        {item.mutNo && (
+                            <span className="badge bg-primary">
+                                {item.mutNo}
+                            </span>
                         )}
-                    </CModalBody>
+                    </div>
+
+                    <div className="flex-grow-1">{item.remark}</div>
+                </div>
+            ))
+        ) : (
+            //  ब., क., ड. — Only remark text
+            activeRemarkData.map((item, index) => (
+                <div
+                    key={index}
+                    className="mb-3 p-3 bg-light rounded"
+                >
+                    {item.remark}
+                </div>
+            ))
+        )
+    ) : (
+        <div className="text-center text-muted py-4">शेरा उपलब्ध नाही</div>
+    )}
+</CModalBody>
+{/* ======================================================================================================================== */}
+
+
+                  
                     
                     <CModalFooter>
                         <CButton
