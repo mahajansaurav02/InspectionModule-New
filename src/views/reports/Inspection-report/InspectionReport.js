@@ -29,6 +29,7 @@ import './InspectionReport.css';
 // Import new components
 import InspectionPrint from '../InspectionPrint/InspectionPrint';
 import PrintUtility from '../InspectionPrint/PrintUtility';
+import InspectionRemarksPrint from '../InspectionPrint/InspectionRemarksPrint';
 
 // Your existing mock data remains the same...
 const mockApiData = {
@@ -304,193 +305,706 @@ const InspectionReport = () => {
         setShowAbhiprayModal(true);
     };
 const handleDownloadPdf = () => {
-    if (!printComponentRef.current) {
-        setError('रिपोर्ट कॉम्पोनेंट लोड झालेला नाही.');
+    if (!reportData.tapasaniAdhikariName) {
+        setError('कृपया प्रथम "अहवाल तयार करा" बटण दाबा.');
         return;
     }
 
     setLoading(true);
+    setError(null);
 
-    const element = printComponentRef.current;
-
-    html2canvas(element, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#ffffff',
-        logging: false,
-    })
-    .then((canvas) => {
-
-        // ✅ SAFETY CHECK
-        if (!canvas.width || !canvas.height) {
-            throw new Error('Canvas has invalid size');
-        }
-
-        const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-        const pdf = new jsPDF({
-            orientation: 'p',
-            unit: 'mm',
-            format: 'a4'
-        });
-
-        const pageWidth = pdf.internal.pageSize.getWidth();
-        const pageHeight = pdf.internal.pageSize.getHeight();
-
-        // ✅ Always fit width to page
-        const imgWidth = pageWidth;
-        const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-        let heightLeft = imgHeight;
-        let y = 0;
-
-        pdf.addImage(imgData, 'JPEG', 0, y, imgWidth, imgHeight);
-        heightLeft -= pageHeight;
-
-        while (heightLeft > 0) {
-            y = heightLeft - imgHeight;
-            pdf.addPage();
-            pdf.addImage(imgData, 'JPEG', 0, y, imgWidth, imgHeight);
-            heightLeft -= pageHeight;
-        }
-
-        pdf.save(`निरीक्षण_रिपोर्ट_${new Date().toLocaleDateString('mr-IN')}.pdf`);
+    // Get both report containers
+    const mainReportContainer = document.getElementById('main-report-container');
+    const remarksReportContainer = document.getElementById('remarks-report-container');
+    
+    if (!mainReportContainer || !remarksReportContainer) {
+        setError('रिपोर्ट सापडली नाही.');
         setLoading(false);
-    })
-    .catch((err) => {
-        console.error('PDF Generation Error:', err);
-        setError('PDF तयार करताना त्रुटी आली.');
-        setLoading(false);
-    });
-};
-
-
-   const handlePrintDirectly = () => {
-    if (printComponentRef.current) {
-        const printContent = printComponentRef.current.innerHTML;
-        const printWindow = window.open('', '_blank');
-        
-        printWindow.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
-                <meta charset="UTF-8">
-                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
-                <style>
-                    /* A4 Page Setup */
-                    @page {
-                        size: A4;
-                        margin: 15mm;
-                    }
-                    
-                    * {
-                        margin: 0;
-                        padding: 0;
-                        box-sizing: border-box;
-                    }
-                    
+        return;
+    }
+    
+    // Get the HTML content from both containers
+    const mainReportHTML = mainReportContainer.innerHTML;
+    const remarksReportHTML = remarksReportContainer.innerHTML;
+    
+    // Create the HTML content with BOTH reports
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
+            <meta charset="UTF-8">
+            <style>
+                /* A4 Page Settings */
+                @page {
+                    size: A4 portrait;
+                    margin: 15mm 10mm;
+                }
+                
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    width: 210mm;
+                    min-height: 297mm;
+                    margin: 0 auto;
+                    padding: 0;
+                    background: white;
+                    font-family: Arial, sans-serif;
+                    font-size: 10pt;
+                    line-height: 1.3;
+                }
+                
+                /* Main container */
+                .main-container {
+                    padding: 15mm 10mm;
+                    width: 100%;
+                }
+                
+                /* Card styling */
+                .card {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    border: 1px solid #000 !important;
+                    margin-bottom: 15px !important;
+                    box-shadow: none !important;
+                    page-break-inside: avoid;
+                }
+                
+                .card-header {
+                    background-color: #f8f9fa !important;
+                    border-bottom: 2px solid #000 !important;
+                    padding: 12px !important;
+                    text-align: center;
+                }
+                
+                .card-header h2 {
+                    margin: 0 !important;
+                    font-size: 18pt !important;
+                    font-weight: bold;
+                }
+                
+                .card-body {
+                    padding: 15px !important;
+                    width: 100% !important;
+                }
+                
+                /* Table styling - CRITICAL for page breaks */
+                table {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    border-collapse: collapse !important;
+                    border: 1px solid #000 !important;
+                    margin: 10px 0 15px 0 !important;
+                    font-size: 9pt !important;
+                    page-break-inside: auto !important;
+                }
+                
+                /* Force table rows to stay together on same page */
+                tr {
+                    page-break-inside: avoid !important;
+                    page-break-after: auto !important;
+                }
+                
+                th, td {
+                    border: 1px solid #000 !important;
+                    padding: 6px 8px !important;
+                    word-wrap: break-word;
+                }
+                
+                th {
+                    background-color: #f2f2f2 !important;
+                    font-weight: bold !important;
+                }
+                
+                /* Section headers */
+                h4 {
+                    margin: 15px 0 8px 0 !important;
+                    font-size: 12pt !important;
+                    color: #000 !important;
+                    page-break-after: avoid;
+                }
+                
+                /* Horizontal rules */
+                hr {
+                    border-top: 2px solid #000 !important;
+                    margin: 12px 0 !important;
+                }
+                
+                /* Row and column styling */
+                .row {
+                    width: 100% !important;
+                    margin-bottom: 8px !important;
+                }
+                
+                .col {
+                    padding: 0 5px !important;
+                }
+                
+                /* Hide non-print elements */
+                .no-print, .remark-btn, button, .btn {
+                    display: none !important;
+                }
+                
+                /* Print view specific */
+                .print-view {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                }
+                
+                /* Page break control classes */
+                .always-break {
+                    page-break-before: always !important;
+                }
+                
+                .avoid-break {
+                    page-break-inside: avoid !important;
+                }
+                
+                /* Force tables to move to next page if they don't fit */
+                .table-container {
+                    page-break-inside: avoid !important;
+                }
+                
+                /* Compact styling for better fit */
+                .compact-table {
+                    font-size: 8.5pt !important;
+                }
+                
+                .compact-table th,
+                .compact-table td {
+                    padding: 4px 6px !important;
+                }
+                
+                /* Ensure no element overflows */
+                * {
+                    overflow-wrap: break-word;
+                    word-wrap: break-word;
+                }
+                
+                /* Page break for remarks report */
+                .remarks-section {
+                    page-break-before: always !important;
+                    margin-top: 20mm !important;
+                }
+                
+                /* Media print specific rules */
+                @media print {
                     body {
-                        width: 210mm;
-                        min-height: 297mm;
-                        margin: 0 auto;
-                        padding: 15mm;
-                        background: white;
-                        font-size: 12pt;
-                        line-height: 1.4;
-                        font-family: Arial, sans-serif;
+                        padding: 0 !important;
+                        margin: 0 !important;
+                        width: 210mm !important;
                     }
                     
-                    /* Hide non-print elements */
-                    .no-print, .btn, button {
-                        display: none !important;
+                    .main-container {
+                        padding: 15mm 10mm !important;
                     }
                     
-                    /* Card styling */
-                    .card {
-                        width: 100%;
-                        border: 1px solid #000;
-                        box-shadow: none;
-                    }
-                    
-                    .card-header {
-                        background-color: #f8f9fa !important;
-                        border-bottom: 2px solid #000;
-                    }
-                    
-                    /* Table styling */
+                    /* Force entire tables to stay together */
                     table {
-                        width: 100%;
-                        border: 1px solid #000;
-                        border-collapse: collapse;
-                        font-size: 11pt;
-                        margin: 15px 0;
+                        page-break-inside: avoid !important;
+                    }
+                    
+                    /* Prevent orphans and widows */
+                    p, h1, h2, h3, h4 {
+                        page-break-after: avoid;
                         page-break-inside: avoid;
                     }
                     
-                    th, td {
-                        border: 1px solid #000;
-                        padding: 8px 10px;
+                    /* Section breaks */
+                    .section-break {
+                        page-break-before: always;
                     }
-                    
-                    th {
-                        background-color: #f2f2f2 !important;
-                        font-weight: bold;
-                    }
-                    
-                    /* Ensure proper widths */
-                    .container, .container-fluid {
-                        width: 100% !important;
-                        max-width: 100% !important;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="main-container">
+                <!-- Main Report -->
+                <div class="print-view">
+                    ${mainReportHTML}
+                </div>
+                
+                <!-- Page break before remarks -->
+                <div style="page-break-before: always; height: 0;"></div>
+                
+                <!-- Remarks Report -->
+                <div class="print-view remarks-section">
+                    ${remarksReportHTML}
+                </div>
+            </div>
+            
+            <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+            <script>
+                window.onload = function() {
+                    // Add table protection after DOM loads
+                    setTimeout(function() {
+                        // Function to protect tables from page breaks
+                        function protectTablesFromPageBreaks() {
+                            const tables = document.querySelectorAll('table');
+                            
+                            tables.forEach(table => {
+                                // Check table height
+                                const tableHeight = table.offsetHeight;
+                                const pageHeight = 1122; // A4 height in pixels at 96 DPI
+                                
+                                // If table is tall, try to make it more compact
+                                if (tableHeight > pageHeight * 0.6) {
+                                    table.classList.add('compact-table');
+                                }
+                                
+                                // Check individual rows for page break issues
+                                const rows = table.querySelectorAll('tr');
+                                let currentPageBottom = 0;
+                                
+                                rows.forEach((row, index) => {
+                                    const rowRect = row.getBoundingClientRect();
+                                    const rowBottom = rowRect.bottom;
+                                    
+                                    // If row is near page bottom, add page break before table
+                                    if (rowBottom > pageHeight * 0.85 && index === 0) {
+                                        table.style.pageBreakBefore = 'always';
+                                    }
+                                });
+                            });
+                        }
+                        
+                        // Apply table protection
+                        protectTablesFromPageBreaks();
+                        
+                        // Wait a bit more for styles to apply
+                        setTimeout(function() {
+                            // Generate PDF
+                            const element = document.body;
+                            
+                            html2canvas(element, {
+                                scale: 2,
+                                useCORS: true,
+                                backgroundColor: '#ffffff',
+                                logging: false,
+                                width: element.scrollWidth,
+                                height: element.scrollHeight,
+                                windowWidth: element.scrollWidth,
+                                windowHeight: element.scrollHeight,
+                                onclone: function(clonedDoc) {
+                                    // Apply print styles to cloned document
+                                    const style = clonedDoc.createElement('style');
+                                    style.innerHTML = \`
+                                        /* Force table rows to stay together */
+                                        tr {
+                                            page-break-inside: avoid !important;
+                                            break-inside: avoid !important;
+                                        }
+                                        
+                                        /* Prevent table splitting */
+                                        table {
+                                            page-break-inside: avoid !important;
+                                            break-inside: avoid !important;
+                                        }
+                                        
+                                        /* Compact tables for better fit */
+                                        .compact-table {
+                                            font-size: 8.5pt !important;
+                                        }
+                                        
+                                        .compact-table th,
+                                        .compact-table td {
+                                            padding: 4px 6px !important;
+                                        }
+                                    \`;
+                                    clonedDoc.head.appendChild(style);
+                                }
+                            }).then(canvas => {
+                                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                                const pdf = new jspdf.jsPDF({
+                                    orientation: 'portrait',
+                                    unit: 'mm',
+                                    format: 'a4'
+                                });
+                                
+                                const pageWidth = pdf.internal.pageSize.getWidth();
+                                const pageHeight = pdf.internal.pageSize.getHeight();
+                                
+                                // Calculate image dimensions to fit page width
+                                const imgWidth = pageWidth;
+                                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                                
+                                // Add first page
+                                pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+                                
+                                // Handle multiple pages
+                                let heightLeft = imgHeight;
+                                let position = 0;
+                                let pageCount = 1;
+                                
+                                if (heightLeft > pageHeight) {
+                                    while (heightLeft > 0) {
+                                        position = -pageHeight * pageCount;
+                                        pdf.addPage();
+                                        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                                        heightLeft -= pageHeight;
+                                        pageCount++;
+                                    }
+                                }
+                                
+                                pdf.save('निरीक्षण_रिपोर्ट_शेरा_यादी.pdf');
+                                
+                                // Close the window after saving
+                                setTimeout(() => window.close(), 1000);
+                            }).catch(error => {
+                                console.error('PDF generation error:', error);
+                                alert('PDF तयार करताना त्रुटी आली.');
+                                window.close();
+                            });
+                        }, 500);
+                    }, 500);
+                }
+            </script>
+        </body>
+        </html>
+    `;
+    
+    // Open new window and write content
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+    
+    // Wait for window to load
+    printWindow.onload = function() {
+        setTimeout(() => {
+            setLoading(false);
+        }, 4000);
+    };
+
+        setLoading(false);
+
+};
+
+const handlePrintDirectly = () => {
+    const mainReportHTML = document.getElementById('main-report-container')?.innerHTML || '';
+    const remarksReportHTML = document.getElementById('remarks-report-container')?.innerHTML || '';
+    
+    const printWindow = window.open('', '_blank');
+    
+    const printContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
+            <style>
+                /* A4 Page Settings */
+                @page {
+                    size: A4 portrait;
+                    margin: 20mm 15mm;
+                }
+                
+                * {
+                    margin: 0;
+                    padding: 0;
+                    box-sizing: border-box;
+                }
+                
+                body {
+                    width: 210mm;
+                    min-height: 297mm;
+                    margin: 0 auto;
+                    padding: 0;
+                    background: white;
+                    font-family: Arial, sans-serif;
+                    font-size: 11pt;
+                    line-height: 1.4;
+                }
+                
+                /* Print container */
+                .print-container {
+                    padding: 20mm 15mm;
+                    width: 100%;
+                }
+                
+                /* Card styling */
+                .card {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    border: 1px solid #000 !important;
+                    margin-bottom: 20px !important;
+                    box-shadow: none !important;
+                    page-break-inside: avoid;
+                }
+                
+                .card-header {
+                    background-color: #f8f9fa !important;
+                    border-bottom: 2px solid #000 !important;
+                    padding: 15px !important;
+                    text-align: center;
+                }
+                
+                .card-header h2 {
+                    margin: 0 !important;
+                    font-size: 20pt !important;
+                    font-weight: bold;
+                }
+                
+                .card-body {
+                    padding: 20px !important;
+                    width: 100% !important;
+                }
+                
+                /* Table styling */
+                table {
+                    width: 100% !important;
+                    max-width: 100% !important;
+                    border-collapse: collapse !important;
+                    border: 1px solid #000 !important;
+                    margin: 12px 0 18px 0 !important;
+                    font-size: 10pt !important;
+                    page-break-inside: auto !important;
+                }
+                
+                /* Prevent table row breaks */
+                tr {
+                    page-break-inside: avoid !important;
+                    page-break-after: auto !important;
+                }
+                
+                th, td {
+                    border: 1px solid #000 !important;
+                    padding: 8px 10px !important;
+                    word-wrap: break-word;
+                }
+                
+                th {
+                    background-color: #f2f2f2 !important;
+                    font-weight: bold !important;
+                }
+                
+                /* Section headers */
+                h4 {
+                    margin: 18px 0 12px 0 !important;
+                    font-size: 14pt !important;
+                    color: #000 !important;
+                    page-break-after: avoid;
+                }
+                
+                /* Horizontal rules */
+                hr {
+                    border-top: 2px solid #000 !important;
+                    margin: 15px 0 !important;
+                }
+                
+                /* Hide non-print elements */
+                .no-print, .remark-btn, button, .btn {
+                    display: none !important;
+                }
+                
+                /* Signature section - FIXED */
+                .signature-section {
+                    margin-top: 50px !important;
+                    padding-top: 20px !important;
+                    border-top: 1px solid #000 !important;
+                    width: 100% !important;
+                }
+                
+                .signature-container {
+                    display: flex !important;
+                    justify-content: flex-end !important;
+                    align-items: flex-start !important;
+                    width: 100% !important;
+                    margin-top: 40px !important;
+                    page-break-inside: avoid;
+                }
+                
+                .signature-space {
+                    width: 300px !important;
+                    text-align: right !important;
+                    padding-right: 20px !important;
+                }
+                
+                .signature-title {
+                    font-weight: bold !important;
+                    margin-bottom: 10px !important;
+                    font-size: 12pt !important;
+                }
+                
+                .signature-name {
+                    margin-top: 60px !important; /* Space for signature */
+                    font-weight: normal !important;
+                    font-size: 11pt !important;
+                    line-height: 1.5 !important;
+                }
+                
+                .signature-line {
+                    border-top: 1px solid #000 !important;
+                    margin-top: 80px !important;
+                    width: 250px !important;
+                    margin-left: auto !important;
+                }
+                
+                /* Stamp area */
+                .stamp-area {
+                    position: relative;
+                    margin-top: 100px;
+                    height: 100px;
+                }
+                
+                /* Page break control */
+                .page-break {
+                    page-break-before: always;
+                    height: 0;
+                    margin: 0;
+                    padding: 0;
+                }
+                
+                .remarks-section {
+                    page-break-before: always !important;
+                    margin-top: 30mm !important;
+                }
+                
+                /* Responsive text */
+                p {
+                    margin-bottom: 8px !important;
+                }
+                
+                /* Report header info */
+                .report-header .row {
+                    margin-bottom: 10px !important;
+                }
+                
+                .report-header p {
+                    margin-bottom: 6px !important;
+                }
+                
+                /* Media print specific rules */
+                @media print {
+                    body {
                         padding: 0 !important;
                         margin: 0 !important;
+                        width: 210mm !important;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
                     }
                     
-                    /* Page break control */
-                    h1, h2, h3, h4 {
-                        page-break-after: avoid;
+                    .print-container {
+                        padding: 20mm 15mm !important;
                     }
                     
-                    /* HR styling */
-                    hr {
-                        border-top: 2px solid #000;
-                        margin: 20px 0;
+                    /* Force tables to stay together */
+                    table {
+                        page-break-inside: avoid !important;
                     }
                     
-                    /* Print color adjustments */
-                    .text-primary {
-                        color: #000 !important;
+                    /* Ensure signature stays on same page as last content */
+                    .signature-container {
+                        page-break-inside: avoid !important;
                     }
                     
-                    .bg-light {
-                        background-color: #f2f2f2 !important;
+                    /* Page margins */
+                    @page :first {
+                        margin-top: 20mm;
                     }
                     
-                    .bg-warning {
-                        background-color: #ffc107 !important;
+                    @page {
+                        margin: 20mm 15mm;
                     }
-                </style>
-            </head>
-            <body>
-                ${printContent}
-                <script>
-                    // Auto-print and close
-                    window.onload = function() {
+                    
+                    /* Hide URL and page info */
+                    @page {
+                        @bottom-right {
+                            content: "";
+                        }
+                        @top-right {
+                            content: "";
+                        }
+                    }
+                }
+                
+                /* Compact view for better fit */
+                .compact-table {
+                    font-size: 9.5pt !important;
+                }
+                
+                .compact-table th,
+                .compact-table td {
+                    padding: 6px 8px !important;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="print-container">
+                <!-- Main Report -->
+                <div class="main-report">
+                    ${mainReportHTML}
+                </div>
+                
+                <!-- Page break before remarks -->
+                <div class="page-break"></div>
+                
+                <!-- Remarks Report -->
+                <div class="remarks-report remarks-section">
+                    ${remarksReportHTML}
+                </div>
+            </div>
+            
+            <script>
+                window.onload = function() {
+                    // Add page break protection for tables
+                    setTimeout(function() {
+                        // Add compact class to all tables
+                        const tables = document.querySelectorAll('table');
+                        tables.forEach(table => {
+                            table.classList.add('compact-table');
+                        });
+                        
+                        // Ensure signature is properly aligned
+                        const signatureContainers = document.querySelectorAll('.signature');
+                        signatureContainers.forEach(container => {
+                            // Wrap signature in proper container
+                            const signatureHTML = container.innerHTML;
+                            container.innerHTML = \`
+                                <div class="signature-container">
+                                    <div class="signature-space">
+                                        <div class="signature-title">तपासणी अधिकाऱ्याचे नाव व पदनाम:</div>
+                                        <div class="signature-name">\${signatureHTML.replace('तपासणी अधिकाऱ्याचे नाव व पदनाम:', '').trim()}</div>
+                                        <div class="signature-line"></div>
+                                    </div>
+                                </div>
+                            \`;
+                        });
+                        
+                        // Add stamp area space
+                        const cardBodies = document.querySelectorAll('.card-body');
+                        cardBodies.forEach(body => {
+                            const lastChild = body.lastElementChild;
+                            if (lastChild && lastChild.classList.contains('signature-container')) {
+                                const stampArea = document.createElement('div');
+                                stampArea.className = 'stamp-area';
+                                stampArea.innerHTML = '<div style="text-align: right; font-size: 10pt; color: #666; margin-top: 30px;">शुभेच्छा / मुद्रा स्थान</div>';
+                                body.appendChild(stampArea);
+                            }
+                        });
+                        
+                        // Print after everything is ready
                         setTimeout(function() {
                             window.print();
-                            // Close after print
                             setTimeout(function() {
                                 window.close();
-                            }, 500);
-                        }, 500);
-                    }
-                </script>
-            </body>
-            </html>
-        `);
-        printWindow.document.close();
-    }
+                            }, 1000);
+                        }, 1000);
+                    }, 500);
+                }
+            </script>
+        </body>
+        </html>
+    `;
+    
+    printWindow.document.write(printContent);
+    printWindow.document.close();
 };
 
     // Abhipray button cell component
@@ -563,9 +1077,7 @@ const handleDownloadPdf = () => {
             {/* Main Report View */}
             <CContainer className="inspection-container">
                 <CCard className="shadow-lg" ref={componentRef}>
-                    <CCardHeader className="headerName">
-                        <h2 className="mb-0">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी.</h2>
-                    </CCardHeader>
+                 
                     <CCardBody>
                         {error && (
                             <CAlert color="danger" className="mb-3">
@@ -895,7 +1407,7 @@ const handleDownloadPdf = () => {
                                             </p>
                                         </CCol>
                                     </CRow>
-                                    <CRow className="mt-5 mb-10 text-end">
+                                    <CRow className="mt-5  text-end">
                                         <CCol className='signature' xs={12}>
                                             <p className="mb-0">
                                                 <strong>तपासणी अधिकाऱ्याचे नाव व पदनाम:</strong>
@@ -920,28 +1432,30 @@ const handleDownloadPdf = () => {
                     />
                 )}
 
-                {/* Hidden Print Component (for PDF generation) */}
-                <div
-  style={{
-     position: 'absolute',
-    left: '-9999px',
-    top: 0,
-    width: '210mm',        // ✅ THIS IS REQUIRED
-    minHeight: '297mm',   // ✅ A4 HEIGHT
-    backgroundColor: '#fff'
-  }}
->
-
-                    <InspectionPrint 
-                        ref={printComponentRef}
-                        reportData={reportData}
-                        ferfarRemarkList={ferfarRemarkList}
-                        eChawadiRemarks={eChawadiRemarks}
-                        vasuliRemarks={vasuliRemarks}
-                        eHakkRemarks={eHakkRemarks}
-                        printMode={true}
-                    />
-                </div>
+<div>
+  {/* Hidden Main Report for printing */}
+  <div id="main-report-container" style={{ display: 'none' }}>
+    <InspectionPrint 
+      reportData={reportData}
+      ferfarRemarkList={ferfarRemarkList}
+      eChawadiRemarks={eChawadiRemarks}
+      vasuliRemarks={vasuliRemarks}
+      eHakkRemarks={eHakkRemarks}
+      printMode={true}
+    />
+  </div>
+  
+  {/* Hidden Remarks Report for printing */}
+  <div id="remarks-report-container" style={{ display: 'none' }}>
+    <InspectionRemarksPrint
+      reportData={reportData}
+      ferfarRemarkList={ferfarRemarkList}
+      eChawadiRemarks={eChawadiRemarks}
+      vasuliRemarks={vasuliRemarks}
+      eHakkRemarks={eHakkRemarks}
+    />
+  </div>
+</div>
             </CContainer>
 
             {/* Modal for Viewing Remarks */}

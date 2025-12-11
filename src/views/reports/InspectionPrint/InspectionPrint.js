@@ -327,7 +327,7 @@ const InspectionPrint = React.forwardRef(({
                                         </p>
                                     </CCol>
                                 </CRow>
-                                <CRow className="mt-5 mb-10 text-end">
+                                <CRow className="mt-5 mb-2 text-end">
                                     <CCol className='signature' xs={12}>
                                         <p className="mb-1">
                                             <strong>तपासणी अधिकाऱ्याचे नाव व पदनाम:</strong>
