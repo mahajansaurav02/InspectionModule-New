@@ -192,10 +192,10 @@ function ViewSthagitiFerfarList() {
 
                   <CRow>
                     <CCol md={6} className="d-flex align-items-center">
-                      <small className="text-muted">
-                        Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-                        {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
-                      </small>
+                      <div className="dataTables_info">
+                      {totalItems} नोंदींपैकी {(currentPage - 1) * itemsPerPage + 1} ते {' '}
+                       {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
+                    </div>
                     </CCol>
                     <CCol md={6} className="d-flex justify-content-end">
                       <CPagination align="end" size="sm" className="mb-0">
@@ -203,7 +203,7 @@ function ViewSthagitiFerfarList() {
                           disabled={currentPage === 1}
                           onClick={() => setCurrentPage(currentPage - 1)}
                         >
-                          Previous
+                          मागे जा 
                         </CPaginationItem>
 
                         {Array.from({ length: totalPages }, (_, i) => (
@@ -220,7 +220,7 @@ function ViewSthagitiFerfarList() {
                           disabled={currentPage === totalPages}
                           onClick={() => setCurrentPage(currentPage + 1)}
                         >
-                          Next
+                          पुढे जा 
                         </CPaginationItem>
                       </CPagination>
                     </CCol>

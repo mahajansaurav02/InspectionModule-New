@@ -379,7 +379,7 @@ export const NirankGavNamunaTapa = () => {
 
               {/* Remark and Control Section */}
               <div className="remark-section mt-4">
-                <h4 className="remark-title">निरंक/तपासणी शेरा (Remark)</h4>
+                <h4 className="remark-title">निरंक/तपासणी शेरा </h4>
                 <textarea
                   className="form-control"
                   rows="3"
@@ -391,21 +391,21 @@ export const NirankGavNamunaTapa = () => {
 
               <div className="button-container">
                 <button className="cancel-button" onClick={handleCancel}>
-                  रद्द करा (Cancel)
+                  रद्द करा 
                 </button>
                 <button
                   className="submit-button"
                   onClick={handleRemarkSubmit}
                   disabled={!remark.trim()}
                 >
-                  शेरा जमा करा (Submit Remark)
+                  अभिप्राय जतन करा 
                 </button>
               </div>
               {/* End Remark and Control Section */}
             </>
           ) : (
             <div className="report-placeholder">
-              <p>Please select a card from the left panel to view its report.</p>
+              <p>कृपया अहवाल पाहण्यासाठी डाव्या बाजूच्या पॅनलमधील संबंधित कार्ड निवडा.</p>
             </div>
           )}
         </div>

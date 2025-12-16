@@ -458,8 +458,10 @@ const VasuliTapsil = () => {
         </div>
       )}
 
-      <div className="remark-controls-section p-4 mt-4 border rounded bg-light">
-        <h5 className="remark-title mb-3">शेरा (Remark)</h5>
+      {/* <div className="remark-controls-section p-4 mt-4 border rounded bg-light"> */}
+      <div className={styles['table-card']}>
+
+        <h5 className="remark-title mb-3">शेरा</h5>
 
         <CFormTextarea
           rows={4}
@@ -471,7 +473,7 @@ const VasuliTapsil = () => {
 
         <div className="d-flex justify-content-end gap-3 button-container">
           <CButton color="secondary" onClick={handleCancel} className="cancel-button">
-            रद्द करा (Cancel)
+            रद्द करा
           </CButton>
           <CButton
             color="success"
@@ -479,7 +481,7 @@ const VasuliTapsil = () => {
             className="submit-button"
             disabled={!remark.trim()}
           >
-            शेरा जमा करा (Submit Remark)
+            अभिप्राय जतन करा 
           </CButton>
         </div>
       </div>
