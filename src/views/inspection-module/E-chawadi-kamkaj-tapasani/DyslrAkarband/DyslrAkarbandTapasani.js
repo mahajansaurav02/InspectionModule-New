@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Tabs, Tab } from 'react-bootstrap'
 import { Card, Button, Spinner } from 'react-bootstrap'
 import { DownloadTableExcel } from 'react-export-table-to-excel'
@@ -31,12 +31,20 @@ const DyslrAkarbandTapasani = () => {
   const [rejectedTableData, setRejectedTableData] = useState([])
   const tableRef = useRef(null)
   const rejectedTableRef = useRef(null)
+  const firstRemarkRef = useRef(null)
+  const secondRemarkRef = useRef(null)
   const token = localStorage.getItem('token')
   // const [districtCode, setDistrictCode] = useState('24'); // Replace with actual state management
   // const [talukaCode, setTalukaCode] = useState('11'); // Replace with actual state management
   const [villageCode, setVillageCode] = useState('270900130113130000') // Replace with actual state management
-  let VillageData = localStorage.getItem('selectedVillageData')
 
+  const [firstRemark, setFirstRemark] = useState('')
+  const [firstRemarkSubmitting, setFirstRemarkSubmitting] = useState(false)
+  
+  const [secondRemark, setSecondRemark] = useState('')
+  const [secondRemarkSubmitting, setSecondRemarkSubmitting] = useState(false)
+
+  let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = JSON.parse(VillageData)
 
   let {
@@ -48,6 +56,68 @@ const DyslrAkarbandTapasani = () => {
     talukaMarathiName,
     villageName,
   } = selectedVillageData[0]
+
+  // Function to scroll to remark section
+  const scrollToRemark = (tab) => {
+    setActiveTab(tab)
+    
+    // Small delay to ensure tab content is rendered
+    setTimeout(() => {
+      if (tab === 'akarband' && firstRemarkRef.current) {
+        firstRemarkRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        })
+      } else if (tab === 'akarbandRejected' && secondRemarkRef.current) {
+        secondRemarkRef.current.scrollIntoView({ 
+          behavior: 'smooth', 
+          block: 'center' 
+        })
+      }
+    }, 100)
+  }
+
+  const handleFirstRemarkSubmit = () => {
+    if (!firstRemark.trim()) {
+      alert('कृपया शेरा भरा')
+      return
+    }
+
+    setFirstRemarkSubmitting(true)
+
+    // 🔹 API call for first tab remark
+    setTimeout(() => {
+      console.log('Submitted First Remark:', firstRemark)
+      setFirstRemarkSubmitting(false)
+      setFirstRemark('')
+      // Here you can add API call to save the remark
+    }, 1000)
+  }
+
+  const handleFirstRemarkClear = () => {
+    setFirstRemark('')
+  }
+
+  const handleSecondRemarkSubmit = () => {
+    if (!secondRemark.trim()) {
+      alert('कृपया शेरा भरा')
+      return
+    }
+
+    setSecondRemarkSubmitting(true)
+
+    // 🔹 API call for second tab remark
+    setTimeout(() => {
+      console.log('Submitted Second Remark:', secondRemark)
+      setSecondRemarkSubmitting(false)
+      setSecondRemark('')
+      // Here you can add API call to save the remark
+    }, 1000)
+  }
+
+  const handleSecondRemarkClear = () => {
+    setSecondRemark('')
+  }
 
   const getAkarbandDiffData = async () => {
     setLoading(true)
@@ -342,7 +412,26 @@ const DyslrAkarbandTapasani = () => {
         className="mb-3 justify-content-center fw-semibold"
         variant="pills"
       >
-        <Tab eventKey="akarband" title="गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता )">
+        <Tab 
+          eventKey="akarband" 
+          title={
+            <div className="d-flex align-items-center">
+              <span>गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता )</span>
+              <Button 
+                variant="link" 
+                size="sm" 
+                className="ms-2 p-0 text-decoration-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollToRemark('akarband');
+                }}
+                title="शेरा साठी जा"
+              >
+                📝
+              </Button>
+            </div>
+          }
+        >
           <div className={styles.tabContent}>
             <CAlert color="info" className="modern-alert">
               <strong>टीप:</strong>
@@ -357,6 +446,19 @@ const DyslrAkarbandTapasani = () => {
                   भूमिअभिलेख यांच्या आकारबंदात नमूद नाहीत.ते तपासून खात्री करा.
                 </li>
               </ul>
+              <Button 
+                variant="primary" 
+                size="sm" 
+                style={{margin: '10px'}}
+                className="ms-2 p-0 text-decoration-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollToRemark('akarband');
+                }}
+                title="शेरा साठी जा"
+              >
+                अभिप्राय नोंदवा 📝
+              </Button>
             </CAlert>
 
             <div className={styles.controls}>
@@ -451,12 +553,62 @@ const DyslrAkarbandTapasani = () => {
             ) : (
               <p className={styles.noData}>No records found</p>
             )}
+
+            {/* 🔹 First Tab Shera Section */}
+            <div ref={firstRemarkRef}>
+              <Card className={styles.remarkCard}>
+                <h6 className={styles.remarkTitle}>शेरा / अभिप्राय </h6>
+
+                <textarea
+                  className={styles.remarkInput}
+                  rows={3}
+                  placeholder="गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता ) यासंबंधीचा शेरा येथे लिहा..."
+                  value={firstRemark}
+                  onChange={(e) => setFirstRemark(e.target.value)}
+                />
+
+                <div className={styles.remarkActions}>
+                  <Button
+                    variant="success"
+                    size="sm"
+                    disabled={firstRemarkSubmitting}
+                    onClick={handleFirstRemarkSubmit}
+                  >
+                    {firstRemarkSubmitting ? 'सबमिट करत आहे...' : 'शेरा सबमिट करा'}
+                  </Button>
+
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={handleFirstRemarkClear}
+                  >
+                    क्लिअर
+                  </Button>
+                </div>
+              </Card>
+            </div>
           </div>
         </Tab>
 
         <Tab
           eventKey="akarbandRejected"
-          title="गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक"
+          title={
+            <div className="d-flex align-items-center">
+              <span>गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक</span>
+              <Button 
+                variant="link" 
+                size="sm" 
+                className="ms-2 p-0 text-decoration-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollToRemark('akarbandRejected');
+                }}
+                title="शेरा साठी जा"
+              >
+                📝
+              </Button>
+            </div>
+          }
         >
           <div className={styles.tabContent}>
             <CAlert color="info" className="modern-alert">
@@ -468,6 +620,20 @@ const DyslrAkarbandTapasani = () => {
                   त्याचा अहवाल उपलब्ध करून देण्यात आला आहे.
                 </li>
               </ul>
+
+               <Button 
+                variant="primary" 
+                size="sm" 
+                style={{margin: '10px',padding:'5px'}}
+                className="ms-2 p-0 text-decoration-none"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  scrollToRemark('akarbandRejected');
+                }}
+                title="शेरा साठी जा"
+              >
+                अभिप्राय नोंदवा 📝
+              </Button>
             </CAlert>
             <div className={styles.controls}>
               <Button
@@ -494,6 +660,7 @@ const DyslrAkarbandTapasani = () => {
                     <Button variant="success" className={styles.downloadButton}>
                       Download as XLS
                     </Button>
+                    
                   </DownloadTableExcel>
                 </div>
                 <div className={styles.tableContainer}>
@@ -549,6 +716,40 @@ const DyslrAkarbandTapasani = () => {
             ) : (
               <p className={styles.noData}>No records found</p>
             )}
+
+            {/* 🔹 Second Tab Shera Section */}
+            <div ref={secondRemarkRef}>
+              <Card className={styles.remarkCard}>
+                <h6 className={styles.remarkTitle}>शेरा / अभिप्राय </h6>
+
+                <textarea
+                  className={styles.remarkInput}
+                  rows={3}
+                  placeholder="गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक यासंबंधीचा शेरा येथे लिहा..."
+                  value={secondRemark}
+                  onChange={(e) => setSecondRemark(e.target.value)}
+                />
+
+                <div className={styles.remarkActions}>
+                  <Button
+                    variant="success"
+                    size="sm"
+                    disabled={secondRemarkSubmitting}
+                    onClick={handleSecondRemarkSubmit}
+                  >
+                    {secondRemarkSubmitting ? 'सबमिट करत आहे...' : 'शेरा सबमिट करा'}
+                  </Button>
+
+                  <Button
+                    variant="outline-secondary"
+                    size="sm"
+                    onClick={handleSecondRemarkClear}
+                  >
+                    क्लिअर
+                  </Button>
+                </div>
+              </Card>
+            </div>
           </div>
         </Tab>
       </Tabs>

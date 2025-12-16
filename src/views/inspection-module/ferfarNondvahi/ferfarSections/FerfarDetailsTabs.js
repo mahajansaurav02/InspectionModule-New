@@ -13,6 +13,7 @@ import {
   CRow,
   CCol,
   CFormCheck,
+  CAlert,
 } from '@coreui/react'
 import {
   FaFilePdf,
@@ -21,6 +22,7 @@ import {
   FaFileSignature,
   FaDownload,
   FaTimes,
+  FaCheckCircle,
 } from 'react-icons/fa'
 import CryptoJS from 'crypto-js'
 import axios from 'axios'
@@ -28,6 +30,9 @@ import { errorToast } from 'src/views/ui/Toast'
 import './FerfarDetailsTabs.css'
 import { MdOutlineZoomIn } from 'react-icons/md'
 import URLS from 'src/URLS'
+import { useNavigate } from 'react-router-dom'
+
+
 
 const FerfarDetailsTabs = ({ ferfar }) => {
   const [activeKey, setActiveKey] = useState(1)
@@ -39,7 +44,9 @@ const FerfarDetailsTabs = ({ ferfar }) => {
   const [zoomLevel, setZoomLevel] = useState(100)
   const [attachedFile, setAttachedFile] = useState(null)
   const [priority, setPriority] = useState('')
+  const [submitStatus, setSubmitStatus] = useState('')
   const fileInputRef = useRef(null)
+  const navigate = useNavigate()
 
   const [suggestedRemarks] = useState([
     'अपलोड केलेले दस्तऐवज नुसार सातबारा व अंमल योग्य आला आहे/ नाही',
@@ -196,10 +203,22 @@ const FerfarDetailsTabs = ({ ferfar }) => {
     return decrypted.toString(CryptoJS.enc.Utf8)
   }
 
-  const handleSubmit = () => {
-    console.log('Submitted remark:', remark)
-    setRemark('')
-  }
+   const handleSubmit = () => {
+    setIsLoading(true);
+
+    setTimeout(() => {
+      setIsLoading(false);
+      setSubmitStatus('success');
+
+      setTimeout(() => {
+        setSubmitStatus(null);
+        setRemark('');
+
+        navigate(-1);
+      }, 1000);
+
+    }, 1500);
+  };
 
   const handleDownload = (type) => {
     let filePath, fileName
@@ -361,45 +380,45 @@ const FerfarDetailsTabs = ({ ferfar }) => {
               {attachedFile && <span className="text-success small">{attachedFile.name}</span>}
             </div>
              {' '}
-            <div className="priority-selection mb-4">
-                      <h6 className="priority-label mb-2">अभिप्रायाचे प्राधान्य प्रकार :</h6>       {' '}
-              <div className="d-flex gap-4">
-                                    {/* Low Priority Radio */}
-                         {' '}
-                <CFormCheck
-                  type="radio"
-                  id="priority-low"
-                  name="priorityType"
-                  value="Low"
-                  label="अतीगंभीर "
-                  checked={priority === 'Low'}
-                  onChange={() => setPriority('Low')}
-                />
-                          {/* Medium Priority Radio */}
-                         {' '}
-                <CFormCheck
-                  type="radio"
-                  id="priority-medium"
-                  name="priorityType"
-                  value="Medium"
-                  label="गंभीर"
-                  checked={priority === 'Medium'}
-                  onChange={() => setPriority('Medium')}
-                />
-                          {/* High Priority Radio */}
-                         {' '}
-                <CFormCheck
-                  type="radio"
-                  id="priority-high"
-                  name="priorityType"
-                  value="High"
-                  label="साधारण"
-                  checked={priority === 'High'}
-                  onChange={() => setPriority('High')}
-                />
-                       {' '}
+            <div className="priority-selection-sm mb-3">
+              <span className="priority-label-sm">
+                अभिप्रायाचे प्राधान्य प्रकार :
+              </span>
+
+              <div className="d-flex gap-2 mt-2 flex-wrap">
+                <label className={`priority-pill low ${priority === 'Low' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="priorityType"
+                    value="Low"
+                    checked={priority === 'Low'}
+                    onChange={() => setPriority('Low')}
+                  />
+                  अतीगंभीर
+                </label>
+
+                <label className={`priority-pill medium ${priority === 'Medium' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="priorityType"
+                    value="Medium"
+                    checked={priority === 'Medium'}
+                    onChange={() => setPriority('Medium')}
+                  />
+                  गंभीर
+                </label>
+
+                <label className={`priority-pill high ${priority === 'High' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="priorityType"
+                    value="High"
+                    checked={priority === 'High'}
+                    onChange={() => setPriority('High')}
+                  />
+                  साधारण
+                </label>
               </div>
-                   {' '}
             </div>
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
@@ -407,9 +426,16 @@ const FerfarDetailsTabs = ({ ferfar }) => {
               </CButton>
 
               <CButton color="primary" onClick={handleSubmit} className="submit-button">
-                Submit Remark
-              </CButton>
+{isLoading ? 'Submitting...' : 'Submit Remark'}            
+  </CButton>
             </div>
+
+              {submitStatus === 'success' && (
+                          <CAlert color="success" className="mt-3">
+                            <FaCheckCircle className="me-2" />
+                            Remark submitted successfully!
+                          </CAlert>
+                        )}
           </div>
         )
       }

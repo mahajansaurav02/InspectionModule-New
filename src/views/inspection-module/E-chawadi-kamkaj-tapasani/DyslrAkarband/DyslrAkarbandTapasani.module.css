@@ -166,3 +166,40 @@
   margin-top: 2rem;
   font-size: 1.1rem;
 }
+
+.remarkCard {
+  margin-top: 20px;
+  padding: 16px;
+  background: #f9fafc;
+  border: 1px solid #e0e4f1;
+  border-radius: 10px;
+}
+
+.remarkTitle {
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #2c3e50;
+}
+
+.remarkInput {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ced4da;
+  padding: 10px;
+  resize: none;
+  font-size: 14px;
+}
+
+.remarkInput:focus {
+  outline: none;
+  border-color: #6c69cd;
+  box-shadow: 0 0 0 2px rgba(108, 105, 205, 0.15);
+}
+
+.remarkActions {
+  display: flex;
+  gap: 12px;
+  margin-top: 10px;
+  justify-content: flex-end;
+}
+

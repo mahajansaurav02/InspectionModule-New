@@ -32,6 +32,7 @@ import moment from 'moment'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import 'src/views/inspection-module/ferfarNondvahi/FerfarList.css'
 
 function ViewsSection155FerfarList() {
   const navigate = useNavigate()

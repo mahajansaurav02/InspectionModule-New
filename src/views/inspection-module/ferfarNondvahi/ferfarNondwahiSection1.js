@@ -96,7 +96,7 @@ function FerfarNondwahiSection1() {
             {/* New container for the progress circle and button */}
             <div className={styles.cardContentBody}>
               <div className={styles.cardProgressInfo}>
-                <ProgressCircle progress={option.progress} total={option.total} />
+                  <ProgressCircle progress={option.progress} total={option.total} />
               </div>
 
               <button className={styles.button} onClick={() => navigate(option.route)}>

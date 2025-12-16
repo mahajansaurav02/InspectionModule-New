@@ -127,7 +127,7 @@ function ViewOrderFerfarList() {
 
   return (
     <>
-      <FerfarNavbar />
+      {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
         <CCardHeader className="d-flex justify-content-between align-items-center bg-primary text-white">
           <h4 className="mb-0">📋आदेश फेरफार यादी</h4>

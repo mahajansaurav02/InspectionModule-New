@@ -169,7 +169,8 @@ function TrutiArjList() {
   )
 
   const handleApplicationClick = (application) => {
-    navigate(`/truti-applications-details/${application.id}`, { state: { application } }) // Your 7/12 view logic
+    console.log(application,"\application")
+    navigate(`/truti-applications-details/${application.applicationId}`, { state: { application } }) // Your 7/12 view logic
   }
   const handle7_12Click = (applicationNo) => {
     console.log(`View 7/12 for application: ${applicationNo}`)

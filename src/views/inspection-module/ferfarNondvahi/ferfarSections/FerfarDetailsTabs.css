@@ -285,3 +285,62 @@
   border-color: #dc3545 !important;
   color: white !important;
 }
+
+
+.priority-selection-sm {
+  background: #f9fafb;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #eee;
+}
+
+.priority-label-sm {
+  font-size: 13px;
+  font-weight: 600;
+  color: #444;
+}
+
+.priority-pill {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.priority-pill input {
+  display: none;
+}
+
+/* Soft colors */
+.priority-pill.low {
+  background: #fdecec;
+  color: #c62828;
+}
+
+.priority-pill.medium {
+  background: #fff4e5;
+  color: #ef6c00;
+}
+
+.priority-pill.high {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+/* Active */
+.priority-pill.active {
+  border-color: currentColor;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+/* Hover */
+.priority-pill:hover {
+  opacity: 0.9;
+}
+

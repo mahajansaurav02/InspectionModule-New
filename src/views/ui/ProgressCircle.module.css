@@ -1,63 +1,32 @@
-/* ProgressCircle.module.css */
-
 .progressContainer {
-  position: relative; /* Essential for positioning children absolutely */
-  width: 120px; /* Fixed width for the container */
-  height: 120px; /* Fixed height for the container */
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
-  margin: 0 auto; /* Center the progress circle horizontally if it's in a flex item */
+  gap: 6px;
 }
 
-.progressBar {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%; /* Make SVG fill its container */
-  height: 100%; /* Make SVG fill its container */
-  /* Remove transform: rotate(-90deg) here. We will rotate the circle itself. */
-}
-
-.progressBackground {
+.bgCircle {
   fill: none;
-  stroke: #e6e6e6; /* Light gray background for the circle */
-  stroke-width: 8px;
+  stroke: #e6e6e6;
+  stroke-width: 10;
 }
 
 .progressCircle {
   fill: none;
-  stroke: var(--status-color, #2196f3); /* Default blue, will be overridden */
-  stroke-width: 8px;
+  stroke-width: 10;
   stroke-linecap: round;
-  transition: stroke-dashoffset 0.5s ease-in-out;
-  transform-origin: 60px 60px; /* Set rotation origin to the center of the SVG (half of 120px) */
-  transform: rotate(-90deg); /* Apply rotation directly to the progress circle */
-  /* The stroke-dasharray should be dynamically set by React for better control */
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  filter: drop-shadow(0 0 6px rgba(76, 175, 80, 0.4));
 }
 
-.progressStatus {
-  position: absolute; /* Position the status text absolutely within the container */
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%); /* Center the text perfectly */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  font-family: Arial, sans-serif;
-  color: #333;
-}
-
-.progressLabel {
-  font-size: 14px;
-  font-weight: 500;
-  color: #666;
-  margin-bottom: 2px;
-}
-
-.progressCount {
-  font-size: 16px;
+.percentText {
+  font-size: 18px;
   font-weight: 600;
+  fill: #333;
+}
+
+.countText {
+  font-size: 13px;
+  color: #666;
 }

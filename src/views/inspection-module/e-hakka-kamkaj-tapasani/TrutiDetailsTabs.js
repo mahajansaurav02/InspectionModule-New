@@ -15,6 +15,7 @@ import {
   CContainer,
   CRow,
   CCol,
+  CFormCheck,
 } from '@coreui/react'
 import {
   FaFilePdf,
@@ -27,6 +28,7 @@ import {
   FaTimes,
   FaArrowLeft,
 } from 'react-icons/fa'
+import '../Tabs.css'
 import { MdOutlineZoomIn } from 'react-icons/md'
 import { Navigate } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
@@ -35,6 +37,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
   const [activeKey, setActiveKey] = useState(1)
   const [documentHistory, setDocumentHistory] = useState([1])
   const [remark, setRemark] = useState('')
+  const [priority, setPriority] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
   const [zoomLevel, setZoomLevel] = useState(100)
@@ -75,14 +78,22 @@ const TrutiDetailsTabs = ({ ferfar }) => {
   }
 
   const handleSubmit = () => {
-    setIsLoading(true)
+    setIsLoading(true);
+
     setTimeout(() => {
-      setIsLoading(false)
-      setSubmitStatus('success')
-      setRemark('')
-      setTimeout(() => setSubmitStatus(null), 3000)
-    }, 1500)
-  }
+      setIsLoading(false);
+      setSubmitStatus('success');
+
+      setTimeout(() => {
+        setSubmitStatus(null);
+        setRemark('');
+
+        navigate(-1);
+      }, 1000);
+
+    }, 1500);
+  };
+
 
   const handleDownload = (type) => {
     let filePath, fileName
@@ -231,6 +242,46 @@ const TrutiDetailsTabs = ({ ferfar }) => {
               value={remark}
               onChange={(e) => setRemark(e.target.value)}
             />
+            <div className="priority-selection-sm mb-3">
+              <span className="priority-label-sm">
+                अभिप्रायाचे प्राधान्य प्रकार :
+              </span>
+
+              <div className="d-flex gap-2 mt-2 flex-wrap">
+                <label className={`priority-pill low ${priority === 'Low' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="priorityType"
+                    value="Low"
+                    checked={priority === 'Low'}
+                    onChange={() => setPriority('Low')}
+                  />
+                  अतीगंभीर
+                </label>
+
+                <label className={`priority-pill medium ${priority === 'Medium' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="priorityType"
+                    value="Medium"
+                    checked={priority === 'Medium'}
+                    onChange={() => setPriority('Medium')}
+                  />
+                  गंभीर
+                </label>
+
+                <label className={`priority-pill high ${priority === 'High' ? 'active' : ''}`}>
+                  <input
+                    type="radio"
+                    name="priorityType"
+                    value="High"
+                    checked={priority === 'High'}
+                    onChange={() => setPriority('High')}
+                  />
+                  साधारण
+                </label>
+              </div>
+            </div>
 
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">

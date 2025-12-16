@@ -1,63 +1,100 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import styles from './ProgressCircle.module.css'
 
 const ProgressCircle = ({ progress, total }) => {
-  const radius = 50 // Radius of the circle
-  const circumference = 2 * Math.PI * radius // Full circumference
+  const radius = 50
+  const circumference = 2 * Math.PI * radius
 
-  // Calculate percentage
-  const percentage = total === 0 ? 0 : (progress / total) * 100
+  // final completed percentage (used ONLY for color)
+  const completedPercentage =
+    total === 0 ? 0 : (progress / total) * 100
 
-  // Calculate the visible portion of the stroke
-  // The progress circle stroke will start from the top and fill clockwise
-  const strokeDashoffset = circumference - (percentage / 100) * circumference
+  // animated values
+  const [animatedPercent, setAnimatedPercent] = useState(0)
+  const [animatedCount, setAnimatedCount] = useState(0)
 
-  // Function to determine color based on percentage
-  const getColorForProgress = (value) => {
-    if (value < 25) {
-      return '#f44336' // Red
-    } else if (value < 50) {
-      return '#ff9800' // Orange
-    } else if (value < 75) {
-      return '#ffeb3b' // Yellow
-    } else {
-      return '#4caf50' // Green
+  useEffect(() => {
+    let start = null
+    const duration = 1200
+
+    const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3)
+
+    const animate = (timestamp) => {
+      if (!start) start = timestamp
+      const elapsed = timestamp - start
+      const progressRatio = Math.min(elapsed / duration, 1)
+      const eased = easeOutCubic(progressRatio)
+
+      setAnimatedPercent(eased * completedPercentage)
+      setAnimatedCount(Math.round(eased * progress))
+
+      if (progressRatio < 1) {
+        requestAnimationFrame(animate)
+      }
     }
+
+    requestAnimationFrame(animate)
+  }, [completedPercentage, progress])
+
+  const strokeDashoffset =
+    circumference - (animatedPercent / 100) * circumference
+
+  // ✅ COLOR RULES (your exact requirement)
+  const getColor = (value) => {
+    if (value >= 100) return '#2e7d32' // Dark Green
+    if (value < 25) return '#f44336'   // Red
+    if (value < 40) return '#ff9800'   // Orange
+    return '#4caf50'                   // Green
   }
 
-  const statusColor = getColorForProgress(percentage)
+  // color decided ONLY by completed percentage
+  const color = getColor(completedPercentage)
 
   return (
     <div className={styles.progressContainer}>
-      <svg
-        className={styles.progressBar}
-        width="120" // SVG width
-        height="120" // SVG height
-        viewBox="0 0 120 120" // Viewbox should match width/height for easy scaling
-      >
+      <svg width="120" height="120" viewBox="0 0 120 120">
+        <defs>
+          <linearGradient id="progressGradient" x1="1" y1="0" x2="0" y2="1">
+            <stop offset="0%" stopColor={color} />
+            <stop offset="100%" stopColor="#ffffff" />
+          </linearGradient>
+        </defs>
+
         {/* Background circle */}
         <circle
-          className={styles.progressBackground}
-          cx="60" // Center X (half of 120)
-          cy="60" // Center Y (half of 120)
-          r={radius}
-        />
-        {/* Progress circle */}
-        <circle
-          className={styles.progressCircle}
           cx="60"
           cy="60"
           r={radius}
+          className={styles.bgCircle}
+        />
+
+        {/* Progress circle */}
+        <circle
+          cx="60"
+          cy="60"
+          r={radius}
+          className={styles.progressCircle}
           style={{
-            strokeDasharray: circumference, // This sets the total length of the stroke
-            strokeDashoffset: strokeDashoffset, // This controls how much of the stroke is visible
-            stroke: statusColor, // Dynamic color based on progress
+            strokeDasharray: circumference,
+            strokeDashoffset,
+            stroke: 'url(#progressGradient)',
           }}
         />
+
+        {/* Percentage text */}
+        <text
+          x="50%"
+          y="50%"
+          dominantBaseline="middle"
+          textAnchor="middle"
+          className={styles.percentText}
+        >
+          {Math.round(animatedPercent)}%
+        </text>
       </svg>
-      <div className={styles.progressStatus}>
-        <div className={styles.progressLabel}>Status</div>
-        <div className={styles.progressCount}>{`${progress} of ${total}`}</div>
+
+      <div className={styles.countText}>
+        {animatedCount} of {total}
       </div>
     </div>
   )
