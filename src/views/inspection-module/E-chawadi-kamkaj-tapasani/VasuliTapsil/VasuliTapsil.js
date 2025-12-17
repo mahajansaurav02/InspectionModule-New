@@ -16,6 +16,7 @@ import styles from './VasuliTapsil.module.css'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import api from 'src/api/api'
 
 const VasuliTapsil = () => {
   const [demandData, setDemandData] = useState(null)
@@ -49,12 +50,14 @@ const VasuliTapsil = () => {
         alert('Village code not found....Please Select Village First')
         return
       }
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`,
-        {
-          headers: reqHeaders,
-        },
-      )
+
+      const res = await api.get(`${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`)
+  //  const res = await axios.get(
+  //       `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`,
+  //       {
+  //         headers: reqHeaders,
+  //       },
+  //     )
       setDemandData(res.data[0])
       setLoading0029(false)
     } catch (err) {
@@ -70,12 +73,9 @@ const VasuliTapsil = () => {
         return
       }
       setLoading0029(true)
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getVasuliForCollectedFor0029?ccode=${cCode}&revenueYear=2025-26`,
-        {
-          headers: reqHeaders,
-        },
-      )
+
+      const res = await api.get(`/inpsection/getVasuliForCollectedFor0029?ccode=${cCode}&revenueYear=2025-26`)
+
       setCollectedData(res.data[0])
       setLoading0029(false)
     } catch (err) {
@@ -93,12 +93,9 @@ const VasuliTapsil = () => {
         alert('Village code not found....Please Select Village First')
         return
       }
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getVasuliForEgsAndEduCess?revenueYear=2025-26&ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+
+      const res = await api.get(`/inpsection/getVasuliForEgsAndEduCess?revenueYear=2025-26&ccode=${cCode}`)
+
       setEducessData(res.data)
       setLoading0045(false)
     } catch (err) {
@@ -129,12 +126,9 @@ const VasuliTapsil = () => {
         alert('Village code not found....Please Select Village First')
         return
       }
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=2025-26&ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+
+      const res = await api.get(`/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=2025-26&ccode=${cCode}`)
+
       console.log(res.data, 'target data response')
       setTargetData(res.data)
       setLoadingTarget(false)
@@ -481,7 +475,7 @@ const VasuliTapsil = () => {
             className="submit-button"
             disabled={!remark.trim()}
           >
-            अभिप्राय जतन करा 
+            अभिप्राय जतन करा
           </CButton>
         </div>
       </div>

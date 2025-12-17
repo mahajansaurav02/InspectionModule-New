@@ -19,6 +19,7 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import reqHeaders from 'src/instance/headers'
 import './AkrushakDarTapa.module.css'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import api from 'src/api/api'
 const AkrushakDarTapa = () => {
   const [akrushakRateList, setAkrushakRateList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -50,9 +51,9 @@ const AkrushakDarTapa = () => {
         alert('Village code not found....Please Select Village First')
         return
       }
-      const res = await axios.get(`${URLS.BaseURL}/inpsection/getAkrushakDar?ccode=${cCode}`, {
-        headers: reqHeaders,
-      })
+
+            const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`)
+
       setAkrushakRateList(res.data || [])
     } catch (err) {
       setError('डेटा मिळू शकला नाही')

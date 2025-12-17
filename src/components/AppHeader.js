@@ -29,34 +29,34 @@ const AppHeader = () => {
                 {/* Left Section: Brand & Toggler */}
                 <div className="modern-left-section">
 
-                    
+
                     <CHeaderBrand to="/" className="modern-brand">
-                       
+
                         <h4 className="main-text">
-                            ग्राम महसूल अधिकारी दप्तर तपासणी प्रणाली 
+                            ग्राम महसूल अधिकारी दप्तर तपासणी प्रणाली
                         </h4>
                     </CHeaderBrand>
                 </div>
-                
+
 
                 {/* Center Section: Compact Section1 Form */}
                 <div className="modern-center-section">
                     <div className="compact-form-container">
-                       <Section1 
-  setDropdownVal={setDropdownVal} 
-  dropdownVal={dropdownVal}
-  compact
-/>
+                        <Section1
+                            setDropdownVal={setDropdownVal}
+                            dropdownVal={dropdownVal}
+                            compact
+                        />
 
                     </div>
                 </div>
-                
+
                 {/* Right Section: User Profile */}
                 <CHeaderNav className="modern-right-section">
                     <AppHeaderDropdown />
                 </CHeaderNav>
             </CContainer>
-            
+
             {/* Decorative accent line */}
             <div className="header-accent"></div>
         </CHeader>

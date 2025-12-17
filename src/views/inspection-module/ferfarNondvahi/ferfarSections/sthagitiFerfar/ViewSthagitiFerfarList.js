@@ -35,6 +35,7 @@ import moment from 'moment'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import { useSelector } from 'react-redux'
 import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 
 function ViewSthagitiFerfarList() {
   const navigate = useNavigate()
@@ -72,12 +73,9 @@ const reqHeaders = getReqHeaders({ token, user })
       return
     }
     try {
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getStayFerfarForInspection?ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+     
+
+      const res = await api.get(`/inpsection/getStayFerfarForInspection?ccode=${cCode}`)
       setFerfarList1(res.data)
     } catch (err) {
       console.error(err)

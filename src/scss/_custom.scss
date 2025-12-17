@@ -37,7 +37,7 @@
 /* 2. Hover Effect */
 .sidebar .nav-item .nav-link:hover,
 .sidebar .nav-group .nav-group-toggle:hover {
-  background-color: rgba(255, 255, 255, 0.05); /* Light highlight */
+  background-color: #022e90; /* Light highlight */
   color: #fff; /* White text on hover */
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -79,5 +79,9 @@
 }
 @keyframes spin {
   to { transform: rotate(360deg); }
+}
+
+.sidebar{
+  background-color: #022e90;
 }
 

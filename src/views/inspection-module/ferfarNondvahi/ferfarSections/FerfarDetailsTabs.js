@@ -31,6 +31,7 @@ import './FerfarDetailsTabs.css'
 import { MdOutlineZoomIn } from 'react-icons/md'
 import URLS from 'src/URLS'
 import { useNavigate } from 'react-router-dom'
+import api from 'src/api/api'
 
 
 
@@ -47,7 +48,18 @@ const FerfarDetailsTabs = ({ ferfar }) => {
   const [submitStatus, setSubmitStatus] = useState('')
   const fileInputRef = useRef(null)
   const navigate = useNavigate()
+  let VillageData = localStorage.getItem('selectedVillageData')
+  let selectedVillageData = JSON.parse(VillageData)
 
+  let {
+    cCode,
+    distMarathiName,
+    districtCode,
+    lgdCode,
+    talukaCode,
+    talukaMarathiName,
+    villageName,
+  } = selectedVillageData[0]
   const [suggestedRemarks] = useState([
     'अपलोड केलेले दस्तऐवज नुसार सातबारा व अंमल योग्य आला आहे/ नाही',
     'फेरफार विहित मुदतीत प्रमाणित करण्यात आले आहे / नाही',
@@ -203,21 +215,38 @@ const FerfarDetailsTabs = ({ ferfar }) => {
     return decrypted.toString(CryptoJS.enc.Utf8)
   }
 
-   const handleSubmit = () => {
+  const handleSubmit = async () => {
     setIsLoading(true);
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setSubmitStatus('success');
 
-      setTimeout(() => {
-        setSubmitStatus(null);
-        setRemark('');
+    const res = await api.post(`/inpsection/saveFerfarForInspection?ccode=${cCode}&revenueYear=2025-26`)
+    try {
+      if (res.status === '201') {
+        setTimeout(() => {
+          setIsLoading(false);
+          setSubmitStatus('success');
 
-        navigate(-1);
-      }, 1000);
+          setTimeout(() => {
+            setSubmitStatus(null);
+            setRemark('');
 
-    }, 1500);
+            navigate(-1);
+          }, 1000);
+
+        }, 1500);
+
+      } else {
+
+      }
+
+
+
+    } catch (err) {
+
+alert.error('Failed to submit remark')
+    }
+
+
   };
 
   const handleDownload = (type) => {
@@ -375,11 +404,11 @@ const FerfarDetailsTabs = ({ ferfar }) => {
                 onChange={handleFileChange}
               />
               <CButton color="info" onClick={handleAttachClick}>
-                दस्थायावेज जोडा 
+                दस्थायावेज जोडा
               </CButton>
               {attachedFile && <span className="text-success small">{attachedFile.name}</span>}
             </div>
-             {' '}
+            {' '}
             <div className="priority-selection-sm mb-3">
               <span className="priority-label-sm">
                 अभिप्रायाचे प्राधान्य प्रकार :
@@ -422,20 +451,20 @@ const FerfarDetailsTabs = ({ ferfar }) => {
             </div>
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
-                साफ करा 
+                साफ करा
               </CButton>
 
               <CButton color="primary" onClick={handleSubmit} className="submit-button">
-{isLoading ? 'जतन करा' : 'जतन होत आहे ...'}            
-  </CButton>
+                {isLoading ? 'जतन करा' : 'जतन होत आहे ...'}
+              </CButton>
             </div>
 
-              {submitStatus === 'success' && (
-                          <CAlert color="success" className="mt-3">
-                            <FaCheckCircle className="me-2" />
-                            अभिप्राय यशस्वीरित्या जतन झाला!
-                          </CAlert>
-                        )}
+            {submitStatus === 'success' && (
+              <CAlert color="success" className="mt-3">
+                <FaCheckCircle className="me-2" />
+                अभिप्राय यशस्वीरित्या जतन झाला!
+              </CAlert>
+            )}
           </div>
         )
       }

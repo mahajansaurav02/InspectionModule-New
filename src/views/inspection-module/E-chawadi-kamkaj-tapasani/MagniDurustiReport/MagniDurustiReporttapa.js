@@ -2,31 +2,33 @@ import React, { useEffect, useState } from 'react'
 import './MagniDurustiReporttapa.css'
 import axios from 'axios'
 import URLS from 'src/URLS'
+import { useSelector } from 'react-redux'
 
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
 import { CAlert } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
-import reqHeaders from 'src/instance/headers'
+// import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 
 export const MagniDurustiReporttapa = () => {
-  const token = localStorage.getItem('token')
-  const talukCode = JSON.parse(localStorage.getItem('talukaCode'))
-  const districtCode = JSON.parse(localStorage.getItem('districtCode'))
-  const villageForInspection = JSON.parse(localStorage.getItem('villageForInspection'))
+
   const [khatedarList, setKhatedarList] = useState([])
   const [remark, setRemark] = useState('')
   const [loading, setLoading] = useState(false)
+  const [reqHeaders, setReqHeaders] = useState({})
   let VillageData = localStorage.getItem('selectedVillageData')
-
   let selectedVillageData = JSON.parse(VillageData)
 
   let { cCode, distMarathiName, lgdCode, talukaCode, talukaMarathiName, villageName } =
     selectedVillageData[0]
   const navigate = useNavigate()
+const { user, roles, token } = useSelector((state) => state.auth || {})
 
+// const reqHeaders = getReqHeaders({ token, user })
   const tableHeaderMap = {
     khataNo: 'खाताक्र.',
     khataOwnerName: 'खातेदाराचे नाव',
@@ -61,9 +63,23 @@ export const MagniDurustiReporttapa = () => {
     netAmount: 'एकूण रक्कम',
   }
 
+useEffect(() => {
+  const initHeaders = async () => {
+    if (!token || !user) return
+
+    const headers = await getReqHeaders({ token, user })
+    setReqHeaders(headers)
+  }
+
+  initHeaders()
+}, [token, user])
+
+  
   useEffect(() => {
+      if (!reqHeaders || Object.keys(reqHeaders).length === 0) return
+
     getMahsulDurustiList()
-  }, [])
+  }, [reqHeaders])
 
   const handleRemarkSubmit = () => {
 
@@ -83,15 +99,7 @@ export const MagniDurustiReporttapa = () => {
         console.log('Village code not found')
         return
       }
-
-      const response = await axios.get(
-        `${
-          URLS.BaseURL
-        }/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${'11'}&cCode=${cCode}&activeFlag=E&revenueYear=2025-26`,
-        {
-          headers: reqHeaders,
-        },
-      )
+            const response = await api.get(`/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${talukaCode}&cCode=${cCode}&activeFlag=E&revenueYear=2025-26`)
 
       if (response.data.length <= 0) {
         toast.info('No records found', { autoClose: 2000 })

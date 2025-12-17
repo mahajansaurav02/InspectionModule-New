@@ -31,6 +31,7 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import { useSelector } from 'react-redux'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 
 function ViewTemplateFerfarList() {
   const navigate = useNavigate()
@@ -64,9 +65,9 @@ const reqHeaders = getReqHeaders  ({ token, user })
       return
     }
     try {
-      const res = await axios.get(`${URLS.BaseURL}/inpsection/getTemplateFerfar?ccode=${cCode}`, {
-        headers: reqHeaders,
-      })
+   
+
+      const res = await api.get(`/inpsection/getTemplateFerfar?ccode=${cCode}`)
       setFerfarList(res.data)
     } catch (err) {
       console.error(err)

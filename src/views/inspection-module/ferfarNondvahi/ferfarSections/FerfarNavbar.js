@@ -77,7 +77,7 @@ const FerfarNavbar = () => {
     >
       <CContainer fluid>
         {/* Left Section: Brand/Title */}
-        <CNavbarBrand href="#" className="me-auto text-white fw-bold d-flex align-items-center">
+        <CNavbarBrand   className="me-auto text-white fw-bold d-flex align-items-center">
           <CIcon icon={cilBalanceScale} size="lg" className="me-2" />
           <span style={{ fontSize: '1.25rem' }}>ग्राम महसूल अधिकारी दप्तर तपासणी प्रणाली</span>
         </CNavbarBrand>

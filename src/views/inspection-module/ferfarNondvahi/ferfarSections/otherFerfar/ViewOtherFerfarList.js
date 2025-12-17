@@ -31,6 +31,7 @@ import moment from 'moment'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 
 function ViewOtherFerfarList() {
   const navigate = useNavigate()
@@ -63,9 +64,11 @@ const reqHeaders = getReqHeaders({ token, user })
       return
     }
     try {
-      const res = await axios.get(`${URLS.BaseURL}/inpsection/getItarFerfar?ccode=${cCode}`, {
-        headers: reqHeaders,
-      })
+      // const res = await axios.get(`${URLS.BaseURL}/inpsection/getItarFerfar?ccode=${cCode}`, {
+      //   headers: reqHeaders,
+      // })
+            const res = await api.get(`/inpsection/getItarFerfar?ccode=${cCode}`)
+
       setFerfarList1(res.data)
     } catch (err) {
       console.error(err)

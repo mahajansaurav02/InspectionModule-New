@@ -36,6 +36,7 @@ import URLS from 'src/URLS'
 import moment from 'moment/moment'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 
 function ViewRejectedFerfarList() {
   const navigate = useNavigate()
@@ -70,12 +71,9 @@ const reqHeaders = getReqHeaders({ token, user })
       return
     }
     try {
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getTantrikFerfarForInspection?ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+    
+
+      const res = await api.get(`/inpsection/getTantrikFerfarForInspection?ccode=${cCode}`)
       setFerfarList(res.data)
     } catch (err) {
       console.error(err)

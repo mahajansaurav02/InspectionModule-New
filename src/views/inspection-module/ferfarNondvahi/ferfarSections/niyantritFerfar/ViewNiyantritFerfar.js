@@ -36,6 +36,7 @@ import URLS from 'src/URLS'
 import moment from 'moment'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 // const token = localStorage.getItem('token')
 
 function ViewNiyantritFerfar() {
@@ -52,16 +53,14 @@ function ViewNiyantritFerfar() {
   const filteredData = ferfarList1.filter((ferfar) =>
     String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase()),
   )
-const { user, roles, token } = useSelector((state) => state.auth || {})
 
-const reqHeaders = getReqHeaders({ token, user })
   const getReEntryFerfarList = async () => {
     setIsLoading(true)
     const cCode = '272400110296420000'
     try {
-      const res = await axios.get(`${URLS.BaseURL}/inpsection/getWarg2FherfarData?ccode=${cCode}`, {
-        headers: reqHeaders,
-      })
+     
+  const res = await api.get(`${URLS.BaseURL}/inpsection/getWarg2FherfarData?ccode=${cCode}`)
+
       setFerfarList1(res.data)
     } catch (err) {
       console.error(err)

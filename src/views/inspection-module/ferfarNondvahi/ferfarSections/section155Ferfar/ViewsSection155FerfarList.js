@@ -34,6 +34,7 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import 'src/views/inspection-module/ferfarNondvahi/FerfarList.css'
 import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 
 function ViewsSection155FerfarList() {
   const navigate = useNavigate()
@@ -71,9 +72,12 @@ const reqHeaders = getReqHeaders({ token, user })
         alert('Village code not found....Please Select Village First')
         return
       }
-      const res = await axios.get(`${URLS.BaseURL}/inpsection/getKalamFerfar?ccode=${cCode}`, {
-        headers: reqHeaders,
-      })
+      // const res = await axios.get(`${URLS.BaseURL}`, {
+      //   headers: reqHeaders,
+      // })
+
+
+      const res = await api.get(`${URLS.BaseURL}/inpsection/getKalamFerfar?ccode=${cCode}`)
       setFerfarList1(res.data)
     } catch (err) {
       console.error(err)

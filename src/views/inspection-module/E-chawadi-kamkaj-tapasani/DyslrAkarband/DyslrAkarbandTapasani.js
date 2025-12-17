@@ -9,6 +9,7 @@ import axios from 'axios'
 import URLS from 'src/URLS'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import api from 'src/api/api'
 
 // Add the new functions from the second code snippet
 var prevTotalArea = 0.0,
@@ -127,12 +128,9 @@ const DyslrAkarbandTapasani = () => {
         alert('Village code not found....Please Select Village First')
         return
       }
-      const response = await axios.get(
-        `${URLS.BaseURL}/inpsection/form1OdcDiff?districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+   
+                  const response = await api.get(`/inpsection/form1OdcDiff?districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${cCode}`)
+
 
       if (response.data) {
         const filteredData = response.data.filter((r) => {
@@ -360,13 +358,10 @@ const DyslrAkarbandTapasani = () => {
 
     setLoadingRejected(true)
     try {
-      const response = await axios.get(
-        `${URLS.BaseURL}/inpsection/getFormDyslrDeleteEntries?cCode=${cCode}
-`,
-        {
-          headers: reqHeaders,
-        },
-      )
+   
+            const response = await api.get(`/inpsection/getFormDyslrDeleteEntries?cCode=${cCode}`)
+
+
       if (response.data && response.data.form1DyslrData) {
         const mappedData = response.data.form1DyslrData.map((r) => {
           getTotalAreaAssess(r.totalAreaH, r.cultivableAreaInt, r.netCultiAreaH, r.assessment)

@@ -27,6 +27,7 @@ import { useNavigate, useParams } from 'react-router-dom' // 👈 IMPORTANT: Imp
 import URLS from 'src/URLS'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import api from 'src/api/api'
 
 const CONDITION_MAPPING = {
   // We are using '1', '2', '3', '4' assuming those are the IDs passed in the path.
@@ -47,10 +48,7 @@ const CONDITION_MAPPING = {
     title: '३० दिवसा पेक्षा कमी दिवस प्रलंबित अर्जांची यादी',
   },
 }
-// /getPendingApplicationsForTalathiUnderThirtyDays
-//  /getPendingApplicationsForTalathiInMidPendingRange
-//  /getPendingApplicationsOver180Days
-//  /getPendingApplications90To180Days
+
 // --------------------------------------------------------
 
 function TrutiArjList() {
@@ -99,13 +97,10 @@ function TrutiArjList() {
     // 🚨 Adjust payload for your API requirements (e.g., divisionCode, status, etc.)
 
     try {
-      const response = await axios.get(
-        `${URLS.BaseURL}/${currentCondition.apiUrl}?ccode=${cCode}&talukaCode=${talukaCode}&districtCode=${districtCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
-      // Adjust this line based on your API response structure (e.g., response.data.data.content)
+
+
+      const response = await api.get(`/${currentCondition.apiUrl}?ccode=${cCode}&talukaCode=${talukaCode}&districtCode=${districtCode}`)
+
       const fetchedData = response.data.data.content || response.data.data || response.data
 
       if (Array.isArray(fetchedData)) {
@@ -244,8 +239,8 @@ function TrutiArjList() {
                     </div> */}
                     <div className="dataTables_info">
                       {totalItems} नोंदींपैकी {(currentPage - 1) * itemsPerPage + 1} ते {' '}
-                       {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
-                      
+                      {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
+
                     </div>
                   </CCol>
 

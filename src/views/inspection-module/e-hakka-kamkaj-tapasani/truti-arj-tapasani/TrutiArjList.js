@@ -28,6 +28,7 @@ import axios from 'axios'
 import URLS from 'src/URLS'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import api from 'src/api/api'
 
 function TrutiArjList() {
   // Sample data - replace with your actual data source
@@ -134,12 +135,9 @@ function TrutiArjList() {
       return
     }
     try {
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getEhakkaTrutiApplication?ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+    
+
+      const res = await api.get(`/inpsection/getEhakkaTrutiApplication?ccode=${cCode}`)
 
       console.log(res.data, 'trutiApplication list')
       setTrutiArjList(res.data)

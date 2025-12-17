@@ -10,10 +10,11 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 
 import './NirankGavNamunaTapa.css'
 import { Card } from 'react-bootstrap'
-import reqHeaders from 'src/instance/headers'
+import { useSelector } from 'react-redux'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 
-const token = localStorage.getItem('token')
 const villageData = JSON.parse(localStorage.getItem('villageData'))
 
 export const NirankGavNamunaTapa = () => {
@@ -30,6 +31,8 @@ export const NirankGavNamunaTapa = () => {
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)
+  const { user, roles, token } = useSelector((state) => state.auth || {})
+  const [reqHeaders, setReqHeaders] = useState({})
 
   let {
     cCode,
@@ -41,10 +44,11 @@ export const NirankGavNamunaTapa = () => {
     villageName,
   } = selectedVillageData[0]
   const getVillageForms = async () => {
+
     try {
-      const response = await axios.get(`${URLS.BaseURL}/restservice/getAllVillageForm`, {
-        headers: reqHeaders,
-      })
+
+            const response = await api.get(`/restservice/getAllVillageForm`)
+
 
       setVillageForms(
         response.data.villageFormMaster.map((vfm, i) => ({
@@ -69,12 +73,8 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-      const response = await axios.get(
-        `${URLS.BaseURL}/restservice/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`,
-        {
-          headers: reqHeaders,
-        },
-      )
+  
+      const response = await api.get(`/restservice/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`)
 
       if (response.data) {
         const dataa = response.data.nirank.map((row, index) => ({
@@ -102,12 +102,7 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-      const response = await axios.get(
-        `${URLS.BaseURL}/form17NoKaJaPa/getReportForm17NoKaJaPa?cCode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+      const response = await api.get(`/form17NoKaJaPa/getReportForm17NoKaJaPa?cCode=${cCode}`)
 
       if (response.data) {
         setKajapaData(
@@ -146,14 +141,7 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-      const response = await axios.get(
-        `${
-          URLS.BaseURL
-        }/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${'2025-26'}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+      const response = await api.get(`/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${'2025-26'}`)
 
       if (response.data) {
         setAddLandRevenueData(
@@ -186,7 +174,6 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-      // Example API call for other table data - replace with actual endpoint
       const response = await axios.get(
         `${URLS.BaseURL}/otherEndpoint/getOtherData?cCode=${ccode}`,
         {
@@ -195,7 +182,7 @@ export const NirankGavNamunaTapa = () => {
       )
 
       if (response.data) {
-        // Sample data structure - replace with actual response structure
+
         setOtherTableData([
           {
             id: 1,
@@ -221,15 +208,21 @@ export const NirankGavNamunaTapa = () => {
     }
   }
 
+
+
   useEffect(() => {
+    // if (!reqHeaders || Object.keys(reqHeaders).length === 0) return
+
     if (!apiCalled.current) {
       apiCalled.current = true
+
       getVillageForms()
       getNirankandCompleted()
       getKajapadata()
       getOtherTableData()
     }
-  }, [])
+  }, [reqHeaders])
+
 
   useEffect(() => {
     if (villageForms.length > 0 && tableData.length > 0) {
@@ -247,7 +240,6 @@ export const NirankGavNamunaTapa = () => {
   }, [tableData])
 
   useEffect(() => {
-    // Reset remark when a new form is selected or if the form is 'वाढीव जमीन महसूल'
     if (selectedForm) {
       setRemark('')
       if (
@@ -281,27 +273,19 @@ export const NirankGavNamunaTapa = () => {
       return
     }
 
-    // Placeholder for API call to submit the remark
     console.log(`Submitting remark for form: ${selectedForm.formName}`)
     console.log(`Remark: ${remark}`)
 
-    // Logic to send data to the backend would go here
-    // Example: axios.post(`${URLS.BaseURL}/restservice/submitRemark`, { formId: selectedForm.formId, remark: remark, ... })
-
-    // After successful submission
+   
     alert(`Remark submitted successfully for ${selectedForm.formName}`)
-    setRemark('') // Clear the remark field
+    setRemark('') 
   }
 
-  // Function to determine which table to show based on selected form
   const renderReportTable = () => {
     if (!selectedForm) return null
 
-    // Pass an empty object for now as 'showControls' is handled outside, but for future proofing of components,
-    // it's good practice to pass props for what they display.
     const tableProps = {
       formName: selectedForm.formName,
-      // You can add village/taluka/district info from villageData here if available
     }
 
     if (selectedForm.formName.includes('कजाप') || selectedForm.formId === 'FORM_17') {
@@ -341,9 +325,8 @@ export const NirankGavNamunaTapa = () => {
                 villageForms.slice(1).map((record) => (
                   <div
                     key={record.id || record.index}
-                    className={`form-card ${
-                      selectedForm?.formId === record.formId ? 'selected' : ''
-                    }`}
+                    className={`form-card ${selectedForm?.formId === record.formId ? 'selected' : ''
+                      }`}
                     onClick={() => setSelectedForm(record)}
                   >
                     <div className="form-card-inner">
@@ -391,14 +374,14 @@ export const NirankGavNamunaTapa = () => {
 
               <div className="button-container">
                 <button className="cancel-button" onClick={handleCancel}>
-                  रद्द करा 
+                  रद्द करा
                 </button>
                 <button
                   className="submit-button"
                   onClick={handleRemarkSubmit}
                   disabled={!remark.trim()}
                 >
-                  अभिप्राय जतन करा 
+                  अभिप्राय जतन करा
                 </button>
               </div>
               {/* End Remark and Control Section */}

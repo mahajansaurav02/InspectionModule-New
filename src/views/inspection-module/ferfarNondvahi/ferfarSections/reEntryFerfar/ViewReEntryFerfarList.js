@@ -35,6 +35,7 @@ import moment from 'moment'
 import { useSelector } from 'react-redux'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
+import api from 'src/api/api'
 
 function ViewReEntryFerfarList() {
   const navigate = useNavigate()
@@ -48,9 +49,7 @@ function ViewReEntryFerfarList() {
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)
-const { user, roles, token } = useSelector((state) => state.auth || {})
 
-const reqHeaders = getReqHeaders({ token, user })
   let {
     cCode,
     distMarathiName,
@@ -72,12 +71,9 @@ const reqHeaders = getReqHeaders({ token, user })
       return
     }
     try {
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getReEntryFerfarDetails?ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+     
+
+      const res = await api.get(`/inpsection/getReEntryFerfarDetails?ccode=${cCode}`)
       setFerfarList1(res.data)
     } catch (err) {
       console.error(err)

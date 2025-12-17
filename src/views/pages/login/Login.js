@@ -350,15 +350,9 @@ const Login = () => {
         }
         setShowToast(true)
         // Reload captcha on failed API call
-<<<<<<< HEAD
          setLoginValue({ ...loginValue, captcha: '' })
          loadCaptchaEnginge(6, 'skyblue')
         
-=======
-        loadCaptchaEnginge(6, 'skyblue')
-        // setLoginValue({ ...loginValue, captcha: '' })
-
->>>>>>> 5edb8bebfb8d28f0984c99ff7cda701e8651bac3
       })
   }
   const togglePassword = () => {
