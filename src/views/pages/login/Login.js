@@ -160,6 +160,8 @@ const Login = () => {
     } else {
       setShowToast(true)
       setToastMsg('Captcha does not match.')
+      setLoginValue({ ...loginValue, captcha: '' })
+      loadCaptchaEnginge(6, 'skyblue')
     }
   }
 
@@ -294,7 +296,9 @@ const Login = () => {
         }
         setShowToast(true)
         // Reload captcha on failed API call
-        loadCaptchaEnginge(6, 'skyblue')
+         setLoginValue({ ...loginValue, captcha: '' })
+         loadCaptchaEnginge(6, 'skyblue')
+        
       })
   }
   const togglePassword = () => {
