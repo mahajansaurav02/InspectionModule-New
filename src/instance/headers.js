@@ -8,6 +8,8 @@ const mhrSchemaName = localStorage.getItem('mhrSchemaName')
 const servarthId = localStorage.getItem('servarthId')
 const langType = localStorage.getItem('umi_locale') === 'ma-IN' ? 'mr-IN' : 'en-US'
 
+
+
 const reqHeaders = {
   'Accept-Language': langType,
   Authorization: `Bearer ${token}`,

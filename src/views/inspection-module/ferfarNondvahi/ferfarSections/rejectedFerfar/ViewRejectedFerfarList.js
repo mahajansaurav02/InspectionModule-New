@@ -25,6 +25,7 @@ import {
   CTooltip,
   CPaginationItem,
 } from '@coreui/react'
+import { useSelector } from 'react-redux'
 import CIcon from '@coreui/icons-react'
 import { cilSearch, cilFile, cilMagnifyingGlass, cilInfo } from '@coreui/icons'
 import FerfarNavbar from '../FerfarNavbar'
@@ -33,8 +34,8 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import axios from 'axios'
 import URLS from 'src/URLS'
 import moment from 'moment/moment'
-import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import getReqHeaders from 'src/instance/getHeader'
 
 function ViewRejectedFerfarList() {
   const navigate = useNavigate()
@@ -47,7 +48,9 @@ function ViewRejectedFerfarList() {
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)
+const { user, roles, token } = useSelector((state) => state.auth || {})
 
+const reqHeaders = getReqHeaders({ token, user })
   let {
     cCode,
     distMarathiName,
@@ -57,7 +60,6 @@ function ViewRejectedFerfarList() {
     talukaMarathiName,
     villageName,
   } = selectedVillageData[0]
-  const token = localStorage.getItem('token')
 
   const itemsPerPage = 5
 

@@ -25,6 +25,8 @@ import {
   CPaginationItem,
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
+import { useSelector } from 'react-redux'
+
 import { cilSearch, cilFile, cilMagnifyingGlass, cilInfo } from '@coreui/icons'
 import FerfarNavbar from '../FerfarNavbar'
 import { useNavigate } from 'react-router-dom'
@@ -32,9 +34,9 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import axios from 'axios'
 import URLS from 'src/URLS'
 import moment from 'moment'
-import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
-const token = localStorage.getItem('token')
+import getReqHeaders from 'src/instance/getHeader'
+// const token = localStorage.getItem('token')
 
 function ViewNiyantritFerfar() {
   const navigate = useNavigate()
@@ -50,7 +52,9 @@ function ViewNiyantritFerfar() {
   const filteredData = ferfarList1.filter((ferfar) =>
     String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase()),
   )
+const { user, roles, token } = useSelector((state) => state.auth || {})
 
+const reqHeaders = getReqHeaders({ token, user })
   const getReEntryFerfarList = async () => {
     setIsLoading(true)
     const cCode = '272400110296420000'

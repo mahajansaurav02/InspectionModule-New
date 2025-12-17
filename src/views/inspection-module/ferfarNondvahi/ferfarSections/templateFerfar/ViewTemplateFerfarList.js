@@ -28,8 +28,9 @@ import URLS from 'src/URLS'
 import moment from 'moment'
 import Section1 from 'src/views/dashboard/Sections/Section1'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
-import reqHeaders from 'src/instance/headers'
+import { useSelector } from 'react-redux'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import getReqHeaders from 'src/instance/getHeader'
 
 function ViewTemplateFerfarList() {
   const navigate = useNavigate()
@@ -51,9 +52,10 @@ function ViewTemplateFerfarList() {
     talukaMarathiName,
     villageName,
   } = selectedVillageData[0]
-  const token = localStorage.getItem('token')
+const { user, roles, token } = useSelector((state) => state.auth || {})
 
-  const itemsPerPage = 5
+const reqHeaders = getReqHeaders  ({ token, user })
+  const itemsPerPage = 10
 
   const getTemplateFerfar = async () => {
     setIsLoading(true)
