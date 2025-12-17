@@ -284,7 +284,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
 
   const renderDocumentContent = (doc, tabKey) => {
     if (doc.type === '7/12') {
-      if (!doc.content) return <div className="text-muted">No 7/12 document available</div>
+      if (!doc.content) return <div className="text-muted"> ७/१२ उपलब्ध नाही  </div>
       return <div className="document-viewer" dangerouslySetInnerHTML={{ __html: doc.content }} />
     } else if (doc.type === 'ferfar') {
       return (
@@ -342,7 +342,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
         return (
           <div className="mb-3">
             <div className="suggested-remarks mb-3">
-              <h6>Suggested Remarks:</h6>
+              <h6>सुचविलेले अभिप्राय:</h6>
               <div className="d-flex flex-wrap gap-2">
                 {suggestedRemarks.map((suggestion, index) => (
                   <CButton
@@ -362,7 +362,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
             <CFormTextarea
               rows={4}
               className="remark-textarea mb-3"
-              placeholder="Write your remark here..."
+              placeholder="तुमचा अभिप्राय येथे लिहा..."
               value={remark}
               onChange={(e) => setRemark(e.target.value)}
             />
@@ -375,7 +375,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
                 onChange={handleFileChange}
               />
               <CButton color="info" onClick={handleAttachClick}>
-                Attach Document
+                दस्थायावेज जोडा 
               </CButton>
               {attachedFile && <span className="text-success small">{attachedFile.name}</span>}
             </div>
@@ -422,18 +422,18 @@ const FerfarDetailsTabs = ({ ferfar }) => {
             </div>
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
-                Clear Remarks
+                साफ करा 
               </CButton>
 
               <CButton color="primary" onClick={handleSubmit} className="submit-button">
-{isLoading ? 'Submitting...' : 'Submit Remark'}            
+{isLoading ? 'जतन करा' : 'जतन होत आहे ...'}            
   </CButton>
             </div>
 
               {submitStatus === 'success' && (
                           <CAlert color="success" className="mt-3">
                             <FaCheckCircle className="me-2" />
-                            Remark submitted successfully!
+                            अभिप्राय यशस्वीरित्या जतन झाला!
                           </CAlert>
                         )}
           </div>
@@ -486,7 +486,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
           <MdOutlineZoomIn /> -
         </CButton>
       </CTooltip>
-      <CTooltip content="Download Document">
+      <CTooltip content="दस्तऐवज डाउनलोड करा">
         <CButton
           color="primary"
           size="sm"

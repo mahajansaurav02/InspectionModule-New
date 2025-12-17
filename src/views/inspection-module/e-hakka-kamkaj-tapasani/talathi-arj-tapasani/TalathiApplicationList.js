@@ -238,9 +238,14 @@ function TrutiArjList() {
 
                 <CRow className="mt-3 align-items-center">
                   <CCol xs={12} md={6} className="mb-2 mb-md-0">
-                    <div className="dataTables_info">
+                    {/* <div className="dataTables_info">
                       Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
                       {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
+                    </div> */}
+                    <div className="dataTables_info">
+                      {totalItems} नोंदींपैकी {(currentPage - 1) * itemsPerPage + 1} ते {' '}
+                       {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
+                      
                     </div>
                   </CCol>
 

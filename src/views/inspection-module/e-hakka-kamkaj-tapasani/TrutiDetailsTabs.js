@@ -217,7 +217,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
         return (
           <div className="mb-3">
             <div className="suggested-remarks mb-3">
-              <h6>Suggested Remarks:</h6>
+              <h6>सुचविलेले अभिप्राय:</h6>
               <div className="d-flex flex-wrap gap-2">
                 {suggestedRemarks.map((suggestion, index) => (
                   <CButton
@@ -238,7 +238,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
             <CFormTextarea
               rows={4}
               className="remark-textarea mb-3"
-              placeholder="Write your remark here..."
+              placeholder="तुमचा अभिप्राय येथे लिहा..."
               value={remark}
               onChange={(e) => setRemark(e.target.value)}
             />
@@ -285,7 +285,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
-                Clear Remarks
+                साफ करा
               </CButton>
 
               <CButton
@@ -294,14 +294,14 @@ const TrutiDetailsTabs = ({ ferfar }) => {
                 className="submit-button"
                 disabled={isLoading}
               >
-                {isLoading ? 'Submitting...' : 'Submit Remark'}
+                {isLoading ? 'जतन होत आहे ...' :'जतन करा' }
               </CButton>
             </div>
 
             {submitStatus === 'success' && (
               <CAlert color="success" className="mt-3">
                 <FaCheckCircle className="me-2" />
-                Remark submitted successfully!
+                अभिप्राय यशस्वीरित्या जतन झाला!
               </CAlert>
             )}
           </div>
@@ -354,7 +354,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
           <MdOutlineZoomIn /> -
         </CButton>
       </CTooltip>
-      <CTooltip content="Download Document">
+      <CTooltip content="दस्तऐवज डाउनलोड करा">
         <CButton
           color="primary"
           size="sm"

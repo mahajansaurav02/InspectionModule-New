@@ -574,7 +574,7 @@ const DyslrAkarbandTapasani = () => {
                     disabled={firstRemarkSubmitting}
                     onClick={handleFirstRemarkSubmit}
                   >
-                    {firstRemarkSubmitting ? 'सबमिट करत आहे...' : 'शेरा सबमिट करा'}
+                    {firstRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
                   </Button>
 
                   <Button
@@ -582,7 +582,7 @@ const DyslrAkarbandTapasani = () => {
                     size="sm"
                     onClick={handleFirstRemarkClear}
                   >
-                    क्लिअर
+                    साफ करा 
                   </Button>
                 </div>
               </Card>
@@ -737,7 +737,7 @@ const DyslrAkarbandTapasani = () => {
                     disabled={secondRemarkSubmitting}
                     onClick={handleSecondRemarkSubmit}
                   >
-                    {secondRemarkSubmitting ? 'सबमिट करत आहे...' : 'शेरा सबमिट करा'}
+                    {secondRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
                   </Button>
 
                   <Button
@@ -745,7 +745,7 @@ const DyslrAkarbandTapasani = () => {
                     size="sm"
                     onClick={handleSecondRemarkClear}
                   >
-                    क्लिअर
+                    साफ करा 
                   </Button>
                 </div>
               </Card>

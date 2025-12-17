@@ -265,7 +265,7 @@ export const MagniDurustiReporttapa = () => {
       <div className="remark-controls-section">
         {/* Remark Section */}
         <div className="remark-section">
-          <h4 className="remark-title">तपासणी शेरा (Remark)</h4>
+          <h4 className="remark-title">तपासणी शेरा </h4>
           <textarea
             className="form-control"
             rows="3"
@@ -278,10 +278,10 @@ export const MagniDurustiReporttapa = () => {
         {/* Button Container */}
         <div className="button-container">
           <button className="cancel-button" onClick={handleCancel}>
-            रद्द करा (Cancel)
+            रद्द करा
           </button>
           <button className="submit-button" onClick={handleRemarkSubmit} disabled={!remark?.trim()}>
-            शेरा जमा करा (Submit Remark)
+            अभिप्राय जतन करा 
           </button>
         </div>
       </div>
