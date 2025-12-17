@@ -159,7 +159,10 @@ function TrutiArjList() {
 
   return (
     <CCard className="mb-4 custom-card">
-      <CCardHeader className="d-flex justify-content-between align-items-center bg-primary text-white">
+      <CCardHeader className="d-flex justify-content-between align-items-center text-white"
+      style={{
+    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+  }}>
         {/* Display the dynamic title */}
         <h4 className="mb-0">
           {currentCondition ? currentCondition.title : 'तलाठी स्तरावर प्रलंबित अर्जांची यादी'}

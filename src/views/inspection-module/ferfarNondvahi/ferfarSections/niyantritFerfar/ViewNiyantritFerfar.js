@@ -100,7 +100,10 @@ const reqHeaders = getReqHeaders({ token, user })
     <>
       <FerfarNavbar />
       <CCard className="mb-4 custom-card">
-        <CCardHeader className="d-flex justify-content-between align-items-center bg-primary text-white">
+        <CCardHeader style={{
+    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+  }}
+  className="d-flex justify-content-between align-items-center text-white">
           <h4 className="mb-0">
             📋 नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार{' '}
           </h4>

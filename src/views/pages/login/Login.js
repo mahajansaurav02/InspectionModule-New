@@ -37,7 +37,6 @@ import { Toast, errorToast } from 'src/views/ui/Toast'
 import ChangePasswordModal from 'src/views/ui/ChangePasswordModal/ChangePasswordModal'
 import { loginSuccess } from 'src/store/slices/authSlice'
 
-
 const Login = () => {
   const { t } = useTranslation('login')
 
@@ -215,61 +214,63 @@ const Login = () => {
             return // Stop further execution
           }
 
+          dispatch(
+            loginSuccess({
+              token: data.token,
+              expiryTime: data.expiryTime,
+              roles: Array.isArray(data.roles) ? data.roles[0] : data.roles,
+              user: {
+                servarthId: data.servarthId,
+                fullName: data.fullName,
+                marathiName: data.marathiName,
+                desg: data.desg,
+                districtCode: data.districtCode,
+                districtName: data.districtName,
+                talukaCode: data.talukaCode,
+                talukaName: data.talukaName,
+                revenueYear: data.revenueYear,
+                villageForInspection: data.villageForInspection,
+                challanHeads: data.challanHeads,
+                dbInfo: {
+                  echDbName: data.echDbName,
+                  echSchemaName: data.echSchemaName,
+                  echHost: data.echHost,
+                  mhrDbName: data.mhrDbName,
+                  mhrSchemaName: data.mhrSchemaName,
+                  mhrHost: data.mhrHost,
+                },
+              },
+            }),
+          )
 
-            dispatch(
-        loginSuccess({
-          token: data.token,
-          expiryTime: data.expiryTime,
-          roles: Array.isArray(data.roles) ? data.roles[0] : data.roles,
-          user: {
-            servarthId: data.servarthId,
-            fullName: data.fullName,
-            marathiName: data.marathiName,
-            desg: data.desg,
-            districtCode: data.districtCode,
-            districtName: data.districtName,
-            talukaCode: data.talukaCode,
-            talukaName: data.talukaName,
-            revenueYear: data.revenueYear,
-            villageForInspection: data.villageForInspection,
-            challanHeads: data.challanHeads,
-            dbInfo: {
-              echDbName: data.echDbName,
-              echSchemaName: data.echSchemaName,
-              echHost: data.echHost,
-              mhrDbName: data.mhrDbName,
-              mhrSchemaName: data.mhrSchemaName,
-              mhrHost: data.mhrHost,
-            },
-          },
-        })
-      )
-
-      localStorage.setItem('auth', JSON.stringify({
-  token: data.token,
-  user: {
-            servarthId: data.servarthId,
-            fullName: data.fullName,
-            marathiName: data.marathiName,
-            desg: data.desg,
-            districtCode: data.districtCode,
-            districtName: data.districtName,
-            talukaCode: data.talukaCode,
-            talukaName: data.talukaName,
-            revenueYear: data.revenueYear,
-            villageForInspection: data.villageForInspection,
-            challanHeads: data.challanHeads,
-            dbInfo: {
-              echDbName: data.echDbName,
-              echSchemaName: data.echSchemaName,
-              echHost: data.echHost,
-              mhrDbName: data.mhrDbName,
-              mhrSchemaName: data.mhrSchemaName,
-              mhrHost: data.mhrHost,
-            },
-          },
-  roles: data.roles,
-}))
+          localStorage.setItem(
+            'auth',
+            JSON.stringify({
+              token: data.token,
+              user: {
+                servarthId: data.servarthId,
+                fullName: data.fullName,
+                marathiName: data.marathiName,
+                desg: data.desg,
+                districtCode: data.districtCode,
+                districtName: data.districtName,
+                talukaCode: data.talukaCode,
+                talukaName: data.talukaName,
+                revenueYear: data.revenueYear,
+                villageForInspection: data.villageForInspection,
+                challanHeads: data.challanHeads,
+                dbInfo: {
+                  echDbName: data.echDbName,
+                  echSchemaName: data.echSchemaName,
+                  echHost: data.echHost,
+                  mhrDbName: data.mhrDbName,
+                  mhrSchemaName: data.mhrSchemaName,
+                  mhrHost: data.mhrHost,
+                },
+              },
+              roles: data.roles,
+            }),
+          )
 
           localStorage.setItem('token', data.token) // Explicitly setting token from response
           localStorage.setItem('expiryDate', data.expiryTime) // New field for expiration
@@ -350,15 +351,9 @@ const Login = () => {
         }
         setShowToast(true)
         // Reload captcha on failed API call
-<<<<<<< HEAD
-         setLoginValue({ ...loginValue, captcha: '' })
+setLoginValue({ ...loginValue, captcha: '' })
          loadCaptchaEnginge(6, 'skyblue')
-        
-=======
-        loadCaptchaEnginge(6, 'skyblue')
-        // setLoginValue({ ...loginValue, captcha: '' })
-
->>>>>>> 5edb8bebfb8d28f0984c99ff7cda701e8651bac3
+                // setLoginValue({ ...loginValue, captcha: '' })
       })
   }
   const togglePassword = () => {

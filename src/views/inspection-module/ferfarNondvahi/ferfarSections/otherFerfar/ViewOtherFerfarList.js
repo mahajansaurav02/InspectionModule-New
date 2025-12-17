@@ -110,7 +110,10 @@ const reqHeaders = getReqHeaders({ token, user })
     <>
       <FerfarNavbar />
       <CCard className="mb-4 custom-card">
-        <CCardHeader className="d-flex justify-content-between align-items-center bg-primary text-white">
+        <CCardHeader style={{
+    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+  }}
+   className="d-flex justify-content-between align-items-center bg-primary text-white">
           <h4 className="mb-0">📋 इतर फेरफार या टेम्प्लेटने केलेले फेरफार यादी</h4>
           <div className="d-flex align-items-center">
             <CTooltip content="Search ferfar">
