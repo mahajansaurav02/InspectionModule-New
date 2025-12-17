@@ -25,6 +25,8 @@ import SthagitiFerfar from './views/inspection-module/ferfarNondvahi/ferfarSecti
 import ViewSthagitiFerfarList from './views/inspection-module/ferfarNondvahi/ferfarSections/sthagitiFerfar/ViewSthagitiFerfarList'
 import LoadingScreen from './views/ui/LoadingScreen'
 import LoadingSpinner from './Models/LoadingSpinner'
+import { loginSuccess } from './slices/authSlice'
+import store from './store'
 // import OrderFerfar from '.'
 const loading = (
   <div className="loading-state">
@@ -65,6 +67,23 @@ const EHakkTooltips = React.lazy(() =>
   import('./views/inspection-module/e-hakka-kamkaj-tapasani/eHakkTooltips'),
 )
 class App extends Component {
+
+ componentDidMount() {
+    const savedAuth = localStorage.getItem('auth')
+console.log(savedAuth,"================")
+    if (savedAuth) {
+      try {
+        const parsedAuth = JSON.parse(savedAuth)
+        store.dispatch(loginSuccess(parsedAuth))
+      } catch (e) {
+        console.error('Failed to rehydrate auth state', e)
+        localStorage.removeItem('authState')
+      }
+    }
+  }
+
+
+  
   render() {
     return (
       <HashRouter>

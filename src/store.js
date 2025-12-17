@@ -3,6 +3,7 @@ import UserDetailsReducer from './slices/UserSlice'
 import InspectionReducer from './slices/InspectionSlice'
 import HomepageSlice from './slices/HomepageSlice'
 import InspectionOnlineReducer from './slices/InspectionOnlineSlice'
+import authReducer from './slices/authSlice'
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     inspection: InspectionReducer,
     inspectionOnline: InspectionOnlineReducer,
     homepage: HomepageSlice,
+    auth: authReducer, // ✅ MUST be here
   },
 })
 

@@ -14,9 +14,8 @@ const formatTime = (date) => {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-    hour12: true, // e.g., 06:26:11 PM
+    hour12: true,
   };
-  // Use current time from context
   return date.toLocaleTimeString('en-IN', options);
 };
 
@@ -27,36 +26,34 @@ const formatDate = (date) => {
         month: 'short',
         year: 'numeric'
     };
-    // Example: 15 Dec 2025
     return date.toLocaleDateString('en-IN', options);
 }
 
 
 const FerfarNavbar = () => {
-  // Use current time from context
-  const initialDate = new Date('2025-12-15T18:26:11'); 
-  
-  // 1. State for Live Time
-  const [liveTime, setLiveTime] = useState(formatTime(initialDate));
-  const [liveDate, setLiveDate] = useState(formatDate(initialDate));
+  // 1. Set the initial state using the actual current time when the component loads
+  const [liveTime, setLiveTime] = useState(formatTime(new Date()));
+  const [liveDate, setLiveDate] = useState(formatDate(new Date()));
 
-  // 2. useEffect to update time every second
+  // 2. useEffect to update the time by getting a new Date() every second
   useEffect(() => {
-    let secondsPassed = 0;
     const timerId = setInterval(() => {
-        // Calculate current time based on the initial time and seconds passed
-        const now = new Date(initialDate.getTime() + secondsPassed * 1000); 
-        secondsPassed += 1; // Increment the counter
+        const now = new Date(); // ALWAYS get the current, up-to-date time
         
         setLiveTime(formatTime(now));
-        setLiveDate(formatDate(now)); // Update date just in case it changes overnight (though unlikely in this context)
+        setLiveDate(formatDate(now));
     }, 1000);
 
     // Cleanup function to clear the interval when the component unmounts
     return () => clearInterval(timerId);
-  }, []); // Empty dependency array means this runs once on mount
+  }, []); // Empty dependency array means this runs once on mount/reload
 
   // --- Static/Mock Data for Contextual Labels ---
+  const contextData = {
+    district: 'नागपूर (Nagpur)',
+    taluka: 'कुही (Kuhi)',
+    village: 'भिवजपूर (Bhivajpur)',
+  }
 
   // Helper component for context labels
   const ContextLabel = ({ label, value }) => (
@@ -72,10 +69,10 @@ const FerfarNavbar = () => {
 
   return (
     <CNavbar
-      // 🎨 PRIMARY CHANGE: Use the Blue background color for consistency
-      style={{ backgroundColor: '#007bff' }} // Standard Bootstrap primary blue, matching the app's headers
-      colorScheme="dark" // Keeps text white
-      className="text-white shadow-lg py-2" // Used shadow-lg for more separation from the white body
+      // Using the cohesive Blue background color
+      style={{ backgroundColor: '#007bff' }} 
+      colorScheme="dark" 
+      className="text-white shadow-lg py-2"
       placement="top"
     >
       <CContainer fluid>
@@ -88,7 +85,11 @@ const FerfarNavbar = () => {
         {/* Right Section: Dynamic Context & Live Time */}
         <CNavbarText className="d-flex align-items-center text-light">
           
-    
+          {/* 1. Contextual Data: District, Taluka, Village */}
+          {/* <ContextLabel label="जिल्हा" value={contextData.district} />
+          <ContextLabel label="तालुका" value={contextData.taluka} />
+          <ContextLabel label="गाव" value={contextData.village} />
+           */}
           {/* Separator Line */}
           <div className="vr mx-3" style={{ opacity: 0.5 }} />
 
@@ -96,7 +97,7 @@ const FerfarNavbar = () => {
           <div className="d-flex align-items-center">
             {/* Date */}
             <div className="d-flex align-items-center me-3">
-                <CIcon icon={cilCalendar} size="sm" className="me-1 text-warning" /> {/* Used text-warning for high contrast */}
+                <CIcon icon={cilCalendar} size="sm" className="me-1 text-warning" />
                 <span className="fw-bold" style={{ fontSize: '0.9rem' }}>
                     {liveDate}
                 </span>
@@ -106,7 +107,7 @@ const FerfarNavbar = () => {
                 <CIcon icon={cilClock} size="sm" className="me-1 text-danger" />
                 <span className="fw-bold" style={{ fontSize: '0.9rem' }}>
                     {liveTime}
-                </span>
+                </span> 
             </div>
           </div>
 

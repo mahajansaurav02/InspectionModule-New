@@ -29,12 +29,14 @@ import { cilSearch, cilFile, cilMagnifyingGlass, cilInfo } from '@coreui/icons'
 import FerfarNavbar from '../FerfarNavbar'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import reqHeaders from 'src/instance/headers'
+// import reqHeaders from 'src/instance/headers'
 import URLS from 'src/URLS'
 import moment from 'moment'
 import Section1 from 'src/views/dashboard/Sections/Section1'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
+import { useSelector } from 'react-redux'
+import getReqHeaders from 'src/instance/getHeader'
 
 function ViewOrderFerfarList() {
   const navigate = useNavigate()
@@ -46,6 +48,12 @@ function ViewOrderFerfarList() {
   const [ferfarList1, setFerfarList1] = useState([])
   const [dropdownVal, setDropdownVal] = useState()
   let VillageData = localStorage.getItem('selectedVillageData')
+
+
+
+const { user, roles, token } = useSelector((state) => state.auth || {})
+const finalState = useSelector((state) => state)
+const reqHeaders = getReqHeaders({ token, user })
 
   let selectedVillageData = JSON.parse(VillageData)
 
@@ -66,6 +74,9 @@ function ViewOrderFerfarList() {
   }, [])
 
   const getAdeshFerfarList = async () => {
+console.log(finalState, 'checkkkk final state')
+console.log(user, 'checkkkk user state')
+
     console.log(selectedVillageData, 'checkkkkkkk')
     console.log(selectedVillageData[0], 'checkkkkkkk2222222222')
     setIsLoading(true)

@@ -32,9 +32,9 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import axios from 'axios'
 import URLS from 'src/URLS'
 import moment from 'moment'
-import reqHeaders from 'src/instance/headers'
+import { useSelector } from 'react-redux'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
-const token = localStorage.getItem('token')
+import getReqHeaders from 'src/instance/getHeader'
 
 function ViewReEntryFerfarList() {
   const navigate = useNavigate()
@@ -48,7 +48,9 @@ function ViewReEntryFerfarList() {
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)
+const { user, roles, token } = useSelector((state) => state.auth || {})
 
+const reqHeaders = getReqHeaders({ token, user })
   let {
     cCode,
     distMarathiName,

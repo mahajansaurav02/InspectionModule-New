@@ -22,7 +22,7 @@ const VillageDetailsList = () => {
   } = selectedVillageData[0]
 
   return (
-    <div className="village-details-container" style={{ padding: '5px' }}>
+    <div className="village-details-container" style={{ padding: '0px' }}>
       <div
         style={{
           display: 'flex',

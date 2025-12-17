@@ -23,6 +23,7 @@ import {
   CTooltip,
   CPaginationItem,
 } from '@coreui/react'
+import { useSelector } from 'react-redux'
 import CIcon from '@coreui/icons-react'
 import { cilSearch, cilInfo } from '@coreui/icons'
 import { useNavigate } from 'react-router-dom'
@@ -30,9 +31,9 @@ import axios from 'axios'
 import URLS from 'src/URLS'
 import moment from 'moment'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
-import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import 'src/views/inspection-module/ferfarNondvahi/FerfarList.css'
+import getReqHeaders from 'src/instance/getHeader'
 
 function ViewsSection155FerfarList() {
   const navigate = useNavigate()
@@ -44,11 +45,12 @@ function ViewsSection155FerfarList() {
   const itemsPerPage = 5
   const [ferfarList1, setFerfarList1] = useState([])
 
-  const token = localStorage.getItem('token')
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)
+const { user, roles, token } = useSelector((state) => state.auth || {})
 
+const reqHeaders = getReqHeaders({ token, user })
   let {
     cCode,
     distMarathiName,

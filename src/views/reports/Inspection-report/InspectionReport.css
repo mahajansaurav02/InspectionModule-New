@@ -6,7 +6,7 @@
 
 /* PDF मध्ये मार्जिनसह रिपोर्टचा बॅकग्राउंड व्यवस्थित दिसावा यासाठी */
 .card {
-  border: 1px solid #ccc;
+  border: 10px solid #ccc;
 }
 .headerName {
   background-color: #0d6efd; /* CoreUI primary color */
