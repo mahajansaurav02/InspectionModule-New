@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { IoArrowBackOutline } from "react-icons/io5";
 import {
   CContainer,
   CCard,
@@ -37,6 +38,7 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import { useSelector } from 'react-redux'
 import getReqHeaders from 'src/instance/getHeader'
+
 
 function ViewOrderFerfarList() {
   const navigate = useNavigate()
@@ -140,7 +142,7 @@ console.log(user, 'checkkkk user state')
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
-        <CCardHeader style={{
+        {/* <CCardHeader style={{
     background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
   }}
    className="d-flex justify-content-between align-items-center text-white">
@@ -165,7 +167,69 @@ console.log(user, 'checkkkk user state')
               </div>
             </CTooltip>
           </div>
-        </CCardHeader>
+        </CCardHeader> */}
+
+<CCardHeader
+  style={{
+    background:
+      'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+  }}
+  className="text-white"
+>
+  <div className="d-flex align-items-center justify-content-between w-100">
+
+  <span
+  onClick={() => navigate(-2)}
+  style={{
+    cursor: 'pointer',
+    fontSize: '22px',
+    color: 'white',
+    transition: 'all 0.25s ease',
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
+    e.currentTarget.style.opacity = '0.85'
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform = 'none'
+    e.currentTarget.style.opacity = '1'
+  }}
+>
+  <IoArrowBackOutline />
+</span>
+
+    {/* 🏷️ Center Title */}
+    <h4 className="mb-0 text-center flex-grow-1">
+      📋 आदेश फेरफार यादी
+    </h4>
+
+    {/* 🔍 Search */}
+    <div className="d-flex align-items-center">
+      <CTooltip content="Search ferfar">
+        <div className="position-relative">
+          <CIcon
+            icon={cilSearch}
+            className="position-absolute top-50 start-0 translate-middle-y ms-2"
+          />
+          <CFormInput
+            type="text"
+            placeholder="शोधा..."
+            className="ps-5"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setCurrentPage(1)
+            }}
+          />
+        </div>
+      </CTooltip>
+    </div>
+
+  </div>
+</CCardHeader>
+
+
+        {/* ======================================================================================================= */}
         <br />
         <CCardBody>
           {isLoading ? (
@@ -185,7 +249,7 @@ console.log(user, 'checkkkk user state')
 
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
-                      <CTableHead className="table-dark">
+                      <CTableHead className="text-center flex-grow-1 table-dark">
                         <CTableRow>
                           <CTableHeaderCell width="5%">अनु. क्रमांक</CTableHeaderCell>
                           <CTableHeaderCell width="15%">फेरफार क्रमांक</CTableHeaderCell>

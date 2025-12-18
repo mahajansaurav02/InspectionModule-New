@@ -16,7 +16,7 @@ const FerfarDetailsPage = () => {
       <h5
         className="fw-bold mb-4 text-white px-4 py-2 rounded shadow transition-all"
         style={{
-          background: 'linear-gradient(135deg, #4e54c8, #8f94fb)',
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
           display: 'inline-block',
           borderRadius: '16px',
           fontSize: '1.5rem',
