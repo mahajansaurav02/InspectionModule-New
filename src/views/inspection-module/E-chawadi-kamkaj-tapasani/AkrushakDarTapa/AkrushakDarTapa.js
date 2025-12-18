@@ -20,6 +20,7 @@ import reqHeaders from 'src/instance/headers'
 import './AkrushakDarTapa.module.css'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
+import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 const AkrushakDarTapa = () => {
   const [akrushakRateList, setAkrushakRateList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -80,6 +81,8 @@ const AkrushakDarTapa = () => {
   // ----------------------------
 
   return (
+    <>
+<FerfarNavbar />
     <CContainer fluid className="p-4 akrushak-dar-container">
       <div className="shadow-lg p-4 rounded bg-white report-area">
         <h4 className="mb-4 text-center text-primary fw-bold border-bottom pb-2">
@@ -179,6 +182,7 @@ const AkrushakDarTapa = () => {
         {/* --- END REMARK AND CONTROL SECTION --- */}
       </div>
     </CContainer>
+    </>
   )
 }
 

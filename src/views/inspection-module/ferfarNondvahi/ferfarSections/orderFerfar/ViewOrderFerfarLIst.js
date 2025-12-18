@@ -24,8 +24,8 @@ import {
   CTooltip,
   CPaginationItem,
 } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilSearch, cilFile, cilMagnifyingGlass, cilInfo } from '@coreui/icons'
+import {CIcon} from '@coreui/icons-react'
+import { cilSearch, cilFile, cilMagnifyingGlass, cilInfo ,cilArrowCircleLeft } from '@coreui/icons'
 import FerfarNavbar from '../FerfarNavbar'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
@@ -37,6 +37,7 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import { useSelector } from 'react-redux'
 import getReqHeaders from 'src/instance/getHeader'
+import  'src/views/inspection-module/ferfarNondvahi/FerfarHome.module.css'
 
 function ViewOrderFerfarList() {
   const navigate = useNavigate()
@@ -102,6 +103,11 @@ console.log(user, 'checkkkk user state')
     }
   }
 
+
+  const pressBack=()=>{
+navigate(-2)
+
+  }
   // Filter data based on search term from the API data
   const filteredData = ferfarList1.filter(
     (ferfar) =>
@@ -122,6 +128,7 @@ console.log(user, 'checkkkk user state')
   )
 
   const handleFerfarClick = (ferfar) => {
+    ferfar.ferfar_type='1'
     navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } })
   }
 
@@ -143,8 +150,29 @@ console.log(user, 'checkkkk user state')
         <CCardHeader style={{
     background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
   }}
-   className="d-flex justify-content-between align-items-center text-white">
-          <h4 className="mb-0">📋आदेश फेरफार यादी</h4>
+   className="d-flex justify-content-between align-items-center text-white ">
+<CIcon
+  icon={cilArrowCircleLeft}
+  size="xl"
+  onClick={pressBack}
+  style={{
+    marginLeft: '6px',
+    marginTop: '2px',
+    cursor: 'pointer',
+    color: '#b8c7deff',
+    transition: 'transform 0.2s ease, color 0.2s ease',
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.transform = 'scale(1.15)'
+    e.currentTarget.style.color = '#c8d3e2ff'
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform = 'scale(1)'
+    e.currentTarget.style.color = ' #c6cedaff'
+  }}
+/>
+
+          <h4 className="mb-0"> आदेश फेरफार यादी</h4>
           <div className="d-flex align-items-center">
             <CTooltip content="Search ferfar">
               <div className="position-relative">

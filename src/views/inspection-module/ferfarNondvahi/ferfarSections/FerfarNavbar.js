@@ -71,7 +71,7 @@ const FerfarNavbar = () => {
     <CNavbar
       // Using the cohesive Blue background color
       style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)', position:'sticky', top:'0', zIndex:'1030'
   }}
       colorScheme="dark" 
       className="text-white shadow-lg py-2"
