@@ -33,6 +33,7 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
+import SmartPagination from 'src/components/SmartPagination';
 
 function ViewOtherFerfarList() {
   const navigate = useNavigate()
@@ -215,41 +216,14 @@ const reqHeaders = getReqHeaders({ token, user })
                     </CTable>
                   </div>
 
-                  <CRow>
-                    <CCol md={6} className="d-flex align-items-center">
-                      <div className="dataTables_info">
-                      {totalItems} नोंदींपैकी {(currentPage - 1) * itemsPerPage + 1} ते {' '}
-                       {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
-                    </div>
-                    </CCol>
-                    <CCol md={6} className="d-flex justify-content-end">
-                      <CPagination align="end" size="sm" className="mb-0">
-                        <CPaginationItem
-                          disabled={currentPage === 1}
-                          onClick={() => setCurrentPage(currentPage - 1)}
-                        >
-                          मागे जा 
-                        </CPaginationItem>
+                 <SmartPagination
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={(page) => setCurrentPage(page)}
+/>
 
-                        {Array.from({ length: totalPages }, (_, i) => (
-                          <CPaginationItem
-                            key={i + 1}
-                            active={i + 1 === currentPage}
-                            onClick={() => setCurrentPage(i + 1)}
-                          >
-                            {i + 1}
-                          </CPaginationItem>
-                        ))}
-
-                        <CPaginationItem
-                          disabled={currentPage === totalPages}
-                          onClick={() => setCurrentPage(currentPage + 1)}
-                        >
-                           पुढे जा 
-                        </CPaginationItem>
-                      </CPagination>
-                    </CCol>
-                  </CRow>
                 </>
               )}
             </>

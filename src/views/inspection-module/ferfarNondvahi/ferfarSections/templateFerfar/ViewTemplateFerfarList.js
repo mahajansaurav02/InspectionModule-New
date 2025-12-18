@@ -32,6 +32,7 @@ import { useSelector } from 'react-redux'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
+import SmartPagination from 'src/components/SmartPagination'
 
 function ViewTemplateFerfarList() {
   const navigate = useNavigate()
@@ -53,9 +54,9 @@ function ViewTemplateFerfarList() {
     talukaMarathiName,
     villageName,
   } = selectedVillageData[0]
-const { user, roles, token } = useSelector((state) => state.auth || {})
+  const { user, roles, token } = useSelector((state) => state.auth || {})
 
-const reqHeaders = getReqHeaders  ({ token, user })
+  const reqHeaders = getReqHeaders({ token, user })
   const itemsPerPage = 10
 
   const getTemplateFerfar = async () => {
@@ -65,7 +66,7 @@ const reqHeaders = getReqHeaders  ({ token, user })
       return
     }
     try {
-   
+
 
       const res = await api.get(`/inpsection/getTemplateFerfar?ccode=${cCode}`)
       setFerfarList(res.data)
@@ -94,9 +95,11 @@ const reqHeaders = getReqHeaders  ({ token, user })
   )
 
   const handleFerfarClick = (ferfar) => {
-        ferfar.ferfar_type='8'
+    ferfar.ferfar_type = '8'
     navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } })
   }
+
+
 
   const getStatusBadge = (status) => {
     switch (status) {
@@ -114,9 +117,9 @@ const reqHeaders = getReqHeaders  ({ token, user })
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
         <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-   className="d-flex justify-content-between align-items-center bg-primary text-white">
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+        }}
+          className="d-flex justify-content-between align-items-center bg-primary text-white">
           <h4 className="mb-0">📋 फेरफार क्रमांकानुसार यादी</h4>
           <div className="d-flex align-items-center">
             <CTooltip content="Search ferfar">
@@ -192,41 +195,13 @@ const reqHeaders = getReqHeaders  ({ token, user })
                       </CTableBody>
                     </CTable>
                   </div>
-                  <CRow>
-                    <CCol md={6} className="d-flex align-items-center">
-                     <div className="dataTables_info">
-                      {totalItems} नोंदींपैकी {(currentPage - 1) * itemsPerPage + 1} ते {' '}
-                       {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
-                    </div>
-                    </CCol>
-                    <CCol md={6} className="d-flex justify-content-end">
-                      <CPagination align="end" size="sm" className="mb-0">
-                        <CPaginationItem
-                          disabled={currentPage === 1}
-                          onClick={() => setCurrentPage(currentPage - 1)}
-                        >
-                          मागे जा 
-                        </CPaginationItem>
-
-                        {Array.from({ length: totalPages }, (_, i) => (
-                          <CPaginationItem
-                            key={i + 1}
-                            active={i + 1 === currentPage}
-                            onClick={() => setCurrentPage(i + 1)}
-                          >
-                            {i + 1}
-                          </CPaginationItem>
-                        ))}
-
-                        <CPaginationItem
-                          disabled={currentPage === totalPages}
-                          onClick={() => setCurrentPage(currentPage + 1)}
-                        >
-                          पुढे जा 
-                        </CPaginationItem>
-                      </CPagination>
-                    </CCol>
-                  </CRow>
+                  <SmartPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                  />
                 </>
               )}
             </>

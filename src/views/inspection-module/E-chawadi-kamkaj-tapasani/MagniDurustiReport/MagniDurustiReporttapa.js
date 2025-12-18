@@ -21,13 +21,15 @@ export const MagniDurustiReporttapa = () => {
   const [remark, setRemark] = useState('')
   const [loading, setLoading] = useState(false)
   const [reqHeaders, setReqHeaders] = useState({})
+  const [submitStatus, setSubmitStatus] = useState('')
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = JSON.parse(VillageData)
 
-  let { cCode, distMarathiName, lgdCode, talukaCode, talukaMarathiName, villageName } =
+  let { cCode, distMarathiName, lgdCode, talukaCode, talukaMarathiName, villageName,districtCode } =
     selectedVillageData[0]
   const navigate = useNavigate()
 const { user, roles, token } = useSelector((state) => state.auth || {})
+const revenueYear=user?.revenueYear[0]?.revenueYear
 
 // const reqHeaders = getReqHeaders({ token, user })
   const tableHeaderMap = {
@@ -82,11 +84,57 @@ useEffect(() => {
     getMahsulDurustiList()
   }, [reqHeaders])
 
-  const handleRemarkSubmit = () => {
+const handleSubmit = async () => {
 
-    console.log('remark-submiteed============')
-    alert('शेरा यशस्वीपणे सादर केला गेला आहे.')
+
+
+  setLoading(true)
+  const payload={
+    
+  districtCode: districtCode,
+  talukaCode: talukaCode,
+  ccode: cCode,
+  revenueYear: revenueYear,
+  remark: remark,
+  echawdiType: 2
+
   }
+
+
+  console.log(payload,"payloaddddd")
+  try {
+    const res = await api.post(
+      `/inpsection/saveEchawdiDataForInspection`,payload
+    )
+
+    if (res.status === 201) {
+      // Optional delay for smooth UX
+      setTimeout(() => {
+        setSubmitStatus('success')
+
+        setTimeout(() => {
+          setSubmitStatus(null)
+          setRemark('')
+          navigate(-1)
+        }, 1000)
+
+      }, 800)
+    } else {
+      throw new Error('Unexpected response status')
+    }
+
+  } catch (err) {
+    console.error('Submit error:', err)
+
+    setSubmitStatus('error')
+    alert(
+      err?.response?.data?.message || 'Failed to submit remark'
+    )
+
+  } finally {
+    setLoading(false)
+  }
+}
 
   const handleCancel = () => {
     navigate('/inspection-module/E-chawadi-kamkaj-tapasani/EChawadiKamkajTap')
@@ -292,7 +340,7 @@ useEffect(() => {
           <button className="cancel-button" onClick={handleCancel}>
             रद्द करा
           </button>
-          <button className="submit-button" onClick={handleRemarkSubmit} disabled={!remark?.trim()}>
+          <button className="submit-button" onClick={handleSubmit} disabled={!remark?.trim()}>
             अभिप्राय जतन करा 
           </button>
         </div>

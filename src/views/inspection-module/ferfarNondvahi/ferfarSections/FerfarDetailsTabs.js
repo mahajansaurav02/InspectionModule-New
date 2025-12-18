@@ -33,6 +33,7 @@ import URLS from 'src/URLS'
 import { useNavigate } from 'react-router-dom'
 import api from 'src/api/api'
 import { useSelector } from 'react-redux'
+import e from 'cors'
 
 
 
@@ -47,13 +48,14 @@ const FerfarDetailsTabs = ({ ferfar }) => {
   const [zoomLevel, setZoomLevel] = useState(100)
   const [attachedFile, setAttachedFile] = useState(null)
   const [priority, setPriority] = useState('')
+  const [remarkTy, setRemarkTy] = useState('')
   const [submitStatus, setSubmitStatus] = useState('')
   const fileInputRef = useRef(null)
   const navigate = useNavigate()
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = JSON.parse(VillageData)
-const { user, roles, token } = useSelector((state) => state.auth || {})
-const revenueYear=user.revenueYear[0].revenueYear
+  const { user, roles, token } = useSelector((state) => state.auth || {})
+  const revenueYear = user?.revenueYear[0]?.revenueYear
   let {
     cCode,
     distMarathiName,
@@ -170,7 +172,7 @@ const revenueYear=user.revenueYear[0].revenueYear
   }
 
   const getFerfarView = async () => {
-    console.log(ferfar,"======ferfar=========")
+    console.log(ferfar, "======ferfar=========")
     setIsLoading(true)
     try {
       const token = 'UcW60oyb7mdxakkWQOYHYqYLaYuquDBmkyir3wBBSkWLsGcoC9JpjidlJuxmdEtI'
@@ -219,50 +221,71 @@ const revenueYear=user.revenueYear[0].revenueYear
     return decrypted.toString(CryptoJS.enc.Utf8)
   }
 const handleSubmit = async () => {
-  setIsLoading(true)
-  const payload={
-    districtCode:  districtCode,
-    talukaCode: talukaCode,
-    ccode: cCode,
-    revenueYear: revenueYear,
-    mutNo: ferfar.mutNo,
-    ferfar_type: ferfar.ferfar_type,
-    remark: remark,
-    remarkType: "साधारण"
+  if (!priority) {
+    alert('Please select priority')
+    return
   }
+
+  let remarkType = ''
+  if (priority === 'High') remarkType = 'अतीगंभीर'
+  if (priority === 'Medium') remarkType = 'गंभीर'
+  if (priority === 'Low') remarkType = 'साधारण'
+
+  setIsLoading(true)
+
   try {
+    const formData = new FormData()
+
+    // 🔹 JSON data → string
+    const dataPayload = {
+      districtCode,
+      talukaCode,
+      ccode: cCode,
+      revenueYear,
+      mutNo: ferfar.mutNo,
+      ferfar_type: ferfar.ferfar_type,
+      remark,
+      remarkType,
+    }
+
+    formData.append('data', JSON.stringify(dataPayload))
+
+    // 🔹 File (ONLY if present)
+    if (attachedFile) {
+      formData.append('file', attachedFile)
+    }
+
     const res = await api.post(
-      `/inpsection/saveFerfarForInspection`
+      '/inpsection/saveFerfarForInspection',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
     )
 
     if (res.status === 201) {
-      // Optional delay for smooth UX
+      setSubmitStatus('success')
+
       setTimeout(() => {
-        setSubmitStatus('success')
-
-        setTimeout(() => {
-          setSubmitStatus(null)
-          setRemark('')
-          navigate(-1)
-        }, 1000)
-
-      }, 800)
+        setSubmitStatus(null)
+        setRemark('')
+        navigate(-1)
+      }, 1000)
     } else {
-      throw new Error('Unexpected response status')
+      throw new Error('Unexpected response')
     }
 
   } catch (err) {
     console.error('Submit error:', err)
-
     setSubmitStatus('error')
-    alert(
-      err?.response?.data?.message || 'Failed to submit remark'
-    )
-
+    alert(err?.response?.data?.message || 'Failed to submit remark')
   } finally {
     setIsLoading(false)
   }
 }
+
 
   const handleDownload = (type) => {
     let filePath, fileName
@@ -419,7 +442,7 @@ const handleSubmit = async () => {
                 onChange={handleFileChange}
               />
               <CButton color="info" onClick={handleAttachClick}>
-                 दस्ताऐवज जोडा
+                दस्ताऐवज जोडा
               </CButton>
               {attachedFile && <span className="text-success small">{attachedFile.name}</span>}
             </div>
@@ -430,7 +453,7 @@ const handleSubmit = async () => {
               </span>
 
               <div className="d-flex gap-2 mt-2 flex-wrap">
-                <label className={`priority-pill low ${priority === 'Low' ? 'active' : ''}`}>
+                <label className={`priority-pill low ${priority === 'High' ? 'active' : ''}`}>
                   <input
                     type="radio"
                     name="priorityType"
@@ -452,7 +475,7 @@ const handleSubmit = async () => {
                   गंभीर
                 </label>
 
-                <label className={`priority-pill high ${priority === 'High' ? 'active' : ''}`}>
+                <label className={`priority-pill high ${priority === 'Low' ? 'active' : ''}`}>
                   <input
                     type="radio"
                     name="priorityType"

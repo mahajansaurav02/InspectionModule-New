@@ -29,85 +29,11 @@ import URLS from 'src/URLS'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
+import SmartPagination from 'src/components/SmartPagination'
 
 function TrutiArjList() {
   // Sample data - replace with your actual data source
   const navigate = useNavigate()
-
-  const [data, setData] = React.useState([
-    {
-      id: '1',
-      applicationNo: 'APP-2023-001',
-      cancelReason: 'आपण अपलोड केलेले दस्तावेज अपूर्ण आहेत.',
-      date: '2023-05-15',
-      docLink: '/documents/app-001',
-      status: 'pending',
-    },
-    {
-      id: '2',
-      applicationNo: 'APP-2023-002',
-      cancelReason: 'धारण जमीन भोगवटदार वर्ग २ ची असल्याने सक्षम अधिकाऱ्याची परवानगी आवश्यक आहे.',
-      date: '2023-05-18',
-      docLink: '/documents/app-002',
-      status: 'rejected',
-    },
-    {
-      id: '3',
-      applicationNo: 'APP-2023-003',
-      cancelReason: 'अर्जामधील माहिती चा फेरफार घेणे ची तरतूद नाही.',
-      date: '2023-05-20',
-      docLink: '/documents/app-003',
-      status: 'rejected',
-    },
-    {
-      id: '4',
-      applicationNo: 'APP-2023-1252',
-      cancelReason: 'दिवाणी / महसूली / सहकार न्यायालयाच्या आदेशावर स्थगिती आहे.',
-      date: '2023-05-20',
-      docLink: '/documents/app-003',
-      status: 'rejected',
-    },
-    {
-      id: '5',
-      applicationNo: 'APP-2023-56952',
-      cancelReason: 'आपण अपलोड केलेला दस्तावेज व भरलेली माहिती यामध्ये तफावत आहे',
-      date: '2023-05-20',
-      docLink: '/documents/app-003',
-      status: 'rejected',
-    },
-    {
-      id: '6',
-      applicationNo: 'APP-2023-0322',
-      cancelReason: 'आपण अपलोड केलेले दस्तावेज अपूर्ण आहेत',
-      date: '2023-05-20',
-      docLink: '/documents/app-003',
-      status: 'rejected',
-    },
-    {
-      id: '7',
-      applicationNo: 'APP-2023-0322',
-      cancelReason: 'आपण अर्जा मध्ये अचुक माहीती भरलेली नाही',
-      date: '2023-05-20',
-      docLink: '/documents/app-003',
-      status: 'rejected',
-    },
-    {
-      id: '8',
-      applicationNo: 'APP-2023-0322',
-      cancelReason: 'आपण भरलेल्या सर्व्हे/खाता नंबरवर आक्षेपीत फेरफार प्रलंबित आहे.',
-      date: '2023-05-20',
-      docLink: '/documents/app-003',
-      status: 'rejected',
-    },
-    {
-      id: '9',
-      applicationNo: 'APP-2023-0322',
-      cancelReason: 'आपणास अर्ज करण्याचा कायदेशीर अधिकार नाही.',
-      date: '2023-05-20',
-      docLink: '/documents/app-003',
-      status: 'rejected',
-    },
-  ])
 
   const [currentPage, setCurrentPage] = React.useState(1)
   const [searchTerm, setSearchTerm] = React.useState('')
@@ -219,9 +145,10 @@ function TrutiArjList() {
           </CTooltip>
         </div>
       </CCardHeader>
-      <VillageDetailsList />
 
       <CCardBody>
+              <VillageDetailsList />
+
         {isLoading ? (
           <div className="text-center py-5">
             <CSpinner color="primary" />
@@ -240,6 +167,7 @@ function TrutiArjList() {
                   <CTable hover striped bordered className="mb-4">
                     <CTableHead className="table-dark">
                       <CTableRow>
+                        <CTableHeaderCell width="4%">क्र.</CTableHeaderCell>
                         <CTableHeaderCell width="15%">अर्ज क्रमांक</CTableHeaderCell>
                         <CTableHeaderCell width="30%">
                           त्रुटीपूर्ततेखाली पाठविण्यात आलेले कारण
@@ -251,8 +179,10 @@ function TrutiArjList() {
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
-                      {paginatedData.map((item) => (
+                      {paginatedData.map((item,index) => (
+                        
                         <CTableRow key={item.id}>
+                          <CTableDataCell>{index + 1}</CTableDataCell>
                           <CTableDataCell>
                             <button
                               className="btn btn-link text-primary text-decoration-underline p-0"
@@ -296,43 +226,14 @@ function TrutiArjList() {
                   </CTable>
                 </div>
 
-                <CRow className="mt-3 align-items-center">
-                  <CCol xs={12} md={6} className="mb-2 mb-md-0">
-                       <div className="dataTables_info">
-                      {totalItems} नोंदींपैकी {(currentPage - 1) * itemsPerPage + 1} ते {' '}
-                       {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
-              
-                    </div>
-                  </CCol>
+               <SmartPagination
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={(page) => setCurrentPage(page)}
+/>
 
-                  <CCol xs={12} md={6}>
-                    <CPagination align="end" size="sm" className="mb-0">
-                      <CPaginationItem
-                        disabled={currentPage === 1}
-                        onClick={() => setCurrentPage(currentPage - 1)}
-                      >
-                        मागे जा 
-                      </CPaginationItem>
-
-                      {Array.from({ length: totalPages }, (_, i) => (
-                        <CPaginationItem
-                          key={i + 1}
-                          active={i + 1 === currentPage}
-                          onClick={() => setCurrentPage(i + 1)}
-                        >
-                          {i + 1}
-                        </CPaginationItem>
-                      ))}
-
-                      <CPaginationItem
-                        disabled={currentPage === totalPages}
-                        onClick={() => setCurrentPage(currentPage + 1)}
-                      >
-                        पुढे जा 
-                      </CPaginationItem>
-                    </CPagination>
-                  </CCol>
-                </CRow>
               </>
             )}
           </>

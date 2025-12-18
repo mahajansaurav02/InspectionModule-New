@@ -28,6 +28,7 @@ import URLS from 'src/URLS'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
+import SmartPagination from 'src/components/SmartPagination'
 
 const CONDITION_MAPPING = {
   // We are using '1', '2', '3', '4' assuming those are the IDs passed in the path.
@@ -155,9 +156,9 @@ function TrutiArjList() {
   return (
     <CCard className="mb-4 custom-card">
       <CCardHeader className="d-flex justify-content-between align-items-center text-white"
-      style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}>
+        style={{
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+        }}>
         {/* Display the dynamic title */}
         <h4 className="mb-0">
           {currentCondition ? currentCondition.title : 'तलाठी स्तरावर प्रलंबित अर्जांची यादी'}
@@ -183,9 +184,10 @@ function TrutiArjList() {
           </CTooltip>
         </div>
       </CCardHeader>
-      <VillageDetailsList />
 
       <CCardBody>
+        <VillageDetailsList />
+
         {apiError && (
           <CAlert color="danger" className="text-center">
             {apiError}
@@ -234,36 +236,14 @@ function TrutiArjList() {
                   </CTable>
                 </div>
 
-                <CRow className="mt-3 align-items-center">
-                  <CCol xs={12} md={6} className="mb-2 mb-md-0">
-                    {/* <div className="dataTables_info">
-                      Showing {(currentPage - 1) * itemsPerPage + 1} to{' '}
-                      {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems} entries
-                    </div> */}
-                    <div className="dataTables_info">
-                      {totalItems} नोंदींपैकी {(currentPage - 1) * itemsPerPage + 1} ते {' '}
-                      {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
+              <SmartPagination
+  currentPage={currentPage}
+  totalPages={totalPages}
+  totalItems={totalItems}
+  itemsPerPage={itemsPerPage}
+  onPageChange={(page) => setCurrentPage(page)}
+/>
 
-                    </div>
-                  </CCol>
-
-                  <CCol xs={12} md={6}>
-                    {totalPages > 1 && (
-                      <CPagination
-                        activePage={currentPage}
-                        pages={totalPages}
-                        onActivePageChange={setCurrentPage}
-                        align="end"
-                        dots={false}
-                        doubleArrows={false}
-                        firstButton="First"
-                        lastButton="Last"
-                        size="sm"
-                        className="justify-content-center justify-content-md-end"
-                      />
-                    )}
-                  </CCol>
-                </CRow>
               </>
             )}
           </>

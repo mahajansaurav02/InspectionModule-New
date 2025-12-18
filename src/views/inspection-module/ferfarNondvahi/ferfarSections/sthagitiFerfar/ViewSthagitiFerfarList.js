@@ -36,6 +36,7 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import { useSelector } from 'react-redux'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
+import SmartPagination from 'src/components/SmartPagination'
 
 function ViewSthagitiFerfarList() {
   const navigate = useNavigate()
@@ -49,9 +50,9 @@ function ViewSthagitiFerfarList() {
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)
-const { user, roles, token } = useSelector((state) => state.auth || {})
+  const { user, roles, token } = useSelector((state) => state.auth || {})
 
-const reqHeaders = getReqHeaders({ token, user })
+  const reqHeaders = getReqHeaders({ token, user })
   let {
     cCode,
     distMarathiName,
@@ -73,7 +74,7 @@ const reqHeaders = getReqHeaders({ token, user })
       return
     }
     try {
-     
+
 
       const res = await api.get(`/inpsection/getStayFerfarForInspection?ccode=${cCode}`)
       setFerfarList1(res.data)
@@ -96,7 +97,7 @@ const reqHeaders = getReqHeaders({ token, user })
   )
 
   const handleFerfarClick = (ferfar) => {
-        ferfar.ferfar_type='7'
+    ferfar.ferfar_type = '7'
 
     navigate(`/ferfar-details/${ferfar.id}`, { state: { ferfar } })
   }
@@ -117,9 +118,9 @@ const reqHeaders = getReqHeaders({ token, user })
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
         <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-   className="d-flex justify-content-between align-items-center text-white">
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+        }}
+          className="d-flex justify-content-between align-items-center text-white">
           <h4 className="mb-0">📋 स्थगिती असलेले फेरफार </h4>
           <div className="d-flex align-items-center">
             <CTooltip content="Search ferfar">
@@ -195,41 +196,14 @@ const reqHeaders = getReqHeaders({ token, user })
                     </CTable>
                   </div>
 
-                  <CRow>
-                    <CCol md={6} className="d-flex align-items-center">
-                      <div className="dataTables_info">
-                      {totalItems} नोंदींपैकी {(currentPage - 1) * itemsPerPage + 1} ते {' '}
-                       {Math.min(currentPage * itemsPerPage, totalItems)} नोंदी दाखवत आहे.
-                    </div>
-                    </CCol>
-                    <CCol md={6} className="d-flex justify-content-end">
-                      <CPagination align="end" size="sm" className="mb-0">
-                        <CPaginationItem
-                          disabled={currentPage === 1}
-                          onClick={() => setCurrentPage(currentPage - 1)}
-                        >
-                          मागे जा 
-                        </CPaginationItem>
+                  <SmartPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                  />
 
-                        {Array.from({ length: totalPages }, (_, i) => (
-                          <CPaginationItem
-                            key={i + 1}
-                            active={i + 1 === currentPage}
-                            onClick={() => setCurrentPage(i + 1)}
-                          >
-                            {i + 1}
-                          </CPaginationItem>
-                        ))}
-
-                        <CPaginationItem
-                          disabled={currentPage === totalPages}
-                          onClick={() => setCurrentPage(currentPage + 1)}
-                        >
-                          पुढे जा 
-                        </CPaginationItem>
-                      </CPagination>
-                    </CCol>
-                  </CRow>
                 </>
               )}
             </>
