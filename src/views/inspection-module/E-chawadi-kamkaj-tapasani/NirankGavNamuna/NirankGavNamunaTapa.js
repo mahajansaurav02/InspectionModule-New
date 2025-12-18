@@ -14,6 +14,7 @@ import { useSelector } from 'react-redux'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
+import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 
 const villageData = JSON.parse(localStorage.getItem('villageData'))
 
@@ -47,7 +48,7 @@ export const NirankGavNamunaTapa = () => {
 
     try {
 
-            const response = await api.get(`/restservice/getAllVillageForm`)
+      const response = await api.get(`/restservice/getAllVillageForm`)
 
 
       setVillageForms(
@@ -73,7 +74,7 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-  
+
       const response = await api.get(`/restservice/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`)
 
       if (response.data) {
@@ -276,9 +277,9 @@ export const NirankGavNamunaTapa = () => {
     console.log(`Submitting remark for form: ${selectedForm.formName}`)
     console.log(`Remark: ${remark}`)
 
-   
+
     alert(`Remark submitted successfully for ${selectedForm.formName}`)
-    setRemark('') 
+    setRemark('')
   }
 
   const renderReportTable = () => {
@@ -302,8 +303,11 @@ export const NirankGavNamunaTapa = () => {
     }
   }
 
-  return (
-    <>
+  return (<>
+    <FerfarNavbar />
+
+    <div className='container'>
+
       <VillageDetailsList />
 
       <div className="main-container">
@@ -393,23 +397,24 @@ export const NirankGavNamunaTapa = () => {
           )}
         </div>
       </div>
+    </div>
     </>
-  )
+    )
 }
 
-// Kajapa Report Table Component (No changes needed here, keeping for completeness)
-const KajapaReportTable = ({
-  data,
-  formName,
-  village = 'Village A',
-  taluka = 'Taluka B',
-  district = 'District C',
+    // Kajapa Report Table Component (No changes needed here, keeping for completeness)
+    const KajapaReportTable = ({
+      data,
+      formName,
+      village = 'Village A',
+      taluka = 'Taluka B',
+      district = 'District C',
 }) => {
   const handleDownload = () => {
-    console.log('Download button clicked for Kajapa table.')
-  }
+      console.log('Download button clicked for Kajapa table.')
+    }
 
-  return (
+    return (
     <div className="table-container">
       <div className="table-header">
         <h3>{formName} - रिपोर्ट</h3>
@@ -507,22 +512,22 @@ const KajapaReportTable = ({
         </table>
       </div>
     </div>
-  )
+    )
 }
 
-// AddLandRevenueReport Component (No changes needed here, keeping for completeness)
-const AddLandRevenueReport = ({
-  data,
-  formName,
-  village = 'Village A',
-  taluka = 'Taluka B',
-  district = 'District C',
+    // AddLandRevenueReport Component (No changes needed here, keeping for completeness)
+    const AddLandRevenueReport = ({
+      data,
+      formName,
+      village = 'Village A',
+      taluka = 'Taluka B',
+      district = 'District C',
 }) => {
   const handleDownload = () => {
-    console.log('Download button clicked for Nirank table.')
-  }
+      console.log('Download button clicked for Nirank table.')
+    }
 
-  return (
+    return (
     <div className="table-container">
       <div className="table-header">
         <h3>{formName}</h3>
@@ -587,21 +592,21 @@ const AddLandRevenueReport = ({
         </Card>
       </div>
     </div>
-  )
+    )
 }
-// Nirank Report Table Component (No changes needed here, keeping for completeness)
-const NirankReportTable = ({
-  data,
-  formName,
-  village = 'Village A',
-  taluka = 'Taluka B',
-  district = 'District C',
+    // Nirank Report Table Component (No changes needed here, keeping for completeness)
+    const NirankReportTable = ({
+      data,
+      formName,
+      village = 'Village A',
+      taluka = 'Taluka B',
+      district = 'District C',
 }) => {
   const handleDownload = () => {
-    console.log('Download button clicked for Nirank table.')
-  }
+      console.log('Download button clicked for Nirank table.')
+    }
 
-  return (
+    return (
     <div className="table-container">
       <div className="table-header">
         <h3>{formName} - रिपोर्ट</h3>
@@ -677,22 +682,22 @@ const NirankReportTable = ({
         </table>
       </div>
     </div>
-  )
+    )
 }
 
-// Default Report Table Component (No changes needed here, keeping for completeness)
-const DefaultReportTable = ({
-  data,
-  formName,
-  village = 'Village A',
-  taluka = 'Taluka B',
-  district = 'District C',
+    // Default Report Table Component (No changes needed here, keeping for completeness)
+    const DefaultReportTable = ({
+      data,
+      formName,
+      village = 'Village A',
+      taluka = 'Taluka B',
+      district = 'District C',
 }) => {
   const handleDownload = () => {
-    console.log('Download button clicked for default table.')
-  }
+      console.log('Download button clicked for default table.')
+    }
 
-  return (
+    return (
     <div className="table-container">
       <div className="table-header">
         <h3>{formName} - रिपोर्ट</h3>
@@ -756,7 +761,7 @@ const DefaultReportTable = ({
         </table>
       </div>
     </div>
-  )
+    )
 }
 
-export default NirankGavNamunaTapa
+    export default NirankGavNamunaTapa

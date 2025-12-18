@@ -81,6 +81,8 @@ function ViewNiyantritFerfar() {
   )
 
   const handleFerfarClick = (ferfar) => {
+        ferfar.ferfar_type='6'
+
     navigate(`/ferfar-details/${ferfar.id}`, { state: { ferfar } })
   }
 
@@ -97,7 +99,7 @@ function ViewNiyantritFerfar() {
 
   return (
     <>
-      <FerfarNavbar />
+      {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
         <CCardHeader style={{
     background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'

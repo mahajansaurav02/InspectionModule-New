@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router-dom'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
+import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 
 export const MagniDurustiReporttapa = () => {
 
@@ -205,6 +206,9 @@ useEffect(() => {
   ]
 
   return (
+<>
+          <FerfarNavbar />
+
     <div className="report-container">
       <ToastContainer position="top-right" autoClose={2000} theme="colored" />
       <h4 className="report-title">महसूल मागणी दुरुस्ती</h4>
@@ -294,5 +298,6 @@ useEffect(() => {
         </div>
       </div>
     </div>
+    </>
   )
 }

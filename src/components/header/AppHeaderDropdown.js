@@ -1,5 +1,10 @@
 import React from 'react'
-import { CDropdown, CDropdownHeader, CDropdownMenu, CDropdownToggle } from '@coreui/react'
+import {
+  CDropdown,
+  CDropdownHeader,
+  CDropdownMenu,
+  CDropdownToggle,
+} from '@coreui/react'
 import AccountCircleIcon from '@mui/icons-material/AccountCircle'
 import Logout from '../logout'
 
@@ -8,62 +13,102 @@ const AppHeaderDropdown = () => {
   const fullName = localStorage.getItem('fullName')
 
   return (
-    <CDropdown variant="nav-item">
+    <CDropdown variant="nav-item" alignment="end">
+      {/* 🔹 Avatar Button */}
       <CDropdownToggle
         caret={false}
-        className="p-0"
-        style={{
-          width: '40px',
-          height: '40px',
-          borderRadius: '50%',
-          backgroundColor: '#007bff',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          transition: 'transform 0.2s',
-        }}
-        onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.1)')}
-        onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+        className="p-0 border-0 bg-transparent"
       >
-        <AccountCircleIcon style={{ color: '#fff', fontSize: '28px' }} />
+        <div
+          style={{
+            width: '30px',
+            height: '30px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            boxShadow: '0 4px 10px rgba(0,0,0,0.15)',
+            cursor: 'pointer',
+            transition: 'all 0.25s ease',
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.transform = 'scale(1.08)')
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.transform = 'scale(1)')
+          }
+        >
+          <AccountCircleIcon style={{ color: '#fff', fontSize: 20  }} />
+        </div>
       </CDropdownToggle>
 
+      {/* 🔹 Dropdown Menu */}
       <CDropdownMenu
-        className="shadow rounded-3 p-3"
         placement="bottom-end"
-        style={{ minWidth: '220px', backgroundColor: '#f9f9f9' }}
+        className="border-0 shadow-lg rounded-4 p-0"
+        style={{
+          minWidth: '260px',
+          background: 'rgba(255,255,255,0.95)',
+          backdropFilter: 'blur(8px)',
+        }}
       >
+        {/* Header */}
         <CDropdownHeader
-          className="fw-bold py-2 px-2 rounded-top text-white"
-          style={{ backgroundColor: '#007bff' }}
+          className="text-white text-center py-3 rounded-top"
+          style={{
+            background: 'linear-gradient(135deg, #4facfe, #00f2fe)',
+          }}
         >
-          Account
+          <strong>My Account</strong>
         </CDropdownHeader>
 
-        <div className="text-center my-3">
+        {/* User Info */}
+        <div className="text-center px-3 py-4">
           <div
             style={{
-              width: '50px',
-              height: '50px',
+              width: '60px',
+              height: '60px',
               borderRadius: '50%',
-              backgroundColor: '#e0f0ff',
+              background: 'linear-gradient(135deg, #e0f7ff, #f0fbff)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              margin: '0 auto 8px auto',
+              margin: '0 auto 10px',
+              boxShadow: 'inset 0 0 6px rgba(0,0,0,0.1)',
             }}
           >
-            <AccountCircleIcon style={{ color: '#007bff', fontSize: '28px' }} />
+            <AccountCircleIcon style={{ fontSize: 34, color: '#007bff' }} />
           </div>
-          <h6 className="mb-0">{fullName ? fullName : 'NA'}</h6>
-          <br />
-          <h6 style={{ fontSize: '15px' }} className="mb-0">
-            {userName ? userName : 'User'}
+
+          <h6 className="mb-1 fw-bold text-dark">
+            {fullName || 'NA'}
           </h6>
-          <small className="text-muted">Welcome back!</small>
+
+          <div
+            style={{
+              fontSize: '14px',
+              color: '#555',
+              marginBottom: '4px',
+            }}
+          >
+            {userName || 'User'}
+          </div>
+
+          <small className="text-muted">Welcome back 👋</small>
         </div>
 
-        <div className="d-flex justify-content-center mt-3">
+        {/* Divider */}
+        <div
+          style={{
+            height: '1px',
+            backgroundColor: '#eee',
+            margin: '0 16px',
+          }}
+        />
+
+        {/* Logout */}
+        <div className="d-flex justify-content-center py-3">
           <Logout />
         </div>
       </CDropdownMenu>

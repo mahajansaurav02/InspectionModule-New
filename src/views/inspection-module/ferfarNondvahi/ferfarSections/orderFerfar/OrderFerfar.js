@@ -12,7 +12,6 @@ import {
   CButton,
 } from '@coreui/react'
 import FerfarNavbar from '../FerfarNavbar'
-
 function OrderFerfar() {
   const navigate = useNavigate()
 

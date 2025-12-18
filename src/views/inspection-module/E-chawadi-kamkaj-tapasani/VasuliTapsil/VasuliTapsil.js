@@ -17,6 +17,7 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
+import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 
 const VasuliTapsil = () => {
   const [demandData, setDemandData] = useState(null)
@@ -247,6 +248,10 @@ const VasuliTapsil = () => {
   }
 
   return (
+
+    <>
+          <FerfarNavbar />
+
     <div className={styles['vasuli-container']}>
       <h2 className={styles['main-title']}>जमीन महसूलाची वसुली तपशील</h2>
       <VillageDetailsList />
@@ -480,6 +485,7 @@ const VasuliTapsil = () => {
         </div>
       </div>
     </div>
+    </>
   )
 }
 

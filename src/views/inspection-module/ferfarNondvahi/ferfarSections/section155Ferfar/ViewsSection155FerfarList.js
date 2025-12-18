@@ -105,6 +105,8 @@ const reqHeaders = getReqHeaders({ token, user })
   )
 
   const handleFerfarClick = (ferfar) => {
+        ferfar.ferfar_type='2'
+
     navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } })
   }
 

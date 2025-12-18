@@ -10,6 +10,7 @@ import URLS from 'src/URLS'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
+import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 
 // Add the new functions from the second code snippet
 var prevTotalArea = 0.0,
@@ -395,6 +396,8 @@ const DyslrAkarbandTapasani = () => {
   }
 
   return (
+<>
+    <FerfarNavbar />
     <div className={styles.wrapper}>
       <h4 className="text-center fw-bold mb-4 text-primary">
         उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील
@@ -749,6 +752,7 @@ const DyslrAkarbandTapasani = () => {
         </Tab>
       </Tabs>
     </div>
+    </>
   )
 }
 

@@ -96,6 +96,8 @@ const reqHeaders = getReqHeaders({ token, user })
   )
 
   const handleFerfarClick = (ferfar) => {
+        ferfar.ferfar_type='3'
+
     navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } })
   }
 
@@ -112,7 +114,7 @@ const reqHeaders = getReqHeaders({ token, user })
 
   return (
     <>
-      <FerfarNavbar />
+      {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
         <CCardHeader style={{
     background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'

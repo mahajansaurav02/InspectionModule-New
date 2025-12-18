@@ -32,6 +32,8 @@ import { MdOutlineZoomIn } from 'react-icons/md'
 import URLS from 'src/URLS'
 import { useNavigate } from 'react-router-dom'
 import api from 'src/api/api'
+import { useSelector } from 'react-redux'
+
 
 
 
@@ -50,7 +52,8 @@ const FerfarDetailsTabs = ({ ferfar }) => {
   const navigate = useNavigate()
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = JSON.parse(VillageData)
-
+const { user, roles, token } = useSelector((state) => state.auth || {})
+const revenueYear=user.revenueYear[0].revenueYear
   let {
     cCode,
     distMarathiName,
@@ -167,6 +170,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
   }
 
   const getFerfarView = async () => {
+    console.log(ferfar,"======ferfar=========")
     setIsLoading(true)
     try {
       const token = 'UcW60oyb7mdxakkWQOYHYqYLaYuquDBmkyir3wBBSkWLsGcoC9JpjidlJuxmdEtI'
@@ -214,40 +218,51 @@ const FerfarDetailsTabs = ({ ferfar }) => {
 
     return decrypted.toString(CryptoJS.enc.Utf8)
   }
+const handleSubmit = async () => {
+  setIsLoading(true)
+  const payload={
+    districtCode:  districtCode,
+    talukaCode: talukaCode,
+    ccode: cCode,
+    revenueYear: revenueYear,
+    mutNo: ferfar.mutNo,
+    ferfar_type: ferfar.ferfar_type,
+    remark: remark,
+    remarkType: "साधारण"
+  }
+  try {
+    const res = await api.post(
+      `/inpsection/saveFerfarForInspection`
+    )
 
-  const handleSubmit = async () => {
-    setIsLoading(true);
+    if (res.status === 201) {
+      // Optional delay for smooth UX
+      setTimeout(() => {
+        setSubmitStatus('success')
 
-
-    const res = await api.post(`/inpsection/saveFerfarForInspection?ccode=${cCode}&revenueYear=2025-26`)
-    try {
-      if (res.status === '201') {
         setTimeout(() => {
-          setIsLoading(false);
-          setSubmitStatus('success');
+          setSubmitStatus(null)
+          setRemark('')
+          navigate(-1)
+        }, 1000)
 
-          setTimeout(() => {
-            setSubmitStatus(null);
-            setRemark('');
-
-            navigate(-1);
-          }, 1000);
-
-        }, 1500);
-
-      } else {
-
-      }
-
-
-
-    } catch (err) {
-
-alert.error('Failed to submit remark')
+      }, 800)
+    } else {
+      throw new Error('Unexpected response status')
     }
 
+  } catch (err) {
+    console.error('Submit error:', err)
 
-  };
+    setSubmitStatus('error')
+    alert(
+      err?.response?.data?.message || 'Failed to submit remark'
+    )
+
+  } finally {
+    setIsLoading(false)
+  }
+}
 
   const handleDownload = (type) => {
     let filePath, fileName
@@ -404,7 +419,7 @@ alert.error('Failed to submit remark')
                 onChange={handleFileChange}
               />
               <CButton color="info" onClick={handleAttachClick}>
-                दस्थायावेज जोडा
+                 दस्ताऐवज जोडा
               </CButton>
               {attachedFile && <span className="text-success small">{attachedFile.name}</span>}
             </div>
@@ -420,8 +435,8 @@ alert.error('Failed to submit remark')
                     type="radio"
                     name="priorityType"
                     value="Low"
-                    checked={priority === 'Low'}
-                    onChange={() => setPriority('Low')}
+                    checked={priority === 'High'}
+                    onChange={() => setPriority('High')}
                   />
                   अतीगंभीर
                 </label>
@@ -442,8 +457,8 @@ alert.error('Failed to submit remark')
                     type="radio"
                     name="priorityType"
                     value="High"
-                    checked={priority === 'High'}
-                    onChange={() => setPriority('High')}
+                    checked={priority === 'Low'}
+                    onChange={() => setPriority('Low')}
                   />
                   साधारण
                 </label>
@@ -455,7 +470,7 @@ alert.error('Failed to submit remark')
               </CButton>
 
               <CButton color="primary" onClick={handleSubmit} className="submit-button">
-                {isLoading ? 'जतन करा' : 'जतन होत आहे ...'}
+                {isLoading ? 'जतन होत आहे ...' : 'जतन करा'}
               </CButton>
             </div>
 
