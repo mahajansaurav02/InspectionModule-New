@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
+import { IoArrowBackOutline } from "react-icons/io5";
 import axios from 'axios'
 import {
   CCard,
@@ -155,11 +156,11 @@ function TrutiArjList() {
 
   return (
     <CCard className="mb-4 custom-card">
-      <CCardHeader className="d-flex justify-content-between align-items-center text-white"
-        style={{
-          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-        }}>
-        {/* Display the dynamic title */}
+      {/* <CCardHeader className="d-flex justify-content-between align-items-center text-white"
+       style={{
+       background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+       }}>
+      
         <h4 className="mb-0">
           {currentCondition ? currentCondition.title : 'तलाठी स्तरावर प्रलंबित अर्जांची यादी'}
         </h4>
@@ -183,7 +184,72 @@ function TrutiArjList() {
             </div>
           </CTooltip>
         </div>
-      </CCardHeader>
+      </CCardHeader> */}
+{/* above code is old */}
+
+<CCardHeader
+  className="text-white"
+  style={{
+    background:
+      'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+  }}
+>
+  <div className="d-flex align-items-center justify-content-between w-100">
+
+    {/* 🔙 Back Icon (LEFT) */}
+    <span
+      onClick={() => navigate(-2)}
+      style={{
+        cursor: 'pointer',
+        fontSize: '22px',
+        color: 'white',
+        transition: 'all 0.25s ease',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
+        e.currentTarget.style.opacity = '0.85'
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.transform = 'none'
+        e.currentTarget.style.opacity = '1'
+      }}
+    >
+      <IoArrowBackOutline />
+    </span>
+
+    {/* 🏷️ CENTER TITLE (from CONDITION_MAPPING) */}
+    <h4 className="mb-0 text-center flex-grow-1">
+      {currentCondition ? currentCondition.title : 'तलाठी स्तरावर प्रलंबित अर्जांची यादी'}
+    </h4>
+
+    {/* 🔍 Search (RIGHT) */}
+    <div className="d-flex align-items-center">
+      <CTooltip content="Search applications">
+        <div className="position-relative">
+          <CIcon
+            icon={cilSearch}
+            className="position-absolute top-50 start-0 translate-middle-y ms-2"
+          />
+          <CFormInput
+            type="text"
+            placeholder="शोधा..."
+            className="ps-5"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value)
+              setCurrentPage(1)
+            }}
+          />
+        </div>
+      </CTooltip>
+    </div>
+
+  </div>
+</CCardHeader>
+
+
+  {/* ===================================================================================================================== */}
+      <VillageDetailsList />
 
       <CCardBody>
         <VillageDetailsList />

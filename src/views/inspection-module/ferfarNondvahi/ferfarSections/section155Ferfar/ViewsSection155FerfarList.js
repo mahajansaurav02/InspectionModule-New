@@ -193,7 +193,7 @@ function ViewsSection155FerfarList() {
                   <VillageDetailsList />
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
-                      <CTableHead className="table-dark">
+                      <CTableHead className="text-center flex-grow-1 table-dark">
                         <CTableRow>
                           <CTableHeaderCell width="5%">अनु क्रमांक</CTableHeaderCell>
                           <CTableHeaderCell width="15%">फेरफार क्रमांक</CTableHeaderCell>
