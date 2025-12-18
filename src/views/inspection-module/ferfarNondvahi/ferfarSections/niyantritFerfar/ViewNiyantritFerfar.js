@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { IoArrowBackOutline } from "react-icons/io5";
 import {
   CCard,
   CCardBody,
@@ -105,7 +106,27 @@ function ViewNiyantritFerfar() {
     background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
   }}
   className="d-flex justify-content-between align-items-center text-white">
-          <h4 className="mb-0">
+    <span
+            onClick={() => navigate(-2)}
+            style={{
+              cursor: 'pointer',
+              fontSize: '22px',
+              color: 'white',
+              transition: 'all 0.25s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
+              e.currentTarget.style.opacity = '0.85'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'none'
+              e.currentTarget.style.opacity = '1'
+            }}
+          >
+            <IoArrowBackOutline />
+          </span>
+
+          <h4 className="mb-0 text-center flex-grow-1">
             📋 नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार{' '}
           </h4>
           <div className="d-flex align-items-center">
@@ -148,7 +169,7 @@ function ViewNiyantritFerfar() {
                 <>
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
-                      <CTableHead className="table-dark">
+                      <CTableHead className="text-center flex-grow-1 table-dark">
                         <CTableRow>
                           <CTableHeaderCell width="5%">अनु क्रमांक</CTableHeaderCell>
                           <CTableHeaderCell width="15%">फेरफार क्रमांक</CTableHeaderCell>

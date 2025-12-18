@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { IoArrowBackOutline } from "react-icons/io5";
 import {
   CCard,
   CCardBody,
@@ -197,7 +198,27 @@ function TrutiArjList() {
     background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
   }}
    className="d-flex justify-content-between align-items-center text-white">
-        <h4 className="mb-0">त्रुटी अर्ज यादी</h4>
+    <span
+  onClick={() => navigate(-2)}
+  style={{
+    cursor: 'pointer',
+    fontSize: '22px',
+    color: 'white',
+    transition: 'all 0.25s ease',
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
+    e.currentTarget.style.opacity = '0.85'
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.transform = 'none'
+    e.currentTarget.style.opacity = '1'
+  }}
+>
+  <IoArrowBackOutline />
+</span>
+        <h4 className="mb-0 text-center flex-grow-1">
+          त्रुटी अर्ज यादी</h4>
         <div className="d-flex align-items-center">
           <CTooltip content="Search applications">
             <div className="position-relative">
