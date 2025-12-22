@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CCard,
   CCardBody,
@@ -79,7 +79,6 @@ function ViewsSection155FerfarList() {
       //   headers: reqHeaders,
       // })
 
-
       const res = await api.get(`${URLS.BaseURL}/inpsection/getKalamFerfar?ccode=${cCode}`)
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
@@ -131,10 +130,14 @@ function ViewsSection155FerfarList() {
       <CCard className="mb-4 custom-card">
         <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-        <CCardHeader style={{
-          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-        }}
-          className="d-flex justify-content-between align-items-center text-white">
+
+        <CCardHeader
+          style={{
+            background:
+              'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+          }}
+          className="d-flex justify-content-between align-items-center text-white"
+        >
           <span
             onClick={() => navigate(-2)}
             style={{
@@ -155,8 +158,7 @@ function ViewsSection155FerfarList() {
             <IoArrowBackOutline />
           </span>
 
-          <h4 className="mb-0 text-center flex-grow-1">
-            📋 कलम १५५ अंतर्गत फेरफार यादी</h4>
+          <h4 className="mb-0 text-center flex-grow-1">📋 कलम १५५ अंतर्गत फेरफार यादी</h4>
           <div className="d-flex align-items-center">
             <CTooltip content="Search ferfar">
               <div className="position-relative">
