@@ -30,6 +30,7 @@ import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
+import { toast } from 'react-toastify';
 
 const CONDITION_MAPPING = {
   // We are using '1', '2', '3', '4' assuming those are the IDs passed in the path.
@@ -78,6 +79,7 @@ function TrutiArjList() {
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [apiError, setApiError] = useState(null)
+  const [applicationType, setApplicationType] = useState(null)
 
   const itemsPerPage = 8
 
@@ -100,12 +102,14 @@ function TrutiArjList() {
 
     try {
 
-
+setApplicationType(conditionId)
       const response = await api.get(`/${currentCondition.apiUrl}?ccode=${cCode}&talukaCode=${talukaCode}&districtCode=${districtCode}`)
 
       const fetchedData = response.data.data.content || response.data.data || response.data
 
       if (Array.isArray(fetchedData)) {
+                toast.success('Data fetched successfully!', { autoClose: 2000 })
+
         setData(fetchedData)
       } else {
         setData([])
@@ -113,6 +117,7 @@ function TrutiArjList() {
       }
     } catch (error) {
       console.error('Error fetching application list:', error)
+      toast.error(error?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
       // setApiError("माहिती आणताना त्रुटी आली. API तपासा.");
     } finally {
       setIsLoading(false)
@@ -140,6 +145,7 @@ function TrutiArjList() {
   )
 
   const handleApplicationClick = (application) => {
+application.ehakkaType=applicationType
     navigate(`/truti-applications-details/${application.id}`, { state: { application } })
   }
 
@@ -249,7 +255,6 @@ function TrutiArjList() {
 
 
   {/* ===================================================================================================================== */}
-      <VillageDetailsList />
 
       <CCardBody>
         <VillageDetailsList />

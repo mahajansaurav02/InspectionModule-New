@@ -40,6 +40,7 @@ import { useSelector } from 'react-redux'
 import getReqHeaders from 'src/instance/getHeader'
 import 'src/views/inspection-module/ferfarNondvahi/FerfarHome.module.css'
 import SmartPagination from 'src/components/SmartPagination';
+import { toast, ToastContainer } from 'react-toastify';
 
 
 function ViewOrderFerfarList() {
@@ -93,10 +94,11 @@ function ViewOrderFerfarList() {
           headers: reqHeaders,
         },
       )
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+
       setFerfarList1(res.data)
     } catch (err) {
-      console.error(err)
-      // You can add error handling here, e.g., show a toast message
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
     } finally {
       setIsLoading(false)
     }
@@ -146,6 +148,8 @@ function ViewOrderFerfarList() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
+                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
         {/* <CCardHeader style={{
     background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
   }}

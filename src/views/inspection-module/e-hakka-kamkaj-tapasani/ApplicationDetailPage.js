@@ -30,7 +30,7 @@ const ApplicationDetailPage = () => {
         onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.05)')}
         onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
       >
-        अर्ज क्रमांक . {application.applicationNo}
+        अर्ज क्रमांक . {application.applicationId}
       </h5>
       <TrutiDetailsTabs ferfar={application} />
     </CContainer>

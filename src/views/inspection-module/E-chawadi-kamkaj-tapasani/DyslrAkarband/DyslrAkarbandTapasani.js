@@ -11,6 +11,12 @@ import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
 import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
+import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { Bounce, toast, ToastContainer } from 'react-toastify'
+// import { async } from 'crypto-random-string'
+
 
 // Add the new functions from the second code snippet
 var prevTotalArea = 0.0,
@@ -31,23 +37,32 @@ const DyslrAkarbandTapasani = () => {
   const [loadingRejected, setLoadingRejected] = useState(false)
   const [tableData, setTableData] = useState([])
   const [rejectedTableData, setRejectedTableData] = useState([])
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+
   const tableRef = useRef(null)
   const rejectedTableRef = useRef(null)
   const firstRemarkRef = useRef(null)
   const secondRemarkRef = useRef(null)
-  const token = localStorage.getItem('token')
   // const [districtCode, setDistrictCode] = useState('24'); // Replace with actual state management
   // const [talukaCode, setTalukaCode] = useState('11'); // Replace with actual state management
   const [villageCode, setVillageCode] = useState('270900130113130000') // Replace with actual state management
 
   const [firstRemark, setFirstRemark] = useState('')
   const [firstRemarkSubmitting, setFirstRemarkSubmitting] = useState(false)
-  
+
   const [secondRemark, setSecondRemark] = useState('')
   const [secondRemarkSubmitting, setSecondRemarkSubmitting] = useState(false)
 
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = JSON.parse(VillageData)
+  const navigate = useNavigate()
+  const { user, roles, token } = useSelector((state) => state.auth || {})
+  const revenueYear = user?.revenueYear[0]?.revenueYear
+
+
 
   let {
     cCode,
@@ -62,59 +77,125 @@ const DyslrAkarbandTapasani = () => {
   // Function to scroll to remark section
   const scrollToRemark = (tab) => {
     setActiveTab(tab)
-    
+
     // Small delay to ensure tab content is rendered
     setTimeout(() => {
       if (tab === 'akarband' && firstRemarkRef.current) {
-        firstRemarkRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
+        firstRemarkRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
         })
       } else if (tab === 'akarbandRejected' && secondRemarkRef.current) {
-        secondRemarkRef.current.scrollIntoView({ 
-          behavior: 'smooth', 
-          block: 'center' 
+        secondRemarkRef.current.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
         })
       }
     }, 100)
   }
 
-  const handleFirstRemarkSubmit = () => {
-    if (!firstRemark.trim()) {
-      alert('कृपया शेरा भरा')
-      return
+  const handleFirstRemarkSubmit = async () => {
+    // 1. Start Loading
+    setIsSubmitting(true);
+
+    const payload = {
+      districtCode,
+      talukaCode,
+      ccode: cCode,
+      revenueYear,
+      remark:firstRemark,
+      echawdiType: 5
+    };
+
+    try {
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        // 2. Stop Loading and Show Green Tick
+        setIsSubmitting(false);
+        setSubmitSuccess(true);
+
+        // 3. Wait for 2 seconds so the user sees the success animation, then redirect
+        setTimeout(() => {
+          setSubmitSuccess(false);
+          setShowConfirmModal(false);
+          setFirstRemark('');
+          navigate(-1); // Redirect back
+        }, 2000);
+
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      setIsSubmitting(false); // Stop loading on error
+           toast.error(err?.response?.data?.message || 'Failed to submit remark', {
+position: "top-right",
+autoClose: 5000,
+hideProgressBar: false,
+closeOnClick: false,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "colored",
+transition: Bounce,
+});
     }
 
-    setFirstRemarkSubmitting(true)
-
-    // 🔹 API call for first tab remark
-    setTimeout(() => {
-      console.log('Submitted First Remark:', firstRemark)
-      setFirstRemarkSubmitting(false)
-      setFirstRemark('')
-      // Here you can add API call to save the remark
-    }, 1000)
   }
 
   const handleFirstRemarkClear = () => {
     setFirstRemark('')
   }
 
-  const handleSecondRemarkSubmit = () => {
-    if (!secondRemark.trim()) {
-      alert('कृपया शेरा भरा')
-      return
+  const handleSecondRemarkSubmit = async () => {
+    setIsSubmitting(true);
+
+    const payload = {
+      districtCode,
+      talukaCode,
+      ccode: cCode,
+      revenueYear,
+      remark: secondRemark,
+      echawdiType: 6
+    };
+
+    try {
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        // 2. Stop Loading and Show Green Tick
+        setIsSubmitting(false);
+        setSubmitSuccess(true);
+
+        // 3. Wait for 2 seconds so the user sees the success animation, then redirect
+        setTimeout(() => {
+          setSubmitSuccess(false);
+          setShowConfirmModal(false);
+          setSecondRemark('');
+          navigate(-1); // Redirect back
+        }, 2000);
+
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      setIsSubmitting(false); // Stop loading on error
+      // alert(err?.response?.data?.message || 'Failed to submit remark');
+
+      toast.error(err?.response?.data?.message || 'Failed to submit remark', {
+position: "top-right",
+autoClose: 5000,
+hideProgressBar: false,
+closeOnClick: false,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "colored",
+transition: Bounce,
+});
     }
-
-    setSecondRemarkSubmitting(true)
-
-    // 🔹 API call for second tab remark
-    setTimeout(() => {
-      console.log('Submitted Second Remark:', secondRemark)
-      setSecondRemarkSubmitting(false)
-      setSecondRemark('')
-      // Here you can add API call to save the remark
-    }, 1000)
   }
 
   const handleSecondRemarkClear = () => {
@@ -129,8 +210,8 @@ const DyslrAkarbandTapasani = () => {
         alert('Village code not found....Please Select Village First')
         return
       }
-   
-                  const response = await api.get(`/inpsection/form1OdcDiff?districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${cCode}`)
+
+      const response = await api.get(`/inpsection/form1OdcDiff?districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${cCode}`)
 
 
       if (response.data) {
@@ -340,10 +421,14 @@ const DyslrAkarbandTapasani = () => {
               </span>
             ),
         }))
+          if (mappedData.length > 0) {
+                  toast.success('Data fetched successfully!', { autoClose: 2000 })
+          
+        }
         setTableData(mappedData)
       }
     } catch (error) {
-      console.error('Error fetching data:', error)
+      toast.error(error, { autoClose: 2000 })
       setTableData([])
     } finally {
       setLoading(false)
@@ -359,8 +444,8 @@ const DyslrAkarbandTapasani = () => {
 
     setLoadingRejected(true)
     try {
-   
-            const response = await api.get(`/inpsection/getFormDyslrDeleteEntries?cCode=${cCode}`)
+
+      const response = await api.get(`/inpsection/getFormDyslrDeleteEntries?cCode=${cCode}`)
 
 
       if (response.data && response.data.form1DyslrData) {
@@ -385,10 +470,14 @@ const DyslrAkarbandTapasani = () => {
             remarks: r.remarks,
           }
         })
+        if (mappedData.length > 0) {
+                  toast.success('Data fetched successfully!', { autoClose: 2000 })
+          
+        }
         setRejectedTableData(mappedData)
       }
     } catch (error) {
-      console.error('Error fetching rejected data:', error)
+      toast.error(error, { autoClose: 2000 })
       setRejectedTableData([])
     } finally {
       setLoadingRejected(false)
@@ -396,362 +485,371 @@ const DyslrAkarbandTapasani = () => {
   }
 
   return (
-<>
-    <FerfarNavbar />
-    <div className={styles.wrapper}>
-      <h4 className="text-center fw-bold mb-4 text-primary">
-        उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील
-      </h4>
-      <VillageDetailsList />
+    <>
+      <FerfarNavbar />
+              <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+      
+      <div className={styles.wrapper}>
+        <h4 className="text-center fw-bold mb-4 text-primary">
+          उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील
+        </h4>
+        <VillageDetailsList />
 
-      <Tabs
-        activeKey={activeTab}
-        onSelect={(k) => setActiveTab(k)}
-        className="mb-3 justify-content-center fw-semibold"
-        variant="pills"
-      >
-        <Tab 
-          eventKey="akarband" 
-          title={
-            <div className="d-flex align-items-center">
-              <span>गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता )</span>
-              <Button 
-                variant="link" 
-                size="sm" 
-                className="ms-2 p-0 text-decoration-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollToRemark('akarband');
-                }}
-                title="शेरा साठी जा"
-              >
-                📝
-              </Button>
-            </div>
-          }
+        <Tabs
+          activeKey={activeTab}
+          onSelect={(k) => setActiveTab(k)}
+          className="mb-3 justify-content-center fw-semibold"
+          variant="pills"
         >
-          <div className={styles.tabContent}>
-            <CAlert color="info" className="modern-alert">
-              <strong>टीप:</strong>
-              <ul className="mt-2 mb-0 text-start">
-                <li>उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद भरलेला आहे.</li>
-                <li>
-                  सदर विसंगतीचे तपशीलवार निरीक्षण करत, त्या भूमापन क्रमांकांची यादी तपासणीसाठी
-                  उपलब्ध करून देण्यात आलेली आहे.
-                </li>
-                <li>
-                  ग्राम महसूल अधिकारी यांच्या आकारबंदमधील असलेले काही भूमापन क्रमांक, उप-अधीक्षक
-                  भूमिअभिलेख यांच्या आकारबंदात नमूद नाहीत.ते तपासून खात्री करा.
-                </li>
-              </ul>
-              <Button 
-                variant="primary" 
-                size="sm" 
-                style={{margin: '10px'}}
-                className="ms-2 p-0 text-decoration-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollToRemark('akarband');
-                }}
-                title="शेरा साठी जा"
-              >
-                अभिप्राय नोंदवा 📝
-              </Button>
-            </CAlert>
-
-            <div className={styles.controls}>
-              <Button
-                onClick={getAkarbandDiffData}
-                disabled={loading}
-                className={styles.customButton}
-              >
-                {loading ? <Spinner size="sm" /> : 'माहिती मिळवा'}
-              </Button>
-            </div>
-
-            {loading ? (
-              <div className="loading-state">
-                <LoadingSpinner message="Loading...." />
+          <Tab
+            eventKey="akarband"
+            title={
+              <div className="d-flex align-items-center">
+                <span>गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता )</span>
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="ms-2 p-0 text-decoration-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    scrollToRemark('akarband');
+                  }}
+                  title="शेरा साठी जा"
+                >
+                  📝
+                </Button>
               </div>
-            ) : tableData.length > 0 ? (
-              <Card className={styles.reportCard}>
-                <div className={styles.exportControls}>
-                  <DownloadTableExcel
-                    filename="akarband-report"
-                    sheet="akarband"
-                    currentTableRef={tableRef.current}
-                  >
-                    <Button variant="success" className={styles.downloadButton}>
-                      Download as XLS
-                    </Button>
-                  </DownloadTableExcel>
-                </div>
+            }
+          >
+            <div className={styles.tabContent}>
+              <CAlert color="info" className="modern-alert">
+                <strong>टीप:</strong>
+                <ul className="mt-2 mb-0 text-start">
+                  <li>उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद भरलेला आहे.</li>
+                  <li>
+                    सदर विसंगतीचे तपशीलवार निरीक्षण करत, त्या भूमापन क्रमांकांची यादी तपासणीसाठी
+                    उपलब्ध करून देण्यात आलेली आहे.
+                  </li>
+                  <li>
+                    ग्राम महसूल अधिकारी यांच्या आकारबंदमधील असलेले काही भूमापन क्रमांक, उप-अधीक्षक
+                    भूमिअभिलेख यांच्या आकारबंदात नमूद नाहीत.ते तपासून खात्री करा.
+                  </li>
+                </ul>
+                <Button
+                  variant="primary"
+                  size="sm"
+                  style={{ margin: '10px' }}
+                  className="ms-2 p-0 text-decoration-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    scrollToRemark('akarband');
+                  }}
+                  title="शेरा साठी जा"
+                >
+                  अभिप्राय नोंदवा 📝
+                </Button>
+              </CAlert>
 
-                <div className={styles.tableContainer}>
-                  <table ref={tableRef} className={styles.report_table}>
-                    <thead>
-                      <tr style={{ backgroundColor: 'white', border: '1px solid black' }}>
-                        <th colSpan="7" style={{ backgroundColor: '#add8e6', width: '100%' }}>
-                          <h3 style={{ color: 'red' }}>
-                            <b>गाव नमुना एक( दुरुस्तीसाठी पडताळणी तक्ता )</b>
-                          </h3>
-                        </th>
-                      </tr>
-
-                      <tr style={{ backgroundColor: '#add8e6', border: '1px solid black' }}>
-                        <th rowSpan="2">
-                          <span style={{ whiteSpace: 'nowrap' }}>भूमापन क्रमांक</span>
-                        </th>
-                        <th rowSpan="2">
-                          <span style={{ whiteSpace: 'nowrap' }}>धारणा प्रकार </span>
-                          <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
-                          <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
-                        </th>
-                        <th rowSpan="2">
-                          <span style={{ whiteSpace: 'nowrap' }}>एकूण क्षेत्र</span>
-                          <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
-                          <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
-                        </th>
-                        <th rowSpan="2">
-                          <span style={{ whiteSpace: 'nowrap' }}>पोट खराब क्षेत्रातील फरक</span>
-                        </th>
-                        <th rowSpan="2">
-                          <span style={{ whiteSpace: 'nowrap' }}>पोट खराब क्षेत्र</span>
-                          <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
-                          <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
-                        </th>
-                        <th rowSpan="2">
-                          <span style={{ whiteSpace: 'nowrap' }}>निव्वळ लागवड योग्य क्षेत्र</span>
-                          <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
-                          <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
-                        </th>
-                        <th rowSpan="2">
-                          <span style={{ whiteSpace: 'nowrap' }}>कृषिक आकारणीतील फरक</span>
-                          <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
-                          <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {tableData.map((r, index) => (
-                        <tr key={index}>
-                          <td>{r.surveyNumber}</td>
-                          <td>{r.tenureCodeFlag}</td>
-                          <td>{r.totalAreaFlag}</td>
-                          <td>{r.potKharabaTypeFlag}</td>
-                          <td>{r.potKharabaFlag}</td>
-                          <td>{r.netCultiAreaFlag}</td>
-                          <td>{r.assessmentFlag}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            ) : (
-              <p className={styles.noData}>No records found</p>
-            )}
-
-            {/* 🔹 First Tab Shera Section */}
-            <div ref={firstRemarkRef}>
-              <Card className={styles.remarkCard}>
-                <h6 className={styles.remarkTitle}>शेरा / अभिप्राय </h6>
-
-                <textarea
-                  className={styles.remarkInput}
-                  rows={3}
-                  placeholder="गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता ) यासंबंधीचा शेरा येथे लिहा..."
-                  value={firstRemark}
-                  onChange={(e) => setFirstRemark(e.target.value)}
-                />
-
-                <div className={styles.remarkActions}>
-                  <Button
-                    variant="success"
-                    size="sm"
-                    disabled={firstRemarkSubmitting}
-                    onClick={handleFirstRemarkSubmit}
-                  >
-                    {firstRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
-                  </Button>
-
-                  <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    onClick={handleFirstRemarkClear}
-                  >
-                    साफ करा 
-                  </Button>
-                </div>
-              </Card>
-            </div>
-          </div>
-        </Tab>
-
-        <Tab
-          eventKey="akarbandRejected"
-          title={
-            <div className="d-flex align-items-center">
-              <span>गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक</span>
-              <Button 
-                variant="link" 
-                size="sm" 
-                className="ms-2 p-0 text-decoration-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollToRemark('akarbandRejected');
-                }}
-                title="शेरा साठी जा"
-              >
-                📝
-              </Button>
-            </div>
-          }
-        >
-          <div className={styles.tabContent}>
-            <CAlert color="info" className="modern-alert">
-              <strong>टीप:</strong>
-              <ul className="mt-2 mb-0 text-start">
-                <li>
-                  उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद मध्ये ग्राम महसूल अधिकारी
-                  यांच्या कडील आकारबंद live नुसार उपलब्ध नसलेले भूमापन क्रमांक कमी करण्यात आले आहे.
-                  त्याचा अहवाल उपलब्ध करून देण्यात आला आहे.
-                </li>
-              </ul>
-
-               <Button 
-                variant="primary" 
-                size="sm" 
-                style={{margin: '10px',padding:'5px'}}
-                className="ms-2 p-0 text-decoration-none"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  scrollToRemark('akarbandRejected');
-                }}
-                title="शेरा साठी जा"
-              >
-                अभिप्राय नोंदवा 📝
-              </Button>
-            </CAlert>
-            <div className={styles.controls}>
-              <Button
-                onClick={getAkarbandRejectedData}
-                disabled={loadingRejected}
-                variant="primary"
-                className={styles.customButton}
-              >
-                {loadingRejected ? <Spinner size="sm" /> : 'माहिती मिळवा'}
-              </Button>
-            </div>
-            {loadingRejected ? (
-              <div className="loading-state">
-                <LoadingSpinner message="Loading...." />
+              <div className={styles.controls}>
+                <Button
+                  onClick={getAkarbandDiffData}
+                  disabled={loading}
+                  className={styles.customButton}
+                >
+                  {loading ? <Spinner size="sm" /> : 'माहिती मिळवा'}
+                </Button>
               </div>
-            ) : rejectedTableData.length > 0 ? (
-              <Card className={styles.reportCard}>
-                <div className={styles.exportControls}>
-                  <DownloadTableExcel
-                    filename="rejected-report"
-                    sheet="rejected"
-                    currentTableRef={rejectedTableRef.current}
-                  >
-                    <Button variant="success" className={styles.downloadButton}>
-                      Download as XLS
-                    </Button>
-                    
-                  </DownloadTableExcel>
+
+              {loading ? (
+                <div className="loading-state">
+                  <LoadingSpinner message="Loading...." />
                 </div>
-                <div className={styles.tableContainer}>
-                  <table ref={rejectedTableRef} className={styles.report_table}>
-                    <thead>
-                      <tr style={{ backgroundColor: '#add8e6', border: '1px solid black' }}>
-                        <th colSpan="13" style={{ backgroundColor: '#add8e6', width: '100%' }}>
-                          <h3 style={{ color: 'red' }}>
-                            <b>गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक</b>
-                          </h3>
-                        </th>
-                      </tr>
-                      <tr style={{ backgroundColor: '#add8e6', border: '1px solid black' }}>
-                        <th>भूमापन क्रमांक</th>
-                        <th>नामनिर्देशन</th>
-                        <th>एकूण क्षेत्र</th>
-                        <th>धारण जमिनीचा प्रकार</th>
-                        <th>पोट खराब क्षेत्र</th>
-                        <th>निव्वळ लागवड योग्य क्षेत्र</th>
-                        <th>कृषिक आकारणी</th>
-                        <th>अकृषिक आकारणी</th>
-                        <th>सार्वजनिक रस्ता</th>
-                        <th>बदलाची नोंद</th>
-                        <th>फेरफार क्रमांक</th>
-                        <th>फेरफार दिनांक</th>
-                        <th>शेरा</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {rejectedTableData.map((r, index) => (
-                        <tr key={index}>
-                          <td>{r.surveyHissaNo}</td>
-                          <td>{r.designation}</td>
-                          <td>{r.totalAreaH}</td>
-                          <td>{r.tenureName}</td>
-                          <td>
-                            {r.cultivableAreaInt} ({r.potkharabaType})
-                          </td>
-                          <td>{r.netCultiAreaH}</td>
-                          <td>{r.assessment}</td>
-                          <td>{r.naAssessment}</td>
-                          <td>{r.publicRightsOfWayAndEasements}</td>
-                          <td>{r.particularsOfAlteration}</td>
-                          <td>{r.orderSanctioningChanges}</td>
-                          <td>{r.orderDate}</td>
-                          <td>{r.remarks}</td>
+              ) : tableData.length > 0 ? (
+                <Card className={styles.reportCard}>
+                  <div className={styles.exportControls}>
+                    <DownloadTableExcel
+                      filename="akarband-report"
+                      sheet="akarband"
+                      currentTableRef={tableRef.current}
+                    >
+                      <Button variant="success" className={styles.downloadButton}>
+                        Download as XLS
+                      </Button>
+                    </DownloadTableExcel>
+                  </div>
+
+                  <div className={styles.tableContainer}>
+                    <table ref={tableRef} className={styles.report_table}>
+                      <thead>
+                        <tr style={{ backgroundColor: 'white', border: '1px solid black' }}>
+                          <th colSpan="7" style={{ backgroundColor: '#add8e6', width: '100%' }}>
+                            <h3 style={{ color: 'red' }}>
+                              <b>गाव नमुना एक( दुरुस्तीसाठी पडताळणी तक्ता )</b>
+                            </h3>
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </Card>
-            ) : (
-              <p className={styles.noData}>No records found</p>
-            )}
 
-            {/* 🔹 Second Tab Shera Section */}
-            <div ref={secondRemarkRef}>
-              <Card className={styles.remarkCard}>
-                <h6 className={styles.remarkTitle}>शेरा / अभिप्राय </h6>
+                        <tr style={{ backgroundColor: '#add8e6', border: '1px solid black' }}>
+                          <th rowSpan="2">
+                            <span style={{ whiteSpace: 'nowrap' }}>भूमापन क्रमांक</span>
+                          </th>
+                          <th rowSpan="2">
+                            <span style={{ whiteSpace: 'nowrap' }}>धारणा प्रकार </span>
+                            <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
+                            <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
+                          </th>
+                          <th rowSpan="2">
+                            <span style={{ whiteSpace: 'nowrap' }}>एकूण क्षेत्र</span>
+                            <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
+                            <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
+                          </th>
+                          <th rowSpan="2">
+                            <span style={{ whiteSpace: 'nowrap' }}>पोट खराब क्षेत्रातील फरक</span>
+                          </th>
+                          <th rowSpan="2">
+                            <span style={{ whiteSpace: 'nowrap' }}>पोट खराब क्षेत्र</span>
+                            <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
+                            <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
+                          </th>
+                          <th rowSpan="2">
+                            <span style={{ whiteSpace: 'nowrap' }}>निव्वळ लागवड योग्य क्षेत्र</span>
+                            <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
+                            <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
+                          </th>
+                          <th rowSpan="2">
+                            <span style={{ whiteSpace: 'nowrap' }}>कृषिक आकारणीतील फरक</span>
+                            <span style={{ color: '#8C92AC' }}>(ODC फरक)</span>{' '}
+                            <span style={{ color: '#FF8F00' }}>(Live फरक)</span>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {tableData.map((r, index) => (
+                          <tr key={index}>
+                            <td>{r.surveyNumber}</td>
+                            <td>{r.tenureCodeFlag}</td>
+                            <td>{r.totalAreaFlag}</td>
+                            <td>{r.potKharabaTypeFlag}</td>
+                            <td>{r.potKharabaFlag}</td>
+                            <td>{r.netCultiAreaFlag}</td>
+                            <td>{r.assessmentFlag}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              ) : (
+                <p className={styles.noData}>No records found</p>
+              )}
 
-                <textarea
-                  className={styles.remarkInput}
-                  rows={3}
-                  placeholder="गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक यासंबंधीचा शेरा येथे लिहा..."
-                  value={secondRemark}
-                  onChange={(e) => setSecondRemark(e.target.value)}
-                />
+              {/* 🔹 First Tab Shera Section */}
+              <div ref={firstRemarkRef}>
+                <Card className={styles.remarkCard}>
+                  <h6 className={styles.remarkTitle}>शेरा / अभिप्राय </h6>
 
-                <div className={styles.remarkActions}>
-                  <Button
-                    variant="success"
-                    size="sm"
-                    disabled={secondRemarkSubmitting}
-                    onClick={handleSecondRemarkSubmit}
-                  >
-                    {secondRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
-                  </Button>
+                  <textarea
+                    className={styles.remarkInput}
+                    rows={3}
+                    placeholder="गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता ) यासंबंधीचा शेरा येथे लिहा..."
+                    value={firstRemark}
+                    onChange={(e) => setFirstRemark(e.target.value)}
+                  />
 
-                  <Button
-                    variant="outline-secondary"
-                    size="sm"
-                    onClick={handleSecondRemarkClear}
-                  >
-                    साफ करा 
-                  </Button>
-                </div>
-              </Card>
+                  <div className={styles.remarkActions}>
+                    <Button
+                      variant="success"
+                      size="sm"
+                      disabled={firstRemarkSubmitting}
+                      onClick={() => setShowConfirmModal(true)}
+                    >
+                      {firstRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
+                    </Button>
+
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={handleFirstRemarkClear}
+                    >
+                      साफ करा
+                    </Button>
+                  </div>
+                </Card>
+              </div>
             </div>
-          </div>
-        </Tab>
-      </Tabs>
-    </div>
+          </Tab>
+
+          <Tab
+            eventKey="akarbandRejected"
+            title={
+              <div className="d-flex align-items-center">
+                <span>गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक</span>
+                <Button
+                  variant="link"
+                  size="sm"
+                  className="ms-2 p-0 text-decoration-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    scrollToRemark('akarbandRejected');
+                  }}
+                  title="शेरा साठी जा"
+                >
+                  📝
+                </Button>
+              </div>
+            }
+          >
+            <div className={styles.tabContent}>
+              <CAlert color="info" className="modern-alert">
+                <strong>टीप:</strong>
+                <ul className="mt-2 mb-0 text-start">
+                  <li>
+                    उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद मध्ये ग्राम महसूल अधिकारी
+                    यांच्या कडील आकारबंद live नुसार उपलब्ध नसलेले भूमापन क्रमांक कमी करण्यात आले आहे.
+                    त्याचा अहवाल उपलब्ध करून देण्यात आला आहे.
+                  </li>
+                </ul>
+
+                <Button
+                  variant="primary"
+                  size="sm"
+                  style={{ margin: '10px', padding: '5px' }}
+                  className="ms-2 p-0 text-decoration-none"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    scrollToRemark('akarbandRejected');
+                  }}
+                  title="शेरा साठी जा"
+                >
+                  अभिप्राय नोंदवा 📝
+                </Button>
+              </CAlert>
+              <div className={styles.controls}>
+                <Button
+                  onClick={getAkarbandRejectedData}
+                  disabled={loadingRejected}
+                  variant="primary"
+                  className={styles.customButton}
+                >
+                  {loadingRejected ? <Spinner size="sm" /> : 'माहिती मिळवा'}
+                </Button>
+              </div>
+              {loadingRejected ? (
+                <div className="loading-state">
+                  <LoadingSpinner message="Loading...." />
+                </div>
+              ) : rejectedTableData.length > 0 ? (
+                <Card className={styles.reportCard}>
+                  <div className={styles.exportControls}>
+                    <DownloadTableExcel
+                      filename="rejected-report"
+                      sheet="rejected"
+                      currentTableRef={rejectedTableRef.current}
+                    >
+                      <Button variant="success" className={styles.downloadButton}>
+                        Download as XLS
+                      </Button>
+
+                    </DownloadTableExcel>
+                  </div>
+                  <div className={styles.tableContainer}>
+                    <table ref={rejectedTableRef} className={styles.report_table}>
+                      <thead>
+                        <tr style={{ backgroundColor: '#add8e6', border: '1px solid black' }}>
+                          <th colSpan="13" style={{ backgroundColor: '#add8e6', width: '100%' }}>
+                            <h3 style={{ color: 'red' }}>
+                              <b>गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक</b>
+                            </h3>
+                          </th>
+                        </tr>
+                        <tr style={{ backgroundColor: '#add8e6', border: '1px solid black' }}>
+                          <th>भूमापन क्रमांक</th>
+                          <th>नामनिर्देशन</th>
+                          <th>एकूण क्षेत्र</th>
+                          <th>धारण जमिनीचा प्रकार</th>
+                          <th>पोट खराब क्षेत्र</th>
+                          <th>निव्वळ लागवड योग्य क्षेत्र</th>
+                          <th>कृषिक आकारणी</th>
+                          <th>अकृषिक आकारणी</th>
+                          <th>सार्वजनिक रस्ता</th>
+                          <th>बदलाची नोंद</th>
+                          <th>फेरफार क्रमांक</th>
+                          <th>फेरफार दिनांक</th>
+                          <th>शेरा</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {rejectedTableData.map((r, index) => (
+                          <tr key={index}>
+                            <td>{r.surveyHissaNo}</td>
+                            <td>{r.designation}</td>
+                            <td>{r.totalAreaH}</td>
+                            <td>{r.tenureName}</td>
+                            <td>
+                              {r.cultivableAreaInt} ({r.potkharabaType})
+                            </td>
+                            <td>{r.netCultiAreaH}</td>
+                            <td>{r.assessment}</td>
+                            <td>{r.naAssessment}</td>
+                            <td>{r.publicRightsOfWayAndEasements}</td>
+                            <td>{r.particularsOfAlteration}</td>
+                            <td>{r.orderSanctioningChanges}</td>
+                            <td>{r.orderDate}</td>
+                            <td>{r.remarks}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </Card>
+              ) : (
+                <p className={styles.noData}>No records found</p>
+              )}
+
+              {/* 🔹 Second Tab Shera Section */}
+              <div ref={secondRemarkRef}>
+                <Card className={styles.remarkCard}>
+                  <h6 className={styles.remarkTitle}>शेरा / अभिप्राय </h6>
+
+                  <textarea
+                    className={styles.remarkInput}
+                    rows={3}
+                    placeholder="गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक यासंबंधीचा शेरा येथे लिहा..."
+                    value={secondRemark}
+                    onChange={(e) => setSecondRemark(e.target.value)}
+                  />
+
+                  <div className={styles.remarkActions}>
+                    <Button
+                      variant="success"
+                      size="sm"
+                      disabled={secondRemarkSubmitting}
+                      onClick={() => setShowConfirmModal(true)}                  >
+                      {secondRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
+                    </Button>
+
+                    <Button
+                      variant="outline-secondary"
+                      size="sm"
+                      onClick={handleSecondRemarkClear}
+                    >
+                      साफ करा
+                    </Button>
+                  </div>
+                </Card>
+              </div>
+            </div>
+          </Tab>
+        </Tabs>
+
+        <ConfirmSubmitModal
+          visible={showConfirmModal}
+          loading={isSubmitting} // This must match your useState name
+          success={submitSuccess}   // This must match your useState name
+          onCancel={() => setShowConfirmModal(false)}
+          onConfirm={activeTab === 'akarband' ? handleFirstRemarkSubmit : handleSecondRemarkSubmit}
+        />
+      </div>
     </>
   )
 }

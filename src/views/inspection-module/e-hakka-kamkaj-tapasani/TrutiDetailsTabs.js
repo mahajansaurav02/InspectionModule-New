@@ -29,9 +29,14 @@ import {
   FaArrowLeft,
 } from 'react-icons/fa'
 import '../Tabs.css'
+import { useSelector } from 'react-redux'
+
 import { MdOutlineZoomIn } from 'react-icons/md'
 import { Navigate } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
+import api from 'src/api/api'
+import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
+import { toast, ToastContainer } from 'react-toastify'
 
 const TrutiDetailsTabs = ({ ferfar }) => {
   const [activeKey, setActiveKey] = useState(1)
@@ -41,6 +46,25 @@ const TrutiDetailsTabs = ({ ferfar }) => {
   const [isLoading, setIsLoading] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
   const [zoomLevel, setZoomLevel] = useState(100)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  let VillageData = localStorage.getItem('selectedVillageData')
+  let selectedVillageData = JSON.parse(VillageData)
+  let {
+    cCode,
+    distMarathiName,
+    districtCode,
+    lgdCode,
+    talukaCode,
+    talukaMarathiName,
+    villageName,
+  } = selectedVillageData[0]
+
+  const { user, roles, token } = useSelector((state) => state.auth || {})
+
+  const revenueYear = user?.revenueYear[0]?.revenueYear
+
   const navigate = useNavigate()
 
   const [suggestedRemarks] = useState([
@@ -64,35 +88,84 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
   const handleCloseDocument = (tabKey) => {
     setDocumentHistory((prev) => prev.filter((tab) => tab !== tabKey))
-    // If we're closing the active document, switch to the next available one
     if (tabKey === activeKey) {
       const remainingTabs = documentHistory.filter((tab) => tab !== tabKey)
       if (remainingTabs.length > 0) {
         setActiveKey(remainingTabs[remainingTabs.length - 1])
       } else {
-        // Default to first tab if no documents left
         setActiveKey(1)
         setDocumentHistory([1])
       }
     }
   }
 
-  const handleSubmit = () => {
-    setIsLoading(true);
+  const handleSubmit = async () => {
 
-    setTimeout(() => {
-      setIsLoading(false);
-      setSubmitStatus('success');
 
-      setTimeout(() => {
-        setSubmitStatus(null);
-        setRemark('');
+    if (!priority) {
+      toast.warn('Please select priority')
+      return
+    }
 
-        navigate(-1);
-      }, 1000);
+    let remarkType = ''
+    if (priority === 'High') remarkType = 'अतीगंभीर'
+    if (priority === 'Medium') remarkType = 'गंभीर'
+    if (priority === 'Low') remarkType = 'साधारण'
 
-    }, 1500);
-  };
+    setIsSubmitting(true);
+    console.log(ferfar, '========application=ji========')
+    let inte = parseInt(ferfar.ehakkaType)
+    const payload ={
+      districtCode: districtCode,
+      talukaCode: talukaCode,
+      ccode: cCode,
+      revenueYear: revenueYear,
+      applicationid: ferfar.applicationId,
+      ehakkaType: inte,
+      remark: remark,
+      remarkType: remarkType
+    }
+
+
+    // const payload =
+    // {
+    //   districtCode: "24",
+    //   talukaCode: "13",
+    //   ccode: "2724003796434400",
+    //   revenueYear: "2025-26",
+    //   applicationid: 13242,
+    //   ehakkaType: 2,
+    //   remark: "नोंद तपासणी पूर्ण झाली",
+    //   remarkType: "साधारण"
+    // }
+
+
+
+
+
+    try {
+      const res = await api.post(`/inpsection/saveEHakkaForInspection`, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        setIsSubmitting(false);
+        setSubmitSuccess(true);
+
+        setTimeout(() => {
+          setSubmitSuccess(false);
+          setShowConfirmModal(false);
+          setRemark('');
+          navigate(-1);
+        }, 2000);
+
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      setIsSubmitting(false);
+      alert(err?.response?.data?.message || 'Failed to submit remark');
+    }
+  }
 
 
   const handleDownload = (type) => {
@@ -248,13 +321,13 @@ const TrutiDetailsTabs = ({ ferfar }) => {
               </span>
 
               <div className="d-flex gap-2 mt-2 flex-wrap">
-                <label className={`priority-pill low ${priority === 'Low' ? 'active' : ''}`}>
+                <label className={`priority-pill low ${priority === 'High' ? 'active' : ''}`}>
                   <input
                     type="radio"
                     name="priorityType"
                     value="Low"
-                    checked={priority === 'Low'}
-                    onChange={() => setPriority('Low')}
+                    checked={priority === 'High'}
+                    onChange={() => setPriority('High')}
                   />
                   अतीगंभीर
                 </label>
@@ -270,13 +343,13 @@ const TrutiDetailsTabs = ({ ferfar }) => {
                   गंभीर
                 </label>
 
-                <label className={`priority-pill high ${priority === 'High' ? 'active' : ''}`}>
+                <label className={`priority-pill high ${priority === 'Low' ? 'active' : ''}`}>
                   <input
                     type="radio"
                     name="priorityType"
                     value="High"
                     checked={priority === 'High'}
-                    onChange={() => setPriority('High')}
+                    onChange={() => setPriority('Low')}
                   />
                   साधारण
                 </label>
@@ -290,11 +363,11 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
               <CButton
                 color="primary"
-                onClick={handleSubmit}
+                onClick={() => setShowConfirmModal(true)}
                 className="submit-button"
                 disabled={isLoading}
               >
-                {isLoading ? 'जतन होत आहे ...' :'जतन करा' }
+                {isLoading ? 'जतन होत आहे ...' : 'जतन करा'}
               </CButton>
             </div>
 
@@ -384,6 +457,8 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
   return (
     <CCard className="shadow border-0 mt-4" style={{ backgroundColor: '#f0f4f8' }}>
+              <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
       <CCardBody>
         <div className="d-flex justify-content-start mb-3">
           <CButton color="light" onClick={handleBack} className="d-flex align-items-center">
@@ -458,6 +533,13 @@ const TrutiDetailsTabs = ({ ferfar }) => {
           <CTabPane visible={activeKey === 4}>{renderDocumentView()}</CTabPane>
         </CTabContent>
       </CCardBody>
+      <ConfirmSubmitModal
+        visible={showConfirmModal}
+        loading={isSubmitting}
+        success={submitSuccess}
+        onCancel={() => setShowConfirmModal(false)}
+        onConfirm={handleSubmit}
+      />
     </CCard>
   )
 }

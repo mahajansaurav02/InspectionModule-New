@@ -34,6 +34,7 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination';
+import { toast, ToastContainer } from 'react-toastify';
 
 function ViewOtherFerfarList() {
   const navigate = useNavigate()
@@ -44,9 +45,9 @@ function ViewOtherFerfarList() {
   // const token = localStorage.getItem('token')
   const itemsPerPage = 20
   let VillageData = localStorage.getItem('selectedVillageData')
-const { user, roles, token } = useSelector((state) => state.auth || {})
+  const { user, roles, token } = useSelector((state) => state.auth || {})
 
-const reqHeaders = getReqHeaders({ token, user })
+  const reqHeaders = getReqHeaders({ token, user })
   let selectedVillageData = JSON.parse(VillageData)
 
   let {
@@ -69,10 +70,14 @@ const reqHeaders = getReqHeaders({ token, user })
       // const res = await axios.get(`${URLS.BaseURL}/inpsection/getItarFerfar?ccode=${cCode}`, {
       //   headers: reqHeaders,
       // })
-            const res = await api.get(`/inpsection/getItarFerfar?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getItarFerfar?ccode=${cCode}`)
 
       setFerfarList1(res.data)
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+
     } catch (err) {
+            toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
+
       console.error(err)
     } finally {
       setIsLoading(false)
@@ -97,7 +102,7 @@ const reqHeaders = getReqHeaders({ token, user })
   )
 
   const handleFerfarClick = (ferfar) => {
-        ferfar.ferfar_type='3'
+    ferfar.ferfar_type = '3'
 
     navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } })
   }
@@ -117,30 +122,32 @@ const reqHeaders = getReqHeaders({ token, user })
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
+                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
         <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-   className="d-flex justify-content-between align-items-center bg-primary text-white">
-    <span
-                onClick={() => navigate(-2)}
-                style={{
-                  cursor: 'pointer',
-                  fontSize: '22px',
-                  color: 'white',
-                  transition: 'all 0.25s ease',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
-                  e.currentTarget.style.opacity = '0.85'
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'none'
-                  e.currentTarget.style.opacity = '1'
-                }}
-              >
-                <IoArrowBackOutline />
-              </span>
-  
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+        }}
+          className="d-flex justify-content-between align-items-center bg-primary text-white">
+          <span
+            onClick={() => navigate(-2)}
+            style={{
+              cursor: 'pointer',
+              fontSize: '22px',
+              color: 'white',
+              transition: 'all 0.25s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
+              e.currentTarget.style.opacity = '0.85'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'none'
+              e.currentTarget.style.opacity = '1'
+            }}
+          >
+            <IoArrowBackOutline />
+          </span>
+
           <h4 className="mb-0 text-center flex-grow-1">
             📋 इतर फेरफार या टेम्प्लेटने केलेले फेरफार यादी</h4>
           <div className="d-flex align-items-center">
@@ -216,13 +223,13 @@ const reqHeaders = getReqHeaders({ token, user })
                     </CTable>
                   </div>
 
-                 <SmartPagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  totalItems={totalItems}
-  itemsPerPage={itemsPerPage}
-  onPageChange={(page) => setCurrentPage(page)}
-/>
+                  <SmartPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                  />
 
                 </>
               )}

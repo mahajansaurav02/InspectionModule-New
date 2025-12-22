@@ -34,6 +34,7 @@ import { useNavigate } from 'react-router-dom'
 import api from 'src/api/api'
 import { useSelector } from 'react-redux'
 import e from 'cors'
+import { Bounce, ToastContainer, toast } from 'react-toastify'
 
 
 
@@ -44,7 +45,8 @@ const FerfarDetailsTabs = ({ ferfar }) => {
   const [remark, setRemark] = useState('')
   const [base64Image, setBase64Image] = useState('')
   const [ferfarImage, setFerfarImage] = useState('')
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isSatbaraLoading, setIsSatbaraLoading] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(100)
   const [attachedFile, setAttachedFile] = useState(null)
   const [priority, setPriority] = useState('')
@@ -103,13 +105,18 @@ const FerfarDetailsTabs = ({ ferfar }) => {
     if (!file) return
 
     if (file.type !== 'application/pdf') {
-      errorToast('Only PDF files are allowed.')
+      toast.error('Only PDF files are allowed.', { autoClose: 2000 })
+
       e.target.value = null
+                    setIsLoading(false)
+
       return
     }
     if (file.size > 1024 * 1024) {
       errorToast('File size must be less than 1 MB.')
       e.target.value = null
+                    setIsLoading(false)
+
       return
     }
 
@@ -122,7 +129,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
     }
   }
   const get712View = async () => {
-    setIsLoading(true)
+    setIsSatbaraLoading(true)
     try {
       const token = 'UcW60oyb7mdxakkWQOYHYqYLaYuquDBmkyir3wBBSkWLsGcoC9JpjidlJuxmdEtI'
       const response = await axios.post(
@@ -164,7 +171,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
 
       setBase64Image(parsedData)
     } catch (err) {
-      errorToast('Failed to load 7/12 document')
+      console.log('Failed to load 7/12 document')
       console.error(err)
     } finally {
       setIsLoading(false)
@@ -173,7 +180,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
 
   const getFerfarView = async () => {
     console.log(ferfar, "======ferfar=========")
-    setIsLoading(true)
+    setIsSatbaraLoading(true)
     try {
       const token = 'UcW60oyb7mdxakkWQOYHYqYLaYuquDBmkyir3wBBSkWLsGcoC9JpjidlJuxmdEtI'
       const response = await axios.post(
@@ -204,7 +211,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
       errorToast('Failed to load 7/12 document')
       console.error(err)
     } finally {
-      setIsLoading(false)
+      setIsSatbaraLoading(false)
     }
   }
   const decryptDataImage = (base64Data, key, iv) => {
@@ -220,71 +227,87 @@ const FerfarDetailsTabs = ({ ferfar }) => {
 
     return decrypted.toString(CryptoJS.enc.Utf8)
   }
-const handleSubmit = async () => {
-  if (!priority) {
-    alert('Please select priority')
-    return
-  }
+  const handleSubmit = async () => {
+        setIsLoading(true)
 
-  let remarkType = ''
-  if (priority === 'High') remarkType = 'अतीगंभीर'
-  if (priority === 'Medium') remarkType = 'गंभीर'
-  if (priority === 'Low') remarkType = 'साधारण'
+    if (!priority) {
+      // toast.warn('')
+      toast.warn('Please select priority', {
+position: "top-right",
+autoClose: 5000,
+hideProgressBar: false,
+closeOnClick: false,
+pauseOnHover: true,
+draggable: true,
+progress: undefined,
+theme: "colored",
+transition: Bounce,
+});
+              setIsLoading(false)
 
-  setIsLoading(true)
+      return
 
-  try {
-    const formData = new FormData()
-
-    // 🔹 JSON data → string
-    const dataPayload = {
-      districtCode,
-      talukaCode,
-      ccode: cCode,
-      revenueYear,
-      mutNo: ferfar.mutNo,
-      ferfar_type: ferfar.ferfar_type,
-      remark,
-      remarkType,
     }
 
-    formData.append('data', JSON.stringify(dataPayload))
+    let remarkType = ''
+    if (priority === 'High') remarkType = 'अतीगंभीर'
+    if (priority === 'Medium') remarkType = 'गंभीर'
+    if (priority === 'Low') remarkType = 'साधारण'
 
-    // 🔹 File (ONLY if present)
-    if (attachedFile) {
-      formData.append('file', attachedFile)
-    }
 
-    const res = await api.post(
-      '/inpsection/saveFerfarForInspection',
-      formData,
-      {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
+    try {
+      const formData = new FormData()
+
+      const dataPayload = {
+        districtCode,
+        talukaCode,
+        ccode: cCode,
+        revenueYear,
+        mutNo: ferfar.mutNo,
+        ferfar_type: ferfar.ferfar_type,
+        remark,
+        remarkType,
       }
-    )
 
-    if (res.status === 201) {
-      setSubmitStatus('success')
+      // ✅ Append JSON payload
+      formData.append('data', JSON.stringify(dataPayload))
 
-      setTimeout(() => {
-        setSubmitStatus(null)
-        setRemark('')
-        navigate(-1)
-      }, 1000)
-    } else {
-      throw new Error('Unexpected response')
+      // ✅ Append file only if exists
+      if (attachedFile) {
+        formData.append('File', attachedFile)
+      }else{
+        formData.append('File', null)
+      }
+
+      // 🔍 Debug FormData (IMPORTANT)
+      for (const [key, value] of formData.entries()) {
+        console.log(key, value)
+      }
+
+      const res = await api.post(
+        '/inpsection/saveFerfarForInspection',
+        formData
+      )
+
+      if (res.status === 201) {
+        setSubmitStatus('success')
+
+        setTimeout(() => {
+          setSubmitStatus(null)
+          setRemark('')
+          navigate(-1)
+        }, 1000)
+      } else {
+        throw new Error('Unexpected response')
+      }
+    } catch (err) {
+      console.error('Submit error:', err)
+      setSubmitStatus('error')
+      alert(err?.response?.data?.message || 'Failed to submit remark')
+    } finally {
+      setIsLoading(false)
     }
-
-  } catch (err) {
-    console.error('Submit error:', err)
-    setSubmitStatus('error')
-    alert(err?.response?.data?.message || 'Failed to submit remark')
-  } finally {
-    setIsLoading(false)
   }
-}
 
 
   const handleDownload = (type) => {
@@ -492,7 +515,8 @@ const handleSubmit = async () => {
                 साफ करा
               </CButton>
 
-              <CButton color="primary" onClick={handleSubmit} className="submit-button">
+              <CButton disabled={!remark.trim()}
+                color="primary" onClick={handleSubmit} className="submit-button">
                 {isLoading ? 'जतन होत आहे ...' : 'जतन करा'}
               </CButton>
             </div>
@@ -568,7 +592,19 @@ const handleSubmit = async () => {
 
   return (
     <CCard className="ferfar-details-card">
-      <CCardBody className="tabscard">
+<ToastContainer
+position="top-right"
+autoClose={5000}
+hideProgressBar={false}
+newestOnTop={false}
+closeOnClick={false}
+rtl={false}
+pauseOnFocusLoss
+draggable
+pauseOnHover
+theme="colored"
+transition={Bounce}
+/>      <CCardBody className="tabscard">
         <CNav variant="tabs" role="tablist" className="ferfar-tab-nav">
           <CNavItem className="ferfar-tab-item">
             <CNavLink

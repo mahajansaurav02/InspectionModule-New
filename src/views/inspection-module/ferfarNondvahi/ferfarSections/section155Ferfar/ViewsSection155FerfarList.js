@@ -37,6 +37,7 @@ import 'src/views/inspection-module/ferfarNondvahi/FerfarList.css'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination';
+import { toast, ToastContainer } from 'react-toastify';
 
 function ViewsSection155FerfarList() {
   const navigate = useNavigate()
@@ -81,7 +82,10 @@ function ViewsSection155FerfarList() {
 
       const res = await api.get(`${URLS.BaseURL}/inpsection/getKalamFerfar?ccode=${cCode}`)
       setFerfarList1(res.data)
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+
     } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
       console.error(err)
     } finally {
       setIsLoading(false)
@@ -125,6 +129,8 @@ function ViewsSection155FerfarList() {
   return (
     <>
       <CCard className="mb-4 custom-card">
+        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
         <CCardHeader style={{
           background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
         }}
@@ -227,13 +233,13 @@ function ViewsSection155FerfarList() {
                     </CTable>
                   </div>
 
-                 <SmartPagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  totalItems={totalItems}
-  itemsPerPage={itemsPerPage}
-  onPageChange={(page) => setCurrentPage(page)}
-/>
+                  <SmartPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                  />
 
                 </>
               )}

@@ -31,6 +31,7 @@ import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
+import { toast, ToastContainer } from 'react-toastify';
 
 function TrutiArjList() {
   // Sample data - replace with your actual data source
@@ -62,14 +63,16 @@ function TrutiArjList() {
       return
     }
     try {
-    
+
 
       const res = await api.get(`/inpsection/getEhakkaTrutiApplication?ccode=${cCode}`)
 
       console.log(res.data, 'trutiApplication list')
       setTrutiArjList(res.data)
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+
     } catch (err) {
-      console.error(err)
+      toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
     } finally {
       setIsLoading(false)
     }
@@ -94,7 +97,8 @@ function TrutiArjList() {
   )
 
   const handleApplicationClick = (application) => {
-    console.log(application,"\application")
+    console.log(application, "\application")
+    application.ehakkaType = 5
     navigate(`/truti-applications-details/${application.applicationId}`, { state: { application } }) // Your 7/12 view logic
   }
   const handle7_12Click = (applicationNo) => {
@@ -120,29 +124,31 @@ function TrutiArjList() {
 
   return (
     <CCard className="mb-4 custom-card">
+      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
       <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-   className="d-flex justify-content-between align-items-center text-white">
-    <span
-  onClick={() => navigate(-2)}
-  style={{
-    cursor: 'pointer',
-    fontSize: '22px',
-    color: 'white',
-    transition: 'all 0.25s ease',
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
-    e.currentTarget.style.opacity = '0.85'
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.transform = 'none'
-    e.currentTarget.style.opacity = '1'
-  }}
->
-  <IoArrowBackOutline />
-</span>
+        background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+      }}
+        className="d-flex justify-content-between align-items-center text-white">
+        <span
+          onClick={() => navigate(-2)}
+          style={{
+            cursor: 'pointer',
+            fontSize: '22px',
+            color: 'white',
+            transition: 'all 0.25s ease',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
+            e.currentTarget.style.opacity = '0.85'
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'none'
+            e.currentTarget.style.opacity = '1'
+          }}
+        >
+          <IoArrowBackOutline />
+        </span>
         <h4 className="mb-0 text-center flex-grow-1">
           त्रुटी अर्ज यादी</h4>
         <div className="d-flex align-items-center">
@@ -168,7 +174,7 @@ function TrutiArjList() {
       </CCardHeader>
 
       <CCardBody>
-              <VillageDetailsList />
+        <VillageDetailsList />
 
         {isLoading ? (
           <div className="text-center py-5">
@@ -200,8 +206,8 @@ function TrutiArjList() {
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
-                      {paginatedData.map((item,index) => (
-                        
+                      {paginatedData.map((item, index) => (
+
                         <CTableRow key={item.id}>
                           <CTableDataCell>{index + 1}</CTableDataCell>
                           <CTableDataCell>
@@ -247,13 +253,13 @@ function TrutiArjList() {
                   </CTable>
                 </div>
 
-               <SmartPagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  totalItems={totalItems}
-  itemsPerPage={itemsPerPage}
-  onPageChange={(page) => setCurrentPage(page)}
-/>
+                <SmartPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
 
               </>
             )}

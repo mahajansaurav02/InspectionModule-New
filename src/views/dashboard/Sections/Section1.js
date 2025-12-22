@@ -95,7 +95,7 @@
     const firstRevenueYear = revenueYearList[0];
     const selectedVillage=localStorage.getItem('selectedVillageData')
     const villageName=JSON.parse(selectedVillage)
-    const selectedMainVillage = villageName[0]?.villageName || '';
+    const selectedMainVillage =villageName? villageName[0]?.villageName || '': '';
     const initialVillageName = dropdownVal.village ?? (firstVillage?.villageName || '');
     const initialRevenueYear = dropdownVal.revenueYear ?? (firstRevenueYear?.revenueYear || '');
 

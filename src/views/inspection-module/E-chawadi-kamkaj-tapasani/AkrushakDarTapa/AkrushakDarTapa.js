@@ -21,14 +21,32 @@ import './AkrushakDarTapa.module.css'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
 import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
+import { toast, ToastContainer } from 'react-toastify'
+
+
+
+
+
 const AkrushakDarTapa = () => {
   const [akrushakRateList, setAkrushakRateList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
-
   const [remark, setRemark] = useState('')
-  let VillageData = localStorage.getItem('selectedVillageData')
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
+
+
+
+  const navigate = useNavigate()
+
+  let VillageData = localStorage.getItem('selectedVillageData')
+ const { user, roles, token } = useSelector((state) => state.auth || {})
+  const revenueYear = user?.revenueYear[0]?.revenueYear
   let selectedVillageData = JSON.parse(VillageData)
 
   let {
@@ -56,8 +74,10 @@ const AkrushakDarTapa = () => {
             const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`)
 
       setAkrushakRateList(res.data || [])
+              toast.success('Data fetched successfully!', { autoClose: 2000 })
+
     } catch (err) {
-      setError('डेटा मिळू शकला नाही')
+            toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
     } finally {
       setIsLoading(false)
     }
@@ -66,12 +86,56 @@ const AkrushakDarTapa = () => {
   // --- NEW HANDLER FUNCTIONS ---
   const handleRemarkSubmit = () => {
     if (!remark.trim()) {
-      alert('कृपया शेरा प्रविष्ट करा.')
+      toast.warn('कृपया शेरा प्रविष्ट करा.')
       return
     }
     console.log('Remark submitted:', remark)
     // Implement submission API logic here
   }
+
+const handleSubmit = async () => {
+    // 1. Start Loading
+    setIsSubmitting(true);
+
+    const payload = {
+      districtCode,
+      talukaCode,
+      ccode: cCode,
+      revenueYear,
+      remark,
+      echawdiType: 3
+    };
+
+    try {
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        // 2. Stop Loading and Show Green Tick
+        setIsSubmitting(false);
+        setSubmitSuccess(true);
+
+        // 3. Wait for 2 seconds so the user sees the success animation, then redirect
+        setTimeout(() => {
+          setSubmitSuccess(false);
+          setShowConfirmModal(false);
+          setRemark('');
+          navigate(-1); // Redirect back
+        }, 2000);
+
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      setIsSubmitting(false); // Stop loading on error
+      alert(err?.response?.data?.message || 'Failed to submit remark');
+    }
+  }
+
+
+
+
+
 
   const handleCancel = () => {
     setRemark('')
@@ -83,6 +147,8 @@ const AkrushakDarTapa = () => {
   return (
     <>
 <FerfarNavbar />
+        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
     <CContainer fluid className="p-4 akrushak-dar-container">
       <div className="shadow-lg p-4 rounded bg-white report-area">
         <h4 className="mb-4 text-center text-primary fw-bold border-bottom pb-2">
@@ -171,8 +237,8 @@ const AkrushakDarTapa = () => {
             </CButton>
             <CButton
               color="success"
-              onClick={handleRemarkSubmit}
-              className="submit-button"
+onClick={() => setShowConfirmModal(true)}        
+      className="submit-button"
               disabled={!remark.trim()}
             >
               अभिप्राय जतन करा
@@ -181,6 +247,14 @@ const AkrushakDarTapa = () => {
         </div>
         {/* --- END REMARK AND CONTROL SECTION --- */}
       </div>
+
+         <ConfirmSubmitModal
+                visible={showConfirmModal}
+                loading={isSubmitting} // This must match your useState name
+                success={submitSuccess}   // This must match your useState name
+                onCancel={() => setShowConfirmModal(false)}
+                onConfirm={handleSubmit}
+              />
     </CContainer>
     </>
   )

@@ -5,8 +5,11 @@ import {
   CNavbarBrand,
   CNavbarText,
 } from '@coreui/react'
+import { useNavigate } from 'react-router-dom'
+
 import { cilBalanceScale, cilCalendar, cilClock } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
+import { IoArrowBackOutline } from 'react-icons/io5';
 
 // Helper function to format the current time
 const formatTime = (date) => {
@@ -34,6 +37,7 @@ const FerfarNavbar = () => {
   // 1. Set the initial state using the actual current time when the component loads
   const [liveTime, setLiveTime] = useState(formatTime(new Date()));
   const [liveDate, setLiveDate] = useState(formatDate(new Date()));
+  const navigate = useNavigate()
 
   // 2. useEffect to update the time by getting a new Date() every second
   useEffect(() => {
@@ -80,8 +84,30 @@ const FerfarNavbar = () => {
       <CContainer fluid>
         {/* Left Section: Brand/Title */}
         <CNavbarBrand   className="me-auto text-white fw-bold d-flex align-items-center">
+             <span
+                        onClick={() => navigate(-1)}
+                        style={{
+                          cursor: 'pointer',
+                          fontSize: '22px',
+                          color: 'white',
+                          transition: 'all 0.25s ease',
+                          marginRight: '30px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
+                          e.currentTarget.style.opacity = '0.85'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'none'
+                          e.currentTarget.style.opacity = '1'
+                        }}
+                      >
+                        <IoArrowBackOutline />
+                      </span>
           <CIcon icon={cilBalanceScale} size="lg" className="me-2" />
-          <span style={{ fontSize: '1.25rem' }}>ग्राम महसूल अधिकारी दप्तर तपासणी प्रणाली</span>
+          <span style={{ fontSize: '1.25rem' }}>
+          
+            ग्राम महसूल अधिकारी दप्तर तपासणी प्रणाली</span>
         </CNavbarBrand>
 
         {/* Right Section: Dynamic Context & Live Time */}

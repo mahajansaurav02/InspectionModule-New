@@ -8,7 +8,6 @@ function EHakkaSection() {
   const navigate = useNavigate()
   const [expandedCardId, setExpandedCardId] = useState(null)
 
-  // Mock data for cards
   const mainCards = [
     {
       id: 'card1',

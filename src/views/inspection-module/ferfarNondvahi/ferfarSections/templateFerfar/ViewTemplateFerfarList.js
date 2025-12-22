@@ -34,6 +34,7 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
+import { toast, ToastContainer } from 'react-toastify';
 
 function ViewTemplateFerfarList() {
   const navigate = useNavigate()
@@ -71,8 +72,12 @@ function ViewTemplateFerfarList() {
 
       const res = await api.get(`/inpsection/getTemplateFerfar?ccode=${cCode}`)
       setFerfarList(res.data)
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+
     } catch (err) {
       console.error(err)
+      toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
+
     } finally {
       setIsLoading(false)
     }
@@ -117,11 +122,13 @@ function ViewTemplateFerfarList() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
+                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
         <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-   className="d-flex justify-content-between align-items-center bg-primary text-white">
-    <span
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+        }}
+          className="d-flex justify-content-between align-items-center bg-primary text-white">
+          <span
             onClick={() => navigate(-2)}
             style={{
               cursor: 'pointer',

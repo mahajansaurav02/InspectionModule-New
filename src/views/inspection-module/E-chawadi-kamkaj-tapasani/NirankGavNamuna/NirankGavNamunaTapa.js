@@ -15,6 +15,7 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
+import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
 
 const villageData = JSON.parse(localStorage.getItem('villageData'))
 
@@ -34,6 +35,11 @@ export const NirankGavNamunaTapa = () => {
   let selectedVillageData = JSON.parse(VillageData)
   const { user, roles, token } = useSelector((state) => state.auth || {})
   const [reqHeaders, setReqHeaders] = useState({})
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
+  const [submitSuccess, setSubmitSuccess] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const revenueYear = user?.revenueYear[0]?.revenueYear
 
   let {
     cCode,
@@ -303,6 +309,56 @@ export const NirankGavNamunaTapa = () => {
     }
   }
 
+
+  const handleSubmit = async () => {
+    // 1. Start Loading
+    setIsSubmitting(true);
+
+    const payload = {
+      districtCode,
+      talukaCode,
+      ccode: cCode,
+      revenueYear,
+      remark,
+      echawdiType: 2
+    };
+
+    try {
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+
+      if (res.status === 201 || res.status === 200) {
+        // 2. Stop Loading and Show Green Tick
+        setIsSubmitting(false);
+        setSubmitSuccess(true);
+
+        // 3. Wait for 2 seconds so the user sees the success animation, then redirect
+        setTimeout(() => {
+          setSubmitSuccess(false);
+          setShowConfirmModal(false);
+          setRemark('');
+          navigate(-1); // Redirect back
+        }, 2000);
+
+      } else {
+        throw new Error('Unexpected response status');
+      }
+    } catch (err) {
+      console.error('Submit error:', err);
+      setIsSubmitting(false); // Stop loading on error
+      alert(err?.response?.data?.message || 'Failed to submit remark');
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
   return (<>
     <FerfarNavbar />
 
@@ -382,8 +438,8 @@ export const NirankGavNamunaTapa = () => {
                 </button>
                 <button
                   className="submit-button"
-                  onClick={handleRemarkSubmit}
-                  disabled={!remark.trim()}
+onClick={() => setShowConfirmModal(true)}         
+         disabled={!remark.trim()}
                 >
                   अभिप्राय जतन करा
                 </button>
@@ -397,24 +453,31 @@ export const NirankGavNamunaTapa = () => {
           )}
         </div>
       </div>
+       <ConfirmSubmitModal
+        visible={showConfirmModal}
+        loading={isSubmitting} // This must match your useState name
+        success={submitSuccess}   // This must match your useState name
+        onCancel={() => setShowConfirmModal(false)}
+        onConfirm={handleSubmit}
+      />
     </div>
-    </>
-    )
+  </>
+  )
 }
 
-    // Kajapa Report Table Component (No changes needed here, keeping for completeness)
-    const KajapaReportTable = ({
-      data,
-      formName,
-      village = 'Village A',
-      taluka = 'Taluka B',
-      district = 'District C',
+// Kajapa Report Table Component (No changes needed here, keeping for completeness)
+const KajapaReportTable = ({
+  data,
+  formName,
+  village = 'Village A',
+  taluka = 'Taluka B',
+  district = 'District C',
 }) => {
   const handleDownload = () => {
-      console.log('Download button clicked for Kajapa table.')
-    }
+    console.log('Download button clicked for Kajapa table.')
+  }
 
-    return (
+  return (
     <div className="table-container">
       <div className="table-header">
         <h3>{formName} - रिपोर्ट</h3>
@@ -512,22 +575,22 @@ export const NirankGavNamunaTapa = () => {
         </table>
       </div>
     </div>
-    )
+  )
 }
 
-    // AddLandRevenueReport Component (No changes needed here, keeping for completeness)
-    const AddLandRevenueReport = ({
-      data,
-      formName,
-      village = 'Village A',
-      taluka = 'Taluka B',
-      district = 'District C',
+// AddLandRevenueReport Component (No changes needed here, keeping for completeness)
+const AddLandRevenueReport = ({
+  data,
+  formName,
+  village = 'Village A',
+  taluka = 'Taluka B',
+  district = 'District C',
 }) => {
   const handleDownload = () => {
-      console.log('Download button clicked for Nirank table.')
-    }
+    console.log('Download button clicked for Nirank table.')
+  }
 
-    return (
+  return (
     <div className="table-container">
       <div className="table-header">
         <h3>{formName}</h3>
@@ -591,22 +654,23 @@ export const NirankGavNamunaTapa = () => {
           </table>
         </Card>
       </div>
+      
     </div>
-    )
+  )
 }
-    // Nirank Report Table Component (No changes needed here, keeping for completeness)
-    const NirankReportTable = ({
-      data,
-      formName,
-      village = 'Village A',
-      taluka = 'Taluka B',
-      district = 'District C',
+// Nirank Report Table Component (No changes needed here, keeping for completeness)
+const NirankReportTable = ({
+  data,
+  formName,
+  village = 'Village A',
+  taluka = 'Taluka B',
+  district = 'District C',
 }) => {
   const handleDownload = () => {
-      console.log('Download button clicked for Nirank table.')
-    }
+    console.log('Download button clicked for Nirank table.')
+  }
 
-    return (
+  return (
     <div className="table-container">
       <div className="table-header">
         <h3>{formName} - रिपोर्ट</h3>
@@ -681,23 +745,24 @@ export const NirankGavNamunaTapa = () => {
           </tbody>
         </table>
       </div>
+      
     </div>
-    )
+  )
 }
 
-    // Default Report Table Component (No changes needed here, keeping for completeness)
-    const DefaultReportTable = ({
-      data,
-      formName,
-      village = 'Village A',
-      taluka = 'Taluka B',
-      district = 'District C',
+// Default Report Table Component (No changes needed here, keeping for completeness)
+const DefaultReportTable = ({
+  data,
+  formName,
+  village = 'Village A',
+  taluka = 'Taluka B',
+  district = 'District C',
 }) => {
   const handleDownload = () => {
-      console.log('Download button clicked for default table.')
-    }
+    console.log('Download button clicked for default table.')
+  }
 
-    return (
+  return (
     <div className="table-container">
       <div className="table-header">
         <h3>{formName} - रिपोर्ट</h3>
@@ -760,8 +825,9 @@ export const NirankGavNamunaTapa = () => {
           </tbody>
         </table>
       </div>
+     
     </div>
-    )
+  )
 }
 
-    export default NirankGavNamunaTapa
+export default NirankGavNamunaTapa

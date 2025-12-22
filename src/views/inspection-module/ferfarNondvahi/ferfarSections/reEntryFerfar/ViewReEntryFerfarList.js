@@ -38,6 +38,7 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
+import { toast, ToastContainer } from 'react-toastify';
 
 function ViewReEntryFerfarList() {
   const navigate = useNavigate()
@@ -73,12 +74,16 @@ function ViewReEntryFerfarList() {
       return
     }
     try {
-     
+
 
       const res = await api.get(`/inpsection/getReEntryFerfarDetails?ccode=${cCode}`)
       setFerfarList1(res.data)
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+
     } catch (err) {
       console.error(err)
+            toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
+
     } finally {
       setIsLoading(false)
     }
@@ -96,7 +101,7 @@ function ViewReEntryFerfarList() {
   )
 
   const handleFerfarClick = (ferfar) => {
-        ferfar.ferfar_type='5'
+    ferfar.ferfar_type = '5'
     navigate(`/ferfar-details/${ferfar.id}`, { state: { ferfar } })
   }
 
@@ -115,11 +120,13 @@ function ViewReEntryFerfarList() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
+                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
         <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-  className="d-flex justify-content-between align-items-center bg-primary text-white">
-    <span
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
+        }}
+          className="d-flex justify-content-between align-items-center bg-primary text-white">
+          <span
             onClick={() => navigate(-2)}
             style={{
               cursor: 'pointer',
@@ -214,13 +221,13 @@ function ViewReEntryFerfarList() {
                     </CTable>
                   </div>
 
-                 <SmartPagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  totalItems={totalItems}
-  itemsPerPage={itemsPerPage}
-  onPageChange={(page) => setCurrentPage(page)}
-/>
+                  <SmartPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                  />
 
                 </>
               )}
