@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CCard,
   CCardBody,
@@ -36,7 +36,7 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import 'src/views/inspection-module/ferfarNondvahi/FerfarList.css'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
-import SmartPagination from 'src/components/SmartPagination';
+import SmartPagination from 'src/components/SmartPagination'
 
 function ViewsSection155FerfarList() {
   const navigate = useNavigate()
@@ -77,7 +77,6 @@ function ViewsSection155FerfarList() {
       // const res = await axios.get(`${URLS.BaseURL}`, {
       //   headers: reqHeaders,
       // })
-
 
       const res = await api.get(`${URLS.BaseURL}/inpsection/getKalamFerfar?ccode=${cCode}`)
       setFerfarList1(res.data)
@@ -125,10 +124,13 @@ function ViewsSection155FerfarList() {
   return (
     <>
       <CCard className="mb-4 custom-card">
-        <CCardHeader style={{
-          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-        }}
-          className="d-flex justify-content-between align-items-center text-white">
+        <CCardHeader
+          style={{
+            background:
+              'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+          }}
+          className="d-flex justify-content-between align-items-center text-white"
+        >
           <span
             onClick={() => navigate(-2)}
             style={{
@@ -149,8 +151,7 @@ function ViewsSection155FerfarList() {
             <IoArrowBackOutline />
           </span>
 
-          <h4 className="mb-0 text-center flex-grow-1">
-            📋 कलम १५५ अंतर्गत फेरफार यादी</h4>
+          <h4 className="mb-0 text-center flex-grow-1">📋 कलम १५५ अंतर्गत फेरफार यादी</h4>
           <div className="d-flex align-items-center">
             <CTooltip content="Search ferfar">
               <div className="position-relative">
@@ -227,14 +228,13 @@ function ViewsSection155FerfarList() {
                     </CTable>
                   </div>
 
-                 <SmartPagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  totalItems={totalItems}
-  itemsPerPage={itemsPerPage}
-  onPageChange={(page) => setCurrentPage(page)}
-/>
-
+                  <SmartPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                  />
                 </>
               )}
             </>
