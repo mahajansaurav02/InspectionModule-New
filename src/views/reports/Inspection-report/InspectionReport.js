@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import {
     CContainer,
     CRow,
@@ -30,6 +30,9 @@ import './InspectionReport.css';
 import InspectionPrint from '../InspectionPrint/InspectionPrint';
 import PrintUtility from '../InspectionPrint/PrintUtility';
 import InspectionRemarksPrint from '../InspectionPrint/InspectionRemarksPrint';
+import api from 'src/api/api';
+import URLS from 'src/URLS';
+import { toast } from 'react-toastify';
 
 // Your existing mock data remains the same...
 const mockApiData = {
@@ -197,10 +200,12 @@ const InspectionReport = () => {
     const [eChawadiRemarks, setEChawadiRemarks] = useState({});
     const [vasuliRemarks, setVasuliRemarks] = useState("");
     const [eHakkRemarks, setEHakkRemarks] = useState({});
+      const [ferfarList1, setFerfarList1] = useState([])
     
     const [showAbhiprayModal, setShowAbhiprayModal] = useState(false);
     const [activeRemarkType, setActiveRemarkType] = useState(null);
     const [activeRemarkData, setActiveRemarkData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false)
 
     let VillageData = localStorage.getItem('selectedVillageData');
     let selectedVillageData = JSON.parse(VillageData);
@@ -216,8 +221,50 @@ const InspectionReport = () => {
         villageName,
     } = selectedVillageData[0];
 
+
+useEffect(() => {
+getFerfarData()
+ 
+}, [])
+
+
+
+
+
+const getFerfarData=async()=>{
+
+    setIsLoading(true)
+    try {
+      if (!cCode) {
+        alert('Village code not found....Please Select Village First')
+        return
+      }
+      // const res = await axios.get(`${URLS.BaseURL}`, {
+      //   headers: reqHeaders,
+      // })
+
+      const res = await api.get(`/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=2024-25&activeFlag=Y&ferFarType=3`)
+      setFerfarList1(res.data)
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  
+
+
+
+}
+
+
     const handleGetData = async () => {
+
         setLoading(true);
+        getFerfarData()
+
         setError(null);
         setReportData({});
         

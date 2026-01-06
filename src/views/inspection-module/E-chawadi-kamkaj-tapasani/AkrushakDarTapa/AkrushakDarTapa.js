@@ -45,7 +45,7 @@ const AkrushakDarTapa = () => {
   const navigate = useNavigate()
 
   let VillageData = localStorage.getItem('selectedVillageData')
- const { user, roles, token } = useSelector((state) => state.auth || {})
+  const { user, roles, token } = useSelector((state) => state.auth || {})
   const revenueYear = user?.revenueYear[0]?.revenueYear
   let selectedVillageData = JSON.parse(VillageData)
 
@@ -70,14 +70,17 @@ const AkrushakDarTapa = () => {
         alert('Village code not found....Please Select Village First')
         return
       }
-
-            const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`)
-
+      // const payload ={
+      //   ferFarType:3
+      // }
+      const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`)
+      // const check = await api.get(`/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=9&talukaCode=13&revenueYear=2024-25&activeFlag=Y&ferFarType=3`)
+      // console.log(check, "checkkkk")
       setAkrushakRateList(res.data || [])
-              toast.success('Data fetched successfully!', { autoClose: 2000 })
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
 
     } catch (err) {
-            toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
+      toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
     } finally {
       setIsLoading(false)
     }
@@ -93,7 +96,7 @@ const AkrushakDarTapa = () => {
     // Implement submission API logic here
   }
 
-const handleSubmit = async () => {
+  const handleSubmit = async () => {
     // 1. Start Loading
     setIsSubmitting(true);
 
@@ -146,116 +149,116 @@ const handleSubmit = async () => {
 
   return (
     <>
-<FerfarNavbar />
-        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+      <FerfarNavbar />
+      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-    <CContainer fluid className="p-4 akrushak-dar-container">
-      <div className="shadow-lg p-4 rounded bg-white report-area">
-        <h4 className="mb-4 text-center text-primary fw-bold border-bottom pb-2">
-          📋 अकृषक दर नमूद केल्याची तपासणी
-        </h4>
-        <VillageDetailsList />
+      <CContainer fluid className="p-4 akrushak-dar-container">
+        <div className="shadow-lg p-4 rounded bg-white report-area">
+          <h4 className="mb-4 text-center text-primary fw-bold border-bottom pb-2">
+            📋 अकृषक दर नमूद केल्याची तपासणी
+          </h4>
+          <VillageDetailsList />
 
-        <CAlert color="info" className="modern-alert">
-          <strong>टीप:</strong>
-          <ul className="mt-2 mb-0 text-start">
-            <li>सदर गावाचे अकृषक दर भरून संबंधित काम पूर्ण झाल्याची घोषणा करण्यात आली आहे का?</li>
-            <li>
-              तसेच सदर दर योग्य पद्धतीने लागू करण्यात आले आहेत याचीही तपासणी करून खात्री करावी.
-            </li>
-          </ul>
-        </CAlert>
+          <CAlert color="info" className="modern-alert">
+            <strong>टीप:</strong>
+            <ul className="mt-2 mb-0 text-start">
+              <li>सदर गावाचे अकृषक दर भरून संबंधित काम पूर्ण झाल्याची घोषणा करण्यात आली आहे का?</li>
+              <li>
+                तसेच सदर दर योग्य पद्धतीने लागू करण्यात आले आहेत याचीही तपासणी करून खात्री करावी.
+              </li>
+            </ul>
+          </CAlert>
 
-        {isLoading && (
-          <div
-            className="d-flex justify-content-center align-items-center"
-            style={{ minHeight: '300px' }}
-          >
-            <LoadingSpinner message="Loading..." />
-          </div>
-        )}
-
-        {error && <p className="text-danger text-center">{error}</p>}
-
-        {/* --- TABLE CONTENT --- */}
-        {!isLoading && !error && (
-          <div className="table-responsive mb-4">
-            <CTable
-              bordered
-              striped
-              hover
-              responsive
-              align="middle"
-              className="text-center akrushak-table"
+          {isLoading && (
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ minHeight: '300px' }}
             >
-              <CTableHead className="bg-info text-white">
-                <CTableRow>
-                  <CTableHeaderCell rowSpan={2}>गावाचे नाव</CTableHeaderCell>
-                  <CTableHeaderCell colSpan={4}>अकृषक दर</CTableHeaderCell>
-                  <CTableHeaderCell rowSpan={2}>दर भरण्याबाबत घोषणा केली आहे काय?</CTableHeaderCell>
-                </CTableRow>
-                <CTableRow>
-                  <CTableHeaderCell>न.प </CTableHeaderCell>
-                  <CTableHeaderCell>म.न.पा</CTableHeaderCell>
-                  <CTableHeaderCell>५ पैसे</CTableHeaderCell>
-                  <CTableHeaderCell>१० पैसे</CTableHeaderCell>
-                </CTableRow>
-              </CTableHead>
+              <LoadingSpinner message="Loading..." />
+            </div>
+          )}
 
-              <CTableBody>
-                {akrushakRateList.map((item, index) => (
-                  <CTableRow key={index}>
-                    <CTableDataCell>{item.name}</CTableDataCell>
-                    <CTableDataCell>{item.nprate ? item.nprate : 0} पैसे </CTableDataCell>
-                    <CTableDataCell>{item.mnparate ? item.mnparate : 0} पैसे</CTableDataCell>
-                    <CTableDataCell>{item.fivepaise ? item.fivepaise : 0} पैसे</CTableDataCell>
-                    <CTableDataCell>{item.tenpaise ? item.tenpaise : 0} पैसे</CTableDataCell>
-                    <CTableDataCell>{item.declaration == 'Y' ? 'होय ' : 'नाही '}</CTableDataCell>
+          {error && <p className="text-danger text-center">{error}</p>}
+
+          {/* --- TABLE CONTENT --- */}
+          {!isLoading && !error && (
+            <div className="table-responsive mb-4">
+              <CTable
+                bordered
+                striped
+                hover
+                responsive
+                align="middle"
+                className="text-center akrushak-table"
+              >
+                <CTableHead className="bg-info text-white">
+                  <CTableRow>
+                    <CTableHeaderCell rowSpan={2}>गावाचे नाव</CTableHeaderCell>
+                    <CTableHeaderCell colSpan={4}>अकृषक दर</CTableHeaderCell>
+                    <CTableHeaderCell rowSpan={2}>दर भरण्याबाबत घोषणा केली आहे काय?</CTableHeaderCell>
                   </CTableRow>
-                ))}
-              </CTableBody>
-            </CTable>
+                  <CTableRow>
+                    <CTableHeaderCell>न.प </CTableHeaderCell>
+                    <CTableHeaderCell>म.न.पा</CTableHeaderCell>
+                    <CTableHeaderCell>५ पैसे</CTableHeaderCell>
+                    <CTableHeaderCell>१० पैसे</CTableHeaderCell>
+                  </CTableRow>
+                </CTableHead>
+
+                <CTableBody>
+                  {akrushakRateList.map((item, index) => (
+                    <CTableRow key={index}>
+                      <CTableDataCell>{item.name}</CTableDataCell>
+                      <CTableDataCell>{item.nprate ? item.nprate : 0} पैसे </CTableDataCell>
+                      <CTableDataCell>{item.mnparate ? item.mnparate : 0} पैसे</CTableDataCell>
+                      <CTableDataCell>{item.fivepaise ? item.fivepaise : 0} पैसे</CTableDataCell>
+                      <CTableDataCell>{item.tenpaise ? item.tenpaise : 0} पैसे</CTableDataCell>
+                      <CTableDataCell>{item.declaration == 'Y' ? 'होय ' : 'नाही '}</CTableDataCell>
+                    </CTableRow>
+                  ))}
+                </CTableBody>
+              </CTable>
+            </div>
+          )}
+          {/* --- END TABLE CONTENT --- */}
+
+          {/* --- MODERN REMARK AND CONTROL SECTION --- */}
+          <div className="remark-controls-section p-4 mt-4 border rounded bg-light">
+            <h5 className="remark-title mb-3">शेरा</h5>
+
+            <CFormTextarea
+              rows={4}
+              className="remark-textarea mb-3"
+              placeholder="येथे तपासणीनंतर आपला शेरा/अभिप्राव नोंदवा..."
+              value={remark}
+              onChange={(e) => setRemark(e.target.value)}
+            />
+
+            <div className="d-flex justify-content-end gap-3 button-container">
+              <CButton color="secondary" onClick={handleCancel} className="cancel-button">
+                रद्द करा
+              </CButton>
+              <CButton
+                color="success"
+                onClick={() => setShowConfirmModal(true)}
+                className="submit-button"
+                disabled={!remark.trim()}
+              >
+                अभिप्राय जतन करा
+              </CButton>
+            </div>
           </div>
-        )}
-        {/* --- END TABLE CONTENT --- */}
-
-        {/* --- MODERN REMARK AND CONTROL SECTION --- */}
-        <div className="remark-controls-section p-4 mt-4 border rounded bg-light">
-          <h5 className="remark-title mb-3">शेरा</h5>
-
-          <CFormTextarea
-            rows={4}
-            className="remark-textarea mb-3"
-            placeholder="येथे तपासणीनंतर आपला शेरा/अभिप्राव नोंदवा..."
-            value={remark}
-            onChange={(e) => setRemark(e.target.value)}
-          />
-
-          <div className="d-flex justify-content-end gap-3 button-container">
-            <CButton color="secondary" onClick={handleCancel} className="cancel-button">
-              रद्द करा
-            </CButton>
-            <CButton
-              color="success"
-onClick={() => setShowConfirmModal(true)}        
-      className="submit-button"
-              disabled={!remark.trim()}
-            >
-              अभिप्राय जतन करा
-            </CButton>
-          </div>
+          {/* --- END REMARK AND CONTROL SECTION --- */}
         </div>
-        {/* --- END REMARK AND CONTROL SECTION --- */}
-      </div>
 
-         <ConfirmSubmitModal
-                visible={showConfirmModal}
-                loading={isSubmitting} // This must match your useState name
-                success={submitSuccess}   // This must match your useState name
-                onCancel={() => setShowConfirmModal(false)}
-                onConfirm={handleSubmit}
-              />
-    </CContainer>
+        <ConfirmSubmitModal
+          visible={showConfirmModal}
+          loading={isSubmitting} // This must match your useState name
+          success={submitSuccess}   // This must match your useState name
+          onCancel={() => setShowConfirmModal(false)}
+          onConfirm={handleSubmit}
+        />
+      </CContainer>
     </>
   )
 }
