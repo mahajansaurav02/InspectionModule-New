@@ -1270,11 +1270,20 @@ const InspectionReport = () => {
                       <CTable bordered className="text-center">
                         <CTableHead>
                           <CTableRow className="bg-light">
-                            <CTableHeaderCell>१८० दिवसापेक्षा जास्त दिवस प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>९० ते १८० दिवसातील प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>३० ते ९० दिवसातील प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>३० दिवसा पेक्षा कमी दिवस प्रलंबित</CTableHeaderCell>
-                            <CTableHeaderCell>शेरा</CTableHeaderCell>
+                            <CTableHeaderCell style={{ width: '21%' }}>
+                              {' '}
+                              १८० दिवसापेक्षा जास्त दिवस प्रलंबित{' '}
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ width: '21%' }}>
+                              ९० ते १८० दिवसातील प्रलंबित
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ width: '21%' }}>
+                              ३० ते ९० दिवसातील प्रलंबित
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ width: '21%' }}>
+                              ३० दिवसा पेक्षा कमी दिवस प्रलंबित
+                            </CTableHeaderCell>
+                            <CTableHeaderCell style={{ width: '14%' }}>शेरा</CTableHeaderCell>
                           </CTableRow>
                         </CTableHead>
                         <CTableBody>
@@ -1318,7 +1327,7 @@ const InspectionReport = () => {
                           तपशील
                         </CTableHeaderCell>
                         <CTableHeaderCell style={{ width: '20%' }}>संख्या</CTableHeaderCell>
-                        <CTableHeaderCell style={{ width: '20%' }}>शेरा</CTableHeaderCell>
+                        <CTableHeaderCell style={{ width: '14%' }}>शेरा</CTableHeaderCell>
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
@@ -1424,7 +1433,7 @@ const InspectionReport = () => {
                         <CTableHeaderCell>मागणी</CTableHeaderCell>
                         <CTableHeaderCell>वसुली</CTableHeaderCell>
                         <CTableHeaderCell>टक्केवारी</CTableHeaderCell>
-                        <CTableHeaderCell>शेरा</CTableHeaderCell>
+                        <CTableHeaderCell style={{ width: '14%' }}>शेरा</CTableHeaderCell>
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
