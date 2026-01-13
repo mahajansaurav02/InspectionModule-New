@@ -74,7 +74,7 @@ const mockApiData = {
       {
         id: 1,
         tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
-        arjNo: 'अर्ज क्र.789',
+        arjNo: '789',
         shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
       },
       {
@@ -321,11 +321,28 @@ const sequentialFerfarList = React.useMemo(() => {
 
 
 
+
+  const getEhakkData = async () => {
+
+// const res = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
+const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
+
+
+console.log(res.data,"ehakk data response")
+
+
+
+
+  }
+
+
+
   const handleGetData = async () => {
     setLoading(true)
     setError(null)
     setReportData({})
     getFerfarData()
+    getEhakkData()
 
     try {
       const data = await fetchInspectionData()
@@ -1708,7 +1725,7 @@ console.log(kramank,"checkkk kramank")
             <CModalTitle>
               {activeRemarkType?.startsWith('ferfar')
                 ? 'फेरफार तपासणी अभिप्राय'
-                : activeRemarkType === 'ehakk'
+                : activeRemarkType === 'ehakk-truti'
                   ? 'ई-हक्क अभिप्राय'
                   : activeRemarkType === 'echawadi'
                     ? 'ई-चावडी अभिप्राय'
@@ -1752,20 +1769,9 @@ console.log(kramank,"checkkk kramank")
 
             {activeRemarkData?.length > 0 ? (
               <>
-{
-              activeRemarkData.map((item, index) => (
-                    <div
-                      key={index}
-                      className="d-flex align-items-start gap-3 mb-3 p-3 bg-light rounded"
-                    >
-                      <div style={{ width: '120px' }}>
-                        {item.mutNo && <span className="badge bg-primary">{item.mutNo}</span>}
-                      </div>
-                      <div className="flex-grow-1">{item.remark}</div>
-                    </div>
-                  ))
-                }
-                {/* {activeRemarkType?.startsWith('ferfar')
+              {/* {activeRemarkData} */}
+
+                {activeRemarkType?.startsWith('ferfar')
                   ? activeRemarkData.map((item, index) => (
                     <div
                       key={index}
@@ -1795,7 +1801,7 @@ console.log(kramank,"checkkk kramank")
                       <div key={index} className="mb-3 p-3 bg-light rounded">
                         {item.remark}
                       </div>
-                    ))} */}
+                    ))}
               </>
             ) : (
               <div className="text-center text-muted py-4">शेरा उपलब्ध नाही</div>
