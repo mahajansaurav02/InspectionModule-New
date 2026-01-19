@@ -164,19 +164,37 @@ const InspectionPrint = React.forwardRef(({ reportData }, ref) => {
                         </CTableHead>
                         <CTableBody>
                           <CTableRow>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['180 दिवसापेक्षा जास्त']}
+                            <CTableDataCell className="fw-bold">
+                              {reportData.eHakkArjData?.pralambitArjList?.filter(
+                                (item) =>
+                                  item.ehakkatype?.includes('180') &&
+                                  item.ehakkatype?.includes('जास्त'),
+                              ).length || 0}
                             </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['90 ते 180 दिवसातील']}
+
+                            <CTableDataCell className="fw-bold">
+                              {reportData.eHakkArjData?.pralambitArjList?.filter(
+                                (item) =>
+                                  item.ehakkatype?.includes('90') &&
+                                  item.ehakkatype?.includes('180'),
+                              ).length || 0}
                             </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['30 ते 90 दिवसातील']}
+
+                            <CTableDataCell className="fw-bold">
+                              {reportData.eHakkArjData?.pralambitArjList?.filter(
+                                (item) =>
+                                  item.ehakkatype?.includes('30') &&
+                                  item.ehakkatype?.includes('90'),
+                              ).length || 0}
                             </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['30 दिवसा पेक्षा कमी']}
+
+                            <CTableDataCell className="fw-bold">
+                              {reportData.eHakkArjData?.pralambitArjList?.filter(
+                                (item) =>
+                                  item.ehakkatype?.includes('30') &&
+                                  item.ehakkatype?.includes('कमी'),
+                              ).length || 0}
                             </CTableDataCell>
-                            {/* <CTableDataCell>&nbsp;</CTableDataCell> */}
                           </CTableRow>
                         </CTableBody>
                       </CTable>

@@ -120,7 +120,19 @@ const InspectionRemarksPrint = React.forwardRef(
                             प्रलंबित अर्जांचे शेरा
                           </CTableDataCell>
                           <CTableDataCell className="text-start">
-                            {eHakkRemarks?.pralambitArj || 'शेरा उपलब्ध नाही'}
+                            {reportData.eHakkArjData?.pralambitArjList?.length > 0 ? (
+                              reportData.eHakkArjData.pralambitArjList
+                                .filter((item) => item.remark && item.remark.trim() !== '') // only show entries with remark
+                                .map((item, idx) => (
+                                  <div key={idx} className="mb-2">
+                                    अर्ज क्र. <strong>{item.applicationId}</strong> –{' '}
+                                    <em>{item.ehakkatype}</em> –{' '}
+                                    {item.remark || 'शेरा नोंदवलेला नाही'}
+                                  </div>
+                                ))
+                            ) : (
+                              <div className="text-muted">प्रलंबित अर्जांचे शेरा उपलब्ध नाहीत</div>
+                            )}
                           </CTableDataCell>
                         </CTableRow>
                       </CTableBody>

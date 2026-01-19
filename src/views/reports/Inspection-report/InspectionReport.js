@@ -1,6 +1,3 @@
-
-
-
 import React, { useState, useRef } from 'react'
 import {
   CContainer,
@@ -78,32 +75,154 @@ const mockApiData = {
         tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
         arjNo: '789',
         shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        typeOfRemark: 2,
       },
       {
         id: 1,
         tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
         arjNo: '125',
         shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.000',
+        typeOfRemark: 1,
       },
       {
         id: 1,
         tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
         arjNo: '252',
         shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        typeOfRemark: 3,
       },
       {
         id: 1,
         tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
         arjNo: '1156',
         shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        typeOfRemark: 1,
       },
     ],
+
     pralambitArj: {
       '180 दिवसापेक्षा जास्त': 0,
       '90 ते 180 दिवसातील': 2,
       '30 ते 90 दिवसातील': 5,
       '30 दिवसा पेक्षा कमी': 10,
     },
+    pralambitArjList: [
+      // 1. Above 180 Days
+      {
+        applicationId: 1004,
+        remark: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        remarkType: '1',
+        ehakkatype: '180 दिवसांपेक्षा जास्त दिवस प्रलंबित',
+      },
+      {
+        applicationId: 1004,
+        remark: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        remarkType: '3',
+        ehakkatype: '180 दिवसांपेक्षा जास्त दिवस प्रलंबित',
+      },
+      {
+        applicationId: 1004,
+        remark: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        remarkType: '2',
+        ehakkatype: '180 दिवसांपेक्षा जास्त दिवस प्रलंबित',
+      },
+      {
+        applicationId: 1001,
+        remark: null,
+        remarkType: '2',
+        ehakkatype: '180 दिवसांपेक्षा जास्त दिवस प्रलंबित',
+      },
+      {
+        applicationId: 1020,
+        remark: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        remarkType: '3',
+        ehakkatype: '180 दिवसांपेक्षा जास्त दिवस प्रलंबित',
+      },
+
+      // 2. 90 to 180 Days
+      {
+        applicationId: 1005,
+        remark: null,
+        remarkType: '2',
+        ehakkatype: '90 ते 180 दिवसातील प्रलंबित',
+      },
+      {
+        applicationId: 1005,
+        remark: null,
+        remarkType: '1',
+        ehakkatype: '90 ते 180 दिवसातील प्रलंबित',
+      },
+      {
+        applicationId: 1002,
+        remark: null,
+        remarkType: '3',
+        ehakkatype: '90 ते 180 दिवसातील प्रलंबित',
+      },
+      {
+        applicationId: 1021,
+        remark: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        remarkType: '1',
+        ehakkatype: '90 ते 180 दिवसातील प्रलंबित',
+      },
+
+      // 3. 30 to 90 Days
+      {
+        applicationId: 1006,
+        remark: null,
+        remarkType: '2',
+        ehakkatype: '30 ते 90 दिवसातील प्रलंबित',
+      },
+      {
+        applicationId: 1006,
+        remark: null,
+        remarkType: '1',
+        ehakkatype: '30 ते 90 दिवसातील प्रलंबित',
+      },
+      {
+        applicationId: 1003,
+        remark: null,
+        remarkType: '3',
+        ehakkatype: '30 ते 90 दिवसातील प्रलंबित',
+      },
+      {
+        applicationId: 1022,
+        remark: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        remarkType: '1',
+        ehakkatype: '30 ते 90 दिवसातील प्रलंबित',
+      },
+
+      // 4. Less than 30 Days
+      {
+        applicationId: 1007,
+        remark: null,
+        remarkType: '2',
+        ehakkatype: '30 दिवसांपेक्षा कमी दिवस प्रलंबित',
+      },
+      {
+        applicationId: 1007,
+        remark: null,
+        remarkType: '3',
+        ehakkatype: '30 दिवसांपेक्षा कमी दिवस प्रलंबित',
+      },
+      {
+        applicationId: 1007,
+        remark: null,
+        remarkType: '1',
+        ehakkatype: '30 दिवसांपेक्षा कमी दिवस प्रलंबित',
+      },
+      {
+        applicationId: 1008,
+        remark: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
+        remarkType: '3',
+        ehakkatype: '30 दिवसांपेक्षा कमी दिवस प्रलंबित',
+      },
+      {
+        applicationId: 1023,
+        remark: null,
+        remarkType: '1',
+        ehakkatype: '30 दिवसांपेक्षा कमी दिवस प्रलंबित',
+      },
+    ],
   },
   eChawadiData: {
     gawNamunaPurna: { nirank: 3, kamkajPurna: 7, aghoshanaKeliNaslele: 2 },
@@ -128,22 +247,27 @@ const mockRemarkData = {
     {
       mutNo: 324,
       remark: 'अधिक तपासणी आवश्यक आहे.',
+      typeOfRemark: 2,
     },
     {
       mutNo: 456,
       remark: 'सर्व फेरफार योग्य आहेत.',
+      typeOfRemark: 1,
     },
     {
       mutNo: 789,
       remark: 'काही फेरफार चुकीचे आहेत, दुरुस्ती करा.',
+      typeOfRemark: 3,
     },
     {
       mutNo: 101,
       remark: 'फेरफारांची नोंदणी वेळेवर झाली नाही.',
+      typeOfRemark: 2,
     },
     {
       mutNo: 112,
       remark: 'फेरफारांसाठी आवश्यक कागदपत्रे सादर करा.',
+      typeOfRemark: 1,
     },
   ],
   kalam155FerfarRemark: [
@@ -225,9 +349,6 @@ const fetchFerfarInspectionData = () => {
   })
 }
 
-
-
-
 const InspectionReport = () => {
   const [reportData, setReportData] = useState({})
   const [loading, setLoading] = useState(false)
@@ -285,9 +406,7 @@ const InspectionReport = () => {
     // Force sequence from 1 to 8
     return Object.keys(ferfarTypeLabel).map((type) => ({
       ferfarType: Number(type),
-      mutNos: map.has(Number(type))
-        ? Array.from(map.get(Number(type)))
-        : [],
+      mutNos: map.has(Number(type)) ? Array.from(map.get(Number(type))) : [],
     }))
   }, [allFerfarList])
 
@@ -300,7 +419,7 @@ const InspectionReport = () => {
       }
 
       const res = await api.get(
-        `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=2025-26&activeFlag=Y&ferFarType=0`
+        `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=2025-26&activeFlag=Y&ferFarType=0`,
       )
 
       console.log(res.data, 'ferfar data response')
@@ -310,21 +429,18 @@ const InspectionReport = () => {
 
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
-      toast.error(
-        err?.response?.data?.message || 'Failed to fetch data',
-        { autoClose: 2000 }
-      )
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
       console.error(err)
     } finally {
       setIsLoading(false)
     }
   }
 
-
-
-
-
   const getEhakkData = async () => {
+    // const res = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
+    // const res = await api.get(
+    //   `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`,
+    // )
 
     // const res = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
     // const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
@@ -337,8 +453,8 @@ const InspectionReport = () => {
       }
 
       //  const res = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
-      // const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
-      const res = await api.get(`https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above`)
+      const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
+      // const res = await api.get(`https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above`)
 
       console.log(res.data, 'EhakkData data response')
 
@@ -358,8 +474,6 @@ const InspectionReport = () => {
 
 
   }
-
-
 
   const handleGetData = async () => {
     setLoading(true)
@@ -430,7 +544,7 @@ const InspectionReport = () => {
       }
 
       const res = await api.get(
-        `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=2025-26&activeFlag=Y&ferFarType=${kramank}`
+        `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=2025-26&activeFlag=Y&ferFarType=${kramank}`,
       )
 
       console.log(res.data, 'selected ferfar data response')
@@ -440,30 +554,67 @@ const InspectionReport = () => {
 
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
-      toast.error(
-        err?.response?.data?.message || 'Failed to fetch data',
-        { autoClose: 2000 }
-      )
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
       console.error(err)
     } finally {
       setIsLoading(false)
     }
-
 
     setActiveRemarkType(`ferfar-${kramank}`)
     // setActiveRemarkData(ferfarRemarkList[kramank] || [])
     setShowAbhiprayModal(true)
   }
 
+  // ====================================================================================================
+  // HELPER FUNCTION for Badge Logic
+  // ====================================================================================================
+  const getRemarkTypeBadge = (typeOfRemark) => {
+    const type = typeOfRemark != null ? Number(typeOfRemark) : 0
 
+    const baseStyle = {
+      padding: '6px 16px',
+      borderRadius: '8px',
+      color: '#fff',
+      fontWeight: '600',
+      fontSize: '14px',
+      display: 'inline-block',
+      textAlign: 'center',
+      minWidth: '100px',
+      lineHeight: '1.4',
+    }
+
+    switch (type) {
+      case 1:
+        return <span style={{ ...baseStyle, backgroundColor: '#2eb85c' }}>साधारण</span>
+      case 2:
+        return <span style={{ ...baseStyle, backgroundColor: '#f9b115' }}>गंभीर</span>
+      case 3:
+        return <span style={{ ...baseStyle, backgroundColor: '#e55353' }}>अतीगंभीर</span>
+      default:
+        return (
+          <span
+            style={{
+              ...baseStyle,
+              backgroundColor: '#6c757d',
+              color: '#fff',
+            }}
+          >
+            —
+          </span>
+        )
+    }
+  }
 
   const handleViewAbhipray = (section) => {
-
     console.log('i am button ')
     switch (section) {
       case 'ehakk':
         setActiveRemarkType('ehakk')
-        setActiveRemarkData([{ remark: eHakkRemarks.pralambitArj }])
+        setActiveRemarkData(reportData.eHakkArjData?.pralambitArjList || [])
+        break
+      case 'ehakk-truti':
+        setActiveRemarkType('ehakk-truti')
+        setActiveRemarkData(reportData.eHakkArjData?.trutiArjList || [])
         break
       case 'echawadi':
         setActiveRemarkType('echawadi')
@@ -702,15 +853,12 @@ const InspectionReport = () => {
         </head>
         <body>
             <div class="main-container">
-                <!-- Main Report -->
                 <div class="print-view">
                     ${mainReportHTML}
                 </div>
                 
-                <!-- Page break before remarks -->
                 <div style="page-break-before: always; height: 0;"></div>
                 
-                <!-- Remarks Report -->
                 <div class="print-view remarks-section">
                     ${remarksReportHTML}
                 </div>
@@ -1115,15 +1263,12 @@ const InspectionReport = () => {
         </head>
         <body>
             <div class="print-container">
-                <!-- Main Report -->
                 <div class="main-report">
                     ${mainReportHTML}
                 </div>
                 
-                <!-- Page break before remarks -->
                 <div class="page-break"></div>
                 
-                <!-- Remarks Report -->
                 <div class="remarks-report remarks-section">
                     ${remarksReportHTML}
                 </div>
@@ -1198,6 +1343,40 @@ const InspectionReport = () => {
       </CButton>
     </CTableDataCell>
   )
+
+  const pendingList = reportData.eHakkArjData?.pralambitArjList || []
+
+  // 1. > 180 (Checks for '180' AND 'जास्त')
+  const count180Plus = pendingList.filter(
+    (item) =>
+      item.ehakkatype &&
+      (item.ehakkatype.includes('180') || item.ehakkatype.includes('१८०')) &&
+      item.ehakkatype.includes('जास्त'),
+  ).length
+
+  // 2. 90 to 180 (Checks for '90' AND '180' - avoids overlapping with >180 because >180 has 'जास्त')
+  const count90to180 = pendingList.filter(
+    (item) =>
+      item.ehakkatype &&
+      (item.ehakkatype.includes('90') || item.ehakkatype.includes('९०')) &&
+      (item.ehakkatype.includes('180') || item.ehakkatype.includes('१८०')),
+  ).length
+
+  // 3. 30 to 90 (Checks for '30' AND '90')
+  const count30to90 = pendingList.filter(
+    (item) =>
+      item.ehakkatype &&
+      (item.ehakkatype.includes('30') || item.ehakkatype.includes('३०')) &&
+      (item.ehakkatype.includes('90') || item.ehakkatype.includes('९०')),
+  ).length
+
+  // 4. < 30 (Checks for '30' AND 'कमी')
+  const countLess30 = pendingList.filter(
+    (item) =>
+      item.ehakkatype &&
+      (item.ehakkatype.includes('30') || item.ehakkatype.includes('३०')) &&
+      item.ehakkatype.includes('कमी'),
+  ).length
 
   if (!reportData.tapasaniAdhikariName && !loading) {
     return (
@@ -1378,7 +1557,7 @@ const InspectionReport = () => {
                     </CTableBody>
                   </CTable>
 
-
+                      
 
                   <hr />
 
@@ -1481,18 +1660,12 @@ const InspectionReport = () => {
                         </CTableHead>
                         <CTableBody>
                           <CTableRow>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['180 दिवसापेक्षा जास्त']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['90 ते 180 दिवसातील']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['30 ते 90 दिवसातील']}
-                            </CTableDataCell>
-                            <CTableDataCell>
-                              {reportData.eHakkArjData?.pralambitArj['30 दिवसा पेक्षा कमी']}
-                            </CTableDataCell>
+                            {/* ================= नवीन Dynamic Counts वापरा ================= */}
+                            <CTableDataCell className="fw-bold">{count180Plus}</CTableDataCell>
+                            <CTableDataCell className="fw-bold">{count90to180}</CTableDataCell>
+                            <CTableDataCell className="fw-bold">{count30to90}</CTableDataCell>
+                            <CTableDataCell className="fw-bold">{countLess30}</CTableDataCell>
+
                             <CTableDataCell>
                               <CButton
                                 color="primary"
@@ -1778,83 +1951,146 @@ const InspectionReport = () => {
               {activeRemarkType?.startsWith('ferfar')
                 ? 'फेरफार तपासणी अभिप्राय'
                 : activeRemarkType === 'ehakk-truti'
-                  ? 'ई-हक्क अभिप्राय'
-                  : activeRemarkType === 'echawadi'
-                    ? 'ई-चावडी अभिप्राय'
-                    : activeRemarkType === 'vasuli'
-                      ? 'वसुली अभिप्राय'
-                      : 'अभिप्राय'}
+                ? 'ई-हक्क अभिप्राय (त्रुटीपूर्ततेसाठी केलेले अर्ज)'
+                : activeRemarkType === 'ehakk'
+                ? 'ई-हक्क अभिप्राय (तलाठी स्तरावरील प्रलंबित अर्ज)'
+                : activeRemarkType === 'echawadi'
+                ? 'ई-चावडी अभिप्राय'
+                : activeRemarkType === 'vasuli'
+                ? 'वसुली अभिप्राय'
+                : 'अभिप्राय'}
             </CModalTitle>
           </CModalHeader>
-          {/*=============================================sejal change below code =================================================================  */}
-          <CModalBody className="px-4 py-3">
+          <CModalBody className="px-4 py-4">
             {/* ================= HEADER SECTION ================= */}
 
-            {/* 1. FERFAR HEADER */}
-            {activeRemarkType?.startsWith('ferfar') ? (
-              <div className="d-flex align-items-center gap-3 mb-2 px-3">
-                <div style={{ width: '120px' }}>
-                  <strong>फेरफार क्र.</strong>
-                </div>
-                <div className="flex-grow-1">
-                  <strong>शेरा</strong>
-                </div>
-              </div>
-            ) : activeRemarkType === 'ehakk-truti' ? (
-              // 2. EHAKK TRUTI HEADER
-              <div className="d-flex align-items-center gap-3 mb-2 px-3">
-                <div style={{ width: '120px' }}>
-                  <strong>अर्ज क्र.</strong>
-                </div>
-                <div className="flex-grow-1">
-                  <strong>शेरा</strong>
-                </div>
-              </div>
-            ) : (
-              // 3. GENERIC HEADER (Vasuli, Chawadi)
-              <div className="mb-2 px-3">
-                <strong>शेरा</strong>
-              </div>
-            )}
-
-            {/* ================= CONTENT SECTION ================= */}
-
             {activeRemarkData?.length > 0 ? (
-              <>
-                {/* {activeRemarkData} */}
+              <CTable bordered striped hover responsive className="mb-0 table-spacious">
+                <CTableHead color="light">
+                  <CTableRow>
+                    {/* 1. FERFAR HEADERS */}
+                    {activeRemarkType?.startsWith('ferfar') ? (
+                      <>
+                        <CTableHeaderCell style={{ width: '120px' }} className="px-3 py-2">
+                          फेरफार क्र.
+                        </CTableHeaderCell>
+                        <CTableHeaderCell
+                          style={{ width: '100px' }}
+                          className="text-center px-3 py-2"
+                        >
+                          प्रकार
+                        </CTableHeaderCell>
+                        <CTableHeaderCell className="px-3 py-2">शेरा</CTableHeaderCell>
+                      </>
+                    ) : activeRemarkType === 'ehakk-truti' ? (
+                      // 2. EHAKK TRUTI HEADERS (Returned)
+                      <>
+                        <CTableHeaderCell style={{ width: '120px' }} className="px-3 py-2">
+                          अर्ज क्र.
+                        </CTableHeaderCell>
+                        <CTableHeaderCell
+                          style={{ width: '100px' }}
+                          className="text-center px-3 py-2"
+                        >
+                          प्रकार
+                        </CTableHeaderCell>
+                        <CTableHeaderCell className="px-3 py-2">शेरा</CTableHeaderCell>
+                      </>
+                    ) : activeRemarkType === 'ehakk' ? (
+                      // 3. EHAKK PENDING HEADERS (New Requirement)
+                      <>
+                        <CTableHeaderCell style={{ width: '100px' }} className="px-3 py-2">
+                          अर्ज क्र .
+                        </CTableHeaderCell>
+                        <CTableHeaderCell style={{ width: '200px' }} className="px-3 py-2">
+                          प्रलंबित प्रकार
+                        </CTableHeaderCell>
+                        <CTableHeaderCell
+                          style={{ width: '100px' }}
+                          className="text-center px-3 py-2"
+                        >
+                          प्रकार
+                        </CTableHeaderCell>
+                        <CTableHeaderCell className="px-3 py-2">शेरा</CTableHeaderCell>
+                      </>
+                    ) : (
+                      // 4. GENERIC HEADERS
+                      <CTableHeaderCell className="px-3 py-2">शेरा</CTableHeaderCell>
+                    )}
+                  </CTableRow>
+                </CTableHead>
 
-                {activeRemarkType?.startsWith('ferfar')
-                  ? activeRemarkData.map((item, index) => (
-                    <div
-                      key={index}
-                      className="d-flex align-items-start gap-3 mb-3 p-3 bg-light rounded"
-                    >
-                      <div style={{ width: '120px' }}>
-                        {item.mutNo && <span className="badge bg-primary">{item.mutNo}</span>}
-                      </div>
-                      <div className="flex-grow-1">{item.remark}</div>
-                    </div>
-                  ))
-                  : activeRemarkType === 'ehakk-truti'
-                    ?
-                    activeRemarkData.map((item, index) => (
-                      <div
-                        key={index}
-                        className="d-flex align-items-start gap-3 mb-3 p-3 bg-light rounded"
-                      >
-                        <div style={{ width: '120px' }}>
-                          {item.arjNo && <span className="badge bg-primary">{item.arjNo}</span>}
-                        </div>
-                        <div className="flex-grow-1">{item.shera || 'शेरा उपलब्ध नाही'}</div>
-                      </div>
-                    ))
-                    :
-                    activeRemarkData.map((item, index) => (
-                      <div key={index} className="mb-3 p-3 bg-light rounded">
-                        {item.remark}
-                      </div>
-                    ))}
-              </>
+                <CTableBody>
+                  {/* ================= CONTENT SECTION ================= */}
+
+                  {/* 1. FERFAR DATA */}
+                  {activeRemarkType?.startsWith('ferfar')
+                    ? activeRemarkData.map((item, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.mutNo ? (
+                              <span className="badge bg-primary fs-6 px-3 py-1">{item.mutNo}</span>
+                            ) : (
+                              '-'
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell className="text-center px-3 py-2">
+                            {getRemarkTypeBadge(item.typeOfRemark)}
+                          </CTableDataCell>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.remark || '-'}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    : /* 2. EHAKK TRUTI DATA */
+                    activeRemarkType === 'ehakk-truti'
+                    ? activeRemarkData.map((item, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.arjNo && (
+                              <span className="badge bg-primary px-3 py-1">{item.arjNo}</span>
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell className="text-center px-3 py-2">
+                            {getRemarkTypeBadge(item.typeOfRemark)}
+                          </CTableDataCell>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.shera || 'शेरा उपलब्ध नाही'}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    : /* 3. EHAKK PENDING (PRALAMBIT) DATA - NEW */
+                    activeRemarkType === 'ehakk'
+                    ? activeRemarkData.map((item, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.applicationId ? (
+                              <span className="badge bg-primary px-3 py-1">
+                                {item.applicationId}
+                              </span>
+                            ) : (
+                              '-'
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.ehakkatype || '-'}
+                          </CTableDataCell>
+                          <CTableDataCell className="text-center px-3 py-2">
+                            {getRemarkTypeBadge(item.remarkType)}
+                          </CTableDataCell>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.remark || '-'}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    : /* 4. GENERIC DATA */
+                      activeRemarkData.map((item, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell className="px-3 py-2">{item.remark}</CTableDataCell>
+                        </CTableRow>
+                      ))}
+                </CTableBody>
+              </CTable>
             ) : (
               <div className="text-center text-muted py-4">शेरा उपलब्ध नाही</div>
             )}
