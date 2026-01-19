@@ -128,113 +128,28 @@ const [base64Image, setBase64Image] = useState(null)
       fileInputRef.current.click()
     }
   }
-
-
-
-const decryptData = (ciphertext) => {
-    try {
-      const key = CryptoJS.enc.Utf8.parse('hCFaaYFOfOhIXNoeC3dL6YnHWwRPS1Jy');
-      const iv = CryptoJS.enc.Utf8.parse('C3dL6YnHWwRPS1Jy');
-
-      // 1. Decrypt the raw ciphertext
-      const decrypted = CryptoJS.AES.decrypt(ciphertext, key, {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-      });
-
-      // 2. IMPORTANT: Convert to Base64 string, NOT Utf8 string
-      // This prevents the "Malformed UTF-8" error
-      const base64Result = decrypted.toString(CryptoJS.enc.Base64);
-
-      if (!base64Result) throw new Error("Decryption failed");
-
-      return base64Result;
-    } catch (error) {
-      console.error("Decryption Error:", error);
-      return null;
-    }
-  };
-
-  const [docContent, setDocContent] = useState(null);
-  const [isPdf, setIsPdf] = useState(false);
-
-
 const get712View = async () => {
-  setIsSatbaraLoading(true);
+  setIsSatbaraLoading(true)
   try {
     const res = await api.post(
-      `${URLS.BaseURL}/callExternalSatBaraApi?lgdCode=535327&pin=125`
-    );
+      `http://115.124.110.193:8091/echawdi/api/callExternalSatBaraApi?lgdCode=535327&pin=125`
+    )
 
-    // const encryptedData = ;
-    const key = 'hCFaaYFOfOhIXNoeC3dL6YnHWwRPS1Jy';
-    const iv = 'C3dL6YnHWwRPS1Jy';
+    const encryptedData = res.data.data
+    const key = 'hCFaaYFOfOhIXNoeC3dL6YnHWwRPS1Jy'
+    const iv = 'C3dL6YnHWwRPS1Jy'
 
-    // Decrypt
-  const encryptedData = res.data.data; 
-      
-      const base64Data = decryptData(encryptedData);
+    const decryptedBase64 = decryptDataImage(encryptedData, key, iv)
 
-      if (base64Data) {
-        // Check first few characters to see if it's a PDF (JVBERi) or Image
-        console.log(base64Data, "=====base64Data=====");
-        if (base64Data.startsWith('JVBERi')) {
-          setIsPdf(true);
-          setDocContent(`data:application/pdf;base64,${base64Data}`);
-        } else {
-          setIsPdf(false);
-          setDocContent(`data:image/png;base64,${base64Data}`);
-        }
-      }
+    if (decryptedBase64) {
+      setBase64Image(`data:image/jpeg;base64,${decryptedBase64}`)
+    }
   } catch (err) {
-    console.error('Failed to load 7/12 document:', err);
+    console.error('Failed to load 7/12 document:', err)
   } finally {
-    setIsSatbaraLoading(false);
+    setIsSatbaraLoading(false)
   }
-};
-// const get712View = async () => {
-//   setIsSatbaraLoading(true);
-//   try {
-//     const res = await api.post(
-//       `${URLS.BaseURL}/callExternalSatBaraApi?lgdCode=535327&pin=125`
-//     );
-
-//     const encryptedData = res.data.data;
-//     const key = 'hCFaaYFOfOhIXNoeC3dL6YnHWwRPS1Jy';
-//     const iv = 'C3dL6YnHWwRPS1Jy';
-
-//     // Decrypt
-//     const keyBytes = CryptoJS.enc.Utf8.parse(key);
-//     const ivBytes = CryptoJS.enc.Utf8.parse(iv);
-    
-//     const decrypted = CryptoJS.AES.decrypt(encryptedData, keyBytes, {
-//       iv: ivBytes,
-//       mode: CryptoJS.mode.CBC,
-//       padding: CryptoJS.pad.Pkcs7
-//     });
-    
-//     const uint8Array = wordArrayToUint8Array(decrypted);
-    
-//     const blob = new Blob([uint8Array], { type: 'application/octet-stream' });
-//     const url = URL.createObjectURL(blob);
-//     const a = document.createElement('a');
-//     a.href = url;
-//     a.download = 'decrypted_data.bin';
-//     a.click();
-    
-//     console.log("Saved decrypted data as binary file for analysis");
-    
-//     const base64 = arrayBufferToBase64(uint8Array.buffer);
-//     setBase64Image(`data:image/jpeg;base64,${base64}`);
-    
-//   } catch (err) {
-//     console.error('Failed to load 7/12 document:', err);
-//   } finally {
-//     setIsSatbaraLoading(false);
-//   }
-// };
-
+}
 
 const getFerfarView = async () => {
     console.log(ferfar, "======ferfar=========")
@@ -272,101 +187,40 @@ const getFerfarView = async () => {
       setIsSatbaraLoading(false)
     }
   }
-  
-  
-  
-  
-  
   const decryptDataImage = (ciphertext, keyStr, ivStr) => {
   try {
-    // Clean the ciphertext (replace spaces with + if needed)
     const cleanCiphertext = ciphertext.replace(/ /g, '+');
-    
-    console.log("Ciphertext length:", cleanCiphertext.length);
-    console.log("First 50 chars:", cleanCiphertext.substring(0, 50));
 
     const key = CryptoJS.enc.Utf8.parse(keyStr);
     const iv = CryptoJS.enc.Utf8.parse(ivStr);
 
-    // Decrypt directly
-    const decrypted = CryptoJS.AES.decrypt(cleanCiphertext, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
+    const cipherParams = CryptoJS.lib.CipherParams.create({
+      ciphertext: CryptoJS.enc.Base64.parse(cleanCiphertext),
     });
 
-    // Convert to Latin1 (binary) first, then to base64
-    const latin1String = decrypted.toString(CryptoJS.enc.Latin1);
-    
-    // Convert Latin1 string to base64
-    const base64String = btoa(latin1String);
-    
-    console.log("Decrypted Latin1 length:", latin1String.length);
-    console.log("Base64 result length:", base64String.length);
-    
-    return base64String;
+    const decrypted = CryptoJS.AES.decrypt(cipherParams, key, {
+      iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    });
 
+    const base64Result = decrypted.toString(CryptoJS.enc.Base64);
+
+    if (!base64Result) throw new Error("Empty decrypt output");
+
+    return base64Result;
   } catch (err) {
-    console.error('Decrypt error:', err);
+    console.error("Decryption Core Error:", err);
     return null;
   }
 };
 
-
-// Helper: Convert CryptoJS WordArray to Uint8Array
-const wordArrayToUint8Array = (wordArray) => {
-  const words = wordArray.words;
-  const sigBytes = wordArray.sigBytes;
-  const u8 = new Uint8Array(sigBytes);
-  
-  for (let i = 0; i < sigBytes; i++) {
-    const byte = (words[i >>> 2] >>> (24 - (i % 4) * 8)) & 0xff;
-    u8[i] = byte;
-  }
-  
-  return u8;
-};
-
-// Helper: Convert ArrayBuffer to base64
-const arrayBufferToBase64 = (buffer) => {
-  let binary = '';
-  const bytes = new Uint8Array(buffer);
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-    binary += String.fromCharCode(bytes[i]);
-  }
-  return btoa(binary);
-};
-// Detect MIME type from base64
-const detectMimeType = (base64String) => {
-  if (!base64String) return 'image/jpeg';
-  
-  const signature = base64String.substring(0, 30);
-  
-  // JPEG
-  if (signature.includes('/9j/') || base64String.startsWith('/9j')) {
-    return 'image/jpeg';
-  }
-  
-  // PNG
-  if (signature.includes('iVBORw0KGgo')) {
-    return 'image/png';
-  }
-  
-  // PDF
-  if (signature.includes('JVBER')) {
-    return 'application/pdf';
-  }
-  
-  // Default to JPEG
-  return 'image/jpeg';
-};
   const handleSubmit = async () => {
         setIsLoading(true)
 
     if (!priority) {
       // toast.warn('')
-      toast.warn('Please select priority', {
+      toast.warn('कृपया अभिप्रायाचे प्राधान्य प्रकार निवडा', {
 position: "top-right",
 autoClose: 5000,
 hideProgressBar: false,
@@ -505,28 +359,27 @@ transition: Bounce,
         return { type: '', content: '' }
     }
   }
-const renderDocumentContent = (doc) => {
+const renderDocumentContent = (doc, tabKey) => {
   if (doc.type === '7/12') {
-    if (isSatbaraLoading) {
-      return (
-        <div className="document-loading">
-          <div className="loading-spinner" />
-          <p>Loading 7/12 document…</p>
-        </div>
-      )
-    }
-
+    console.log(doc.content,"=====doc.content=====")
     if (!doc.content) {
       return <div className="text-muted">७/१२ उपलब्ध नाही</div>
     }
 
+    // ✅ CORRECT: render base64 as IMAGE
     return (
       <div className="image-container">
         <img
           src={doc.content}
           alt="7/12 Document"
-          style={{ width: '100%', height: 'auto' }}
+          style={{
+            width: '100%',
+            height: 'auto',
+            transform: `scale(${zoomLevel / 100})`,
+            transformOrigin: 'top center',
+          }}
           onError={(e) => {
+            console.error('7/12 image failed to load')
             e.target.src = '/placeholder-image.png'
           }}
         />
@@ -535,15 +388,29 @@ const renderDocumentContent = (doc) => {
   }
 
   if (doc.type === 'ferfar') {
-    return <div className="text-muted">फेरफार उपलब्ध नाही</div>
+    if (!doc.content) {
+      return <div className="text-muted">फेरफार दस्तऐवज उपलब्ध नाही</div>
+    }
+
+    return (
+      <div className="image-container">
+        <img
+          src={doc.content}
+          alt="Ferfar Document"
+          style={{ width: '100%', height: 'auto' }}
+        />
+      </div>
+    )
   }
 
+  // PDFs / others
   return (
     <iframe
       src={doc.content}
       title="Document viewer"
       width="100%"
       height="500px"
+      style={{ border: '1px solid #ddd' }}
     />
   )
 }

@@ -24,6 +24,8 @@ import {
   CModalFooter,
   CModalTitle,
 } from '@coreui/react'
+import CIcon from '@coreui/icons-react';
+import { cilUser, cilCalendar, cilLocationPin, cilDescription } from '@coreui/icons';
 import '@coreui/coreui/dist/css/coreui.min.css'
 import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
@@ -258,36 +260,36 @@ const InspectionReport = () => {
     villageName,
   } = selectedVillageData[0]
 
-const ferfarTypeLabel = {
-  1: 'आदेश फेरफार',
-  2: 'कलम 155 नुसार केलेले फेरफार',
-  3: 'इतर फेरफार या टेम्प्लेटने केलेले फेरफार',
-  4: 'तांत्रिक कारणास्तव नामंजूर केलेले फेरफार',
-  5: 'रि-एन्ट्री केलेले फेरफार',
-  6: 'नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार',
-  7: 'स्थगिती असलेले फेरफार',
-  8: 'टेंप्लेट फेरफार',
-}
+  const ferfarTypeLabel = {
+    1: 'आदेश फेरफार',
+    2: 'कलम 155 नुसार केलेले फेरफार',
+    3: 'इतर फेरफार या टेम्प्लेटने केलेले फेरफार',
+    4: 'तांत्रिक कारणास्तव नामंजूर केलेले फेरफार',
+    5: 'रि-एन्ट्री केलेले फेरफार',
+    6: 'नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार',
+    7: 'स्थगिती असलेले फेरफार',
+    8: 'टेंप्लेट फेरफार',
+  }
 
-const sequentialFerfarList = React.useMemo(() => {
-  const map = new Map()
+  const sequentialFerfarList = React.useMemo(() => {
+    const map = new Map()
 
-  // Group mutNos by ferfarType
-  allFerfarList?.forEach((item) => {
-    if (!map.has(item.ferfarType)) {
-      map.set(item.ferfarType, new Set())
-    }
-    map.get(item.ferfarType).add(item.mutNo)
-  })
+    // Group mutNos by ferfarType
+    allFerfarList?.forEach((item) => {
+      if (!map.has(item.ferfarType)) {
+        map.set(item.ferfarType, new Set())
+      }
+      map.get(item.ferfarType).add(item.mutNo)
+    })
 
-  // Force sequence from 1 to 8
-  return Object.keys(ferfarTypeLabel).map((type) => ({
-    ferfarType: Number(type),
-    mutNos: map.has(Number(type))
-      ? Array.from(map.get(Number(type)))
-      : [],
-  }))
-}, [allFerfarList])
+    // Force sequence from 1 to 8
+    return Object.keys(ferfarTypeLabel).map((type) => ({
+      ferfarType: Number(type),
+      mutNos: map.has(Number(type))
+        ? Array.from(map.get(Number(type)))
+        : [],
+    }))
+  }, [allFerfarList])
 
   const getFerfarData = async () => {
     setIsLoading(true)
@@ -324,13 +326,35 @@ const sequentialFerfarList = React.useMemo(() => {
 
   const getEhakkData = async () => {
 
-// const res = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
-const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
+    // const res = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
+    // const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
 
+    setIsLoading(true)
+    try {
+      if (!cCode) {
+        alert('Village code not found....Please Select Village First')
+        return
+      }
 
-console.log(res.data,"ehakk data response")
+      //  const res = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
+      // const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
+      const res = await api.get(`https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above`)
 
+      console.log(res.data, 'EhakkData data response')
 
+      // store full list
+      // setAllFerfarList(res.data)
+
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+    } catch (err) {
+      toast.error(
+        err?.response?.data?.message || 'Failed to fetch data',
+        { autoClose: 2000 }
+      )
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
 
 
   }
@@ -397,8 +421,8 @@ console.log(res.data,"ehakk data response")
   }
 
   const handleViewFerfarRemark = async (kramank) => {
-console.log(kramank,"checkkk kramank")
-  setIsLoading(true)
+    console.log(kramank, "checkkk kramank")
+    setIsLoading(true)
     try {
       if (!cCode) {
         alert('Village code not found....Please Select Village First')
@@ -1177,52 +1201,80 @@ console.log(kramank,"checkkk kramank")
 
   if (!reportData.tapasaniAdhikariName && !loading) {
     return (
-      <CContainer className="inspection-container">
-        <CCard>
-          <CCardHeader className="headerName">
-            <h2 className="mb-0">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी.</h2>
+    <CContainer fluid className="inspection-container d-flex justify-content-center align-items-center">
+      {/* This wrapper controls the "Medium" size */}
+      <div className="report-card-wrapper">
+        <CCard className="inspection-card">
+          <CCardHeader className="header-gradient text-end p-4">
+             <h3 className="mb-0 fw-bold">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी</h3>
           </CCardHeader>
-          <CCardBody className="text-center p-5">
-            <CRow className="mb-3 report-header">
+
+          <CCardBody className="p-4">
+            <CRow className="g-3">
+              {/* Row 1 */}
               <CCol md={6}>
-                <p>
-                  <strong>तपासणी अधिकारी यांचे नाव आणि पदनाम:</strong> {fullName}
-                </p>
+                <div className="info-box border-primary">
+                  <span className="label-text">
+                    <CIcon icon={cilUser} size="md" className="me-1" /> तपासणी अधिकारी
+                  </span>
+                  <p className="value-text">{fullName || "—"}</p>
+                </div>
               </CCol>
+
               <CCol md={6}>
-                <p>
-                  <strong>तपासणी दिनांक:</strong> {reportData.tapasaniDinanck}
-                </p>
+                <div className="info-box border-secondary">
+                  <span className="label-text">
+                    <CIcon icon={cilCalendar} size="sm" className="me-1" /> तपासणी दिनांक
+                  </span>
+                  <p className="value-text">{reportData.tapasaniDinanck || "—"}</p>
+                </div>
               </CCol>
+
+              {/* Row 2 */}
               <CCol md={6}>
-                <p>
-                  <strong>साजाचे नाव:</strong> {villageName}
-                </p>
+                <div className="info-box border-success">
+                  <span className="label-text">
+                    <CIcon icon={cilLocationPin} size="sm" className="me-1" /> साजाचे नाव
+                  </span>
+                  <p className="value-text">{villageName || "—"}</p>
+                </div>
               </CCol>
+
               <CCol md={6}>
-                <p>
-                  <strong>ग्राम महसूल अधिकाऱ्याचे नाव:</strong> {reportData.sajacheNaw}
-                </p>
+                <div className="info-box border-warning">
+                  <span className="label-text">
+                    <CIcon icon={cilUser} size="sm" className="me-1" /> ग्राम महसूल अधिकारी
+                  </span>
+                  <p className="value-text">{reportData.sajacheNaw || "—"}</p>
+                </div>
               </CCol>
-              <CCol md={6}>
-                <p>
-                  <strong>गावाचे नाव:</strong> {villageName} तालुका - {talukaMarathiName} जिल्हा -{' '}
-                  {distMarathiName}
-                </p>
+
+              {/* Row 3 - Full Width */}
+              <CCol xs={12}>
+                <div className="info-box border-danger detail-box">
+                  <span className="label-text">गावाचा संपूर्ण तपशील</span>
+                  <p className="value-text">
+                    <strong>गाव:</strong> {villageName} | <strong>तालुका:</strong> {talukaMarathiName} | <strong>जिल्हा:</strong> {distMarathiName}
+                  </p>
+                </div>
               </CCol>
             </CRow>
+
             {error && (
-              <CAlert color="danger" className="mb-3">
+              <CAlert color="danger" className="mt-3 small py-2">
                 {error}
               </CAlert>
             )}
 
-            <CButton color="primary" className="remark-btn" onClick={handleGetData}>
-              अहवाल तयार करा
-            </CButton>
+            <div className="text-center mt-4">
+              <CButton className="generate-btn" onClick={handleGetData}>
+                अहवाल तयार करा
+              </CButton>
+            </div>
           </CCardBody>
         </CCard>
-      </CContainer>
+      </div>
+    </CContainer>
     )
   }
 
@@ -1279,52 +1331,52 @@ console.log(kramank,"checkkk kramank")
                   <hr />
 
                   <h4 className="mt-4 text-primary">अ. फेरफार तपासणी</h4>
-             <CTable striped bordered responsive className="text-center">
-  <CTableHead>
-    <CTableRow className="bg-light">
-      <CTableHeaderCell>अ.क्र.</CTableHeaderCell>
-      <CTableHeaderCell>तपशील</CTableHeaderCell>
-      <CTableHeaderCell>फेरफार क्रमांक</CTableHeaderCell>
-      <CTableHeaderCell>शेरा</CTableHeaderCell>
-    </CTableRow>
-  </CTableHead>
+                  <CTable striped bordered responsive className="text-center">
+                    <CTableHead>
+                      <CTableRow className="bg-light">
+                        <CTableHeaderCell>अ.क्र.</CTableHeaderCell>
+                        <CTableHeaderCell>तपशील</CTableHeaderCell>
+                        <CTableHeaderCell>फेरफार क्रमांक</CTableHeaderCell>
+                        <CTableHeaderCell>शेरा</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
 
-  <CTableBody>
-    {sequentialFerfarList.map((item, index) => (
-      <CTableRow key={item.ferfarType}>
-        <CTableHeaderCell>
-          {index + 1}
-        </CTableHeaderCell>
+                    <CTableBody>
+                      {sequentialFerfarList.map((item, index) => (
+                        <CTableRow key={item.ferfarType}>
+                          <CTableHeaderCell>
+                            {index + 1}
+                          </CTableHeaderCell>
 
-        {/* Ferfar Numbers */}
+                          {/* Ferfar Numbers */}
 
-        {/* Ferfar Type Name */}
-        <CTableDataCell className="text-center">
-          {ferfarTypeLabel[item.ferfarType]}
-        </CTableDataCell>
+                          {/* Ferfar Type Name */}
+                          <CTableDataCell className="text-center">
+                            {ferfarTypeLabel[item.ferfarType]}
+                          </CTableDataCell>
 
-        <CTableDataCell>
-          {item.mutNos.length > 0
-            ? item.mutNos.join(', ')
-            : '-'}
-        </CTableDataCell>
-        {/* Remark Button */}
-        <CTableDataCell>
-          <CButton
-            size="sm"
-            color="primary"
-            disabled={item.mutNos.length === 0}
-            onClick={() =>
-              handleViewFerfarRemark(item.ferfarType)
-            }
-          >
-            अभिप्राय बघा
-          </CButton>
-        </CTableDataCell>
-      </CTableRow>
-    ))}
-  </CTableBody>
-</CTable>
+                          <CTableDataCell>
+                            {item.mutNos.length > 0
+                              ? item.mutNos.join(', ')
+                              : '-'}
+                          </CTableDataCell>
+                          {/* Remark Button */}
+                          <CTableDataCell>
+                            <CButton
+                              size="sm"
+                              color="primary"
+                              disabled={item.mutNos.length === 0}
+                              onClick={() =>
+                                handleViewFerfarRemark(item.ferfarType)
+                              }
+                            >
+                              अभिप्राय बघा
+                            </CButton>
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))}
+                    </CTableBody>
+                  </CTable>
 
 
 
@@ -1341,7 +1393,7 @@ console.log(kramank,"checkkk kramank")
                           क्र.):
                         </strong>{' '}
                         {/* Count */}
-                        {reportData.eHakkArjData?.trutiArjList?.length || 0}
+                        &nbsp; {reportData.eHakkArjData?.trutiArjList?.length || 0}
                       </p>
 
                       <CTable striped bordered responsive className="text-center">
@@ -1769,7 +1821,7 @@ console.log(kramank,"checkkk kramank")
 
             {activeRemarkData?.length > 0 ? (
               <>
-              {/* {activeRemarkData} */}
+                {/* {activeRemarkData} */}
 
                 {activeRemarkType?.startsWith('ferfar')
                   ? activeRemarkData.map((item, index) => (
@@ -1784,7 +1836,7 @@ console.log(kramank,"checkkk kramank")
                     </div>
                   ))
                   : activeRemarkType === 'ehakk-truti'
-                    ? 
+                    ?
                     activeRemarkData.map((item, index) => (
                       <div
                         key={index}
@@ -1796,7 +1848,7 @@ console.log(kramank,"checkkk kramank")
                         <div className="flex-grow-1">{item.shera || 'शेरा उपलब्ध नाही'}</div>
                       </div>
                     ))
-                    : 
+                    :
                     activeRemarkData.map((item, index) => (
                       <div key={index} className="mb-3 p-3 bg-light rounded">
                         {item.remark}

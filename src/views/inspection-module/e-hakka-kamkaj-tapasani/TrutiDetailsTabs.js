@@ -103,7 +103,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
 
     if (!priority) {
-      toast.warn('Please select priority')
+      toast.warn('कृपया अभिप्रायाचे प्राधान्य प्रकार निवडा')
       return
     }
 
@@ -115,7 +115,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     setIsSubmitting(true);
     console.log(ferfar, '========application=ji========')
     let inte = parseInt(ferfar.ehakkaType)
-    const payload ={
+    const payload = {
       districtCode: districtCode,
       talukaCode: talukaCode,
       ccode: cCode,
@@ -457,7 +457,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
   return (
     <CCard className="shadow border-0 mt-4" style={{ backgroundColor: '#f0f4f8' }}>
-              <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
       <CCardBody>
         <div className="d-flex justify-content-start mb-3">
