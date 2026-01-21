@@ -43,9 +43,11 @@ const FerfarDetailsTabs = ({ ferfar }) => {
   const [activeKey, setActiveKey] = useState(1)
   const [documentHistory, setDocumentHistory] = useState([1])
   const [remark, setRemark] = useState('')
-const [base64Image, setBase64Image] = useState(null)
+  const [base64Image, setBase64Image] = useState(null)
+  const [base64Mime, setBase64Mime] = useState(null)
   const [ferfarImage, setFerfarImage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [isRemarkSubmitLoading, setIsRemarkSubmitLoading] = useState(false)
   const [isSatbaraLoading, setIsSatbaraLoading] = useState(false)
   const [zoomLevel, setZoomLevel] = useState(100)
   const [attachedFile, setAttachedFile] = useState(null)
@@ -108,14 +110,14 @@ const [base64Image, setBase64Image] = useState(null)
       toast.error('Only PDF files are allowed.', { autoClose: 2000 })
 
       e.target.value = null
-                    setIsLoading(false)
+      setIsLoading(false)
 
       return
     }
     if (file.size > 1024 * 1024) {
       errorToast('File size must be less than 1 MB.')
       e.target.value = null
-                    setIsLoading(false)
+      setIsLoading(false)
 
       return
     }
@@ -128,30 +130,34 @@ const [base64Image, setBase64Image] = useState(null)
       fileInputRef.current.click()
     }
   }
-const get712View = async () => {
-  setIsSatbaraLoading(true)
-  try {
-    const res = await api.post(
-      `http://115.124.110.193:8091/echawdi/api/callExternalSatBaraApi?lgdCode=535327&pin=125`
-    )
+  const get712View = async () => {
+    try {
+      setIsLoading(true)
 
-    const encryptedData = res.data.data
-    const key = 'hCFaaYFOfOhIXNoeC3dL6YnHWwRPS1Jy'
-    const iv = 'C3dL6YnHWwRPS1Jy'
+      const payload = {
+        lgd_code: "536349",
+        pinCode: "12",
+      }
 
-    const decryptedBase64 = decryptDataImage(encryptedData, key, iv)
+      const res = await api.post(
+        "/callExternalSatBaraApi",
+        payload
+      )
 
-    if (decryptedBase64) {
-      setBase64Image(`data:image/jpeg;base64,${decryptedBase64}`)
+      const { base64, mimeType } = res.data.data
+
+      // ✅ Store exactly what backend sends
+      setBase64Mime(mimeType)
+      setBase64Image(`data:${mimeType};base64,${base64}`)
+
+    } catch (err) {
+      console.error("Failed to load 7/12 document:", err)
+    } finally {
+      setIsLoading(false)
     }
-  } catch (err) {
-    console.error('Failed to load 7/12 document:', err)
-  } finally {
-    setIsSatbaraLoading(false)
   }
-}
 
-const getFerfarView = async () => {
+  const getFerfarView = async () => {
     console.log(ferfar, "======ferfar=========")
     setIsSatbaraLoading(true)
     try {
@@ -176,8 +182,6 @@ const getFerfarView = async () => {
       const key = 'hCFaaYFOfOhIXNoeC3dL6YnHWwRPS1Jy'
       const iv = 'C3dL6YnHWwRPS1Jy'
       const base64String = atob(encryptedData)
-      const decryptedData = decryptDataImage(base64String, key, iv)
-      const parsedData = JSON.parse(decryptedData)
 
       // setFerfarImage(parsedData)
     } catch (err) {
@@ -187,51 +191,25 @@ const getFerfarView = async () => {
       setIsSatbaraLoading(false)
     }
   }
-  const decryptDataImage = (ciphertext, keyStr, ivStr) => {
-  try {
-    const cleanCiphertext = ciphertext.replace(/ /g, '+');
 
-    const key = CryptoJS.enc.Utf8.parse(keyStr);
-    const iv = CryptoJS.enc.Utf8.parse(ivStr);
-
-    const cipherParams = CryptoJS.lib.CipherParams.create({
-      ciphertext: CryptoJS.enc.Base64.parse(cleanCiphertext),
-    });
-
-    const decrypted = CryptoJS.AES.decrypt(cipherParams, key, {
-      iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7,
-    });
-
-    const base64Result = decrypted.toString(CryptoJS.enc.Base64);
-
-    if (!base64Result) throw new Error("Empty decrypt output");
-
-    return base64Result;
-  } catch (err) {
-    console.error("Decryption Core Error:", err);
-    return null;
-  }
-};
 
   const handleSubmit = async () => {
-        setIsLoading(true)
+    setIsRemarkSubmitLoading(true)
 
     if (!priority) {
       // toast.warn('')
       toast.warn('कृपया अभिप्रायाचे प्राधान्य प्रकार निवडा', {
-position: "top-right",
-autoClose: 5000,
-hideProgressBar: false,
-closeOnClick: false,
-pauseOnHover: true,
-draggable: true,
-progress: undefined,
-theme: "colored",
-transition: Bounce,
-});
-              setIsLoading(false)
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "colored",
+        transition: Bounce,
+      });
+      setIsRemarkSubmitLoading(false)
 
       return
 
@@ -263,8 +241,21 @@ transition: Bounce,
       // ✅ Append file only if exists
       if (attachedFile) {
         formData.append('File', attachedFile)
-      }else{
-        formData.append('File', null)
+      } else {
+        toast.warn('कृपया दस्तावेज निवडा', {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
+        setIsRemarkSubmitLoading(false)
+
+        return
       }
 
       // 🔍 Debug FormData (IMPORTANT)
@@ -293,40 +284,130 @@ transition: Bounce,
       setSubmitStatus('error')
       alert(err?.response?.data?.message || 'Failed to submit remark')
     } finally {
-      setIsLoading(false)
+      setIsRemarkSubmitLoading(false)
     }
   }
 
 
   const handleDownload = (type) => {
-    let filePath, fileName
+    let fileName, base64Data, mimeType
 
     switch (type) {
       case '7/12':
-        filePath = '/satbaaraa.pdf'
-        fileName = '7-12-utara.pdf'
+        if (!base64Image || !base64Mime) {
+          toast.error('७/१२ दस्तऐवज उपलब्ध नाही')
+          return
+        }
+
+        mimeType = base64Mime
+
+        // ✅ Decide extension based on MIME
+        const extension =
+          mimeType === 'image/jpg' || mimeType === 'image/jpeg'
+            ? 'jpg'
+            : mimeType === 'image/png'
+              ? 'png'
+              : mimeType === 'application/pdf'
+                ? 'pdf'
+                : 'bin'
+
+        fileName = `7-12-utara.${extension}`
+        base64Data = base64Image
         break
+
       case 'ferfar':
-        filePath = '/ferfar.png'
+        if (!ferfarImage) {
+          toast.error('फेरफार दस्तऐवज उपलब्ध नाही')
+          return
+        }
         fileName = 'ferfar-pavati.png'
+        base64Data = ferfarImage
+        mimeType = 'image/png'
         break
+
       case 'other':
-        filePath = '/document_app.pdf'
-        fileName = 'ferfar-document.pdf'
-        break
+        if (attachedFile) {
+          const url = URL.createObjectURL(attachedFile)
+          const link = document.createElement('a')
+          link.href = url
+          link.download = attachedFile.name || 'ferfar-document.pdf'
+          document.body.appendChild(link)
+          link.click()
+          document.body.removeChild(link)
+          URL.revokeObjectURL(url)
+          return
+        } else {
+          toast.error('कोणताही दस्ताऐवज जोडलेला नाही')
+          return
+        }
+
       default:
         console.error('Unknown document type')
         return
     }
 
-    const link = document.createElement('a')
-    link.href = filePath
-    link.download = fileName
-    document.body.appendChild(link)
-    link.click()
-    document.body.removeChild(link)
+    downloadBase64File(base64Data, fileName, mimeType)
   }
 
+  const downloadBase64File = (base64String, filename, mimeType) => {
+    try {
+      // Remove data URL prefix if present
+      const base64Content = base64String.includes('base64,')
+        ? base64String.split('base64,')[1]
+        : base64String
+
+      const binaryString = atob(base64Content)
+      const bytes = new Uint8Array(binaryString.length)
+
+      for (let i = 0; i < binaryString.length; i++) {
+        bytes[i] = binaryString.charCodeAt(i)
+      }
+
+      const blob = new Blob([bytes], { type: mimeType })
+
+      const url = URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = filename
+
+      document.body.appendChild(link)
+      link.click()
+
+      document.body.removeChild(link)
+      URL.revokeObjectURL(url)
+
+      toast.success('डाउनलोड सुरू आहे...')
+    } catch (error) {
+      console.error('Download failed:', error)
+      toast.error('डाउनलोड अयशस्वी')
+    }
+  }
+
+  // Helper function to detect MIME type from base64 string
+  const getMimeType = (base64String) => {
+    if (base64String.startsWith('data:')) {
+      const mimeMatch = base64String.match(/^data:(.*?);base64,/)
+      if (mimeMatch && mimeMatch[1]) {
+        return mimeMatch[1]
+      }
+    }
+
+    // Default MIME types based on file extension or content
+    if (base64Image?.includes('/pdf')) {
+      return 'application/pdf'
+    }
+
+    if (base64Image?.includes('/png')) {
+      return 'image/png'
+    }
+
+    if (base64Image?.includes('/jpeg') || base64Image?.includes('/jpg')) {
+      return 'image/jpeg'
+    }
+
+    // Default to PDF for 7/12, PNG for ferfar
+    return 'application/pdf'
+  }
   const handleZoom = (direction) => {
     setZoomLevel((prev) => {
       const newLevel = direction === 'in' ? prev + 10 : prev - 10
@@ -359,61 +440,60 @@ transition: Bounce,
         return { type: '', content: '' }
     }
   }
-const renderDocumentContent = (doc, tabKey) => {
-  if (doc.type === '7/12') {
-    console.log(doc.content,"=====doc.content=====")
-    if (!doc.content) {
-      return <div className="text-muted">७/१२ उपलब्ध नाही</div>
+  const renderDocumentContent = (doc, tabKey) => {
+    if (doc.type === '7/12') {
+      if (!doc.content) {
+        return <div className="text-muted">७/१२ उपलब्ध नाही</div>
+      }
+
+      // ✅ CORRECT: render base64 as IMAGE
+      return (
+        <div className="image-container">
+          <img
+            src={doc.content}
+            alt="7/12 Document"
+            style={{
+              width: '100%',
+              height: 'auto',
+              transform: `scale(${zoomLevel / 100})`,
+              transformOrigin: 'top center',
+            }}
+            onError={(e) => {
+              console.error('7/12 image failed to load')
+              e.target.src = '/placeholder-image.png'
+            }}
+          />
+        </div>
+      )
     }
 
-    // ✅ CORRECT: render base64 as IMAGE
-    return (
-      <div className="image-container">
-        <img
-          src={doc.content}
-          alt="7/12 Document"
-          style={{
-            width: '100%',
-            height: 'auto',
-            transform: `scale(${zoomLevel / 100})`,
-            transformOrigin: 'top center',
-          }}
-          onError={(e) => {
-            console.error('7/12 image failed to load')
-            e.target.src = '/placeholder-image.png'
-          }}
-        />
-      </div>
-    )
-  }
+    if (doc.type === 'ferfar') {
+      if (!doc.content) {
+        return <div className="text-muted">फेरफार दस्तऐवज उपलब्ध नाही</div>
+      }
 
-  if (doc.type === 'ferfar') {
-    if (!doc.content) {
-      return <div className="text-muted">फेरफार दस्तऐवज उपलब्ध नाही</div>
+      return (
+        <div className="image-container">
+          <img
+            src={doc.content}
+            alt="Ferfar Document"
+            style={{ width: '100%', height: 'auto' }}
+          />
+        </div>
+      )
     }
 
+    // PDFs / others
     return (
-      <div className="image-container">
-        <img
-          src={doc.content}
-          alt="Ferfar Document"
-          style={{ width: '100%', height: 'auto' }}
-        />
-      </div>
+      <iframe
+        src={doc.content}
+        title="Document viewer"
+        width="100%"
+        height="500px"
+        style={{ border: '1px solid #ddd' }}
+      />
     )
   }
-
-  // PDFs / others
-  return (
-    <iframe
-      src={doc.content}
-      title="Document viewer"
-      width="100%"
-      height="500px"
-      style={{ border: '1px solid #ddd' }}
-    />
-  )
-}
 
   const renderDocumentHeader = (doc, tabKey) => {
     return (
@@ -529,7 +609,7 @@ const renderDocumentContent = (doc, tabKey) => {
 
               <CButton disabled={!remark.trim()}
                 color="primary" onClick={handleSubmit} className="submit-button">
-                {isLoading ? 'जतन होत आहे ...' : 'जतन करा'}
+                {isRemarkSubmitLoading ? 'जतन होत आहे ...' : 'जतन करा'}
               </CButton>
             </div>
 
@@ -604,19 +684,19 @@ const renderDocumentContent = (doc, tabKey) => {
 
   return (
     <CCard className="ferfar-details-card">
-<ToastContainer
-position="top-right"
-autoClose={5000}
-hideProgressBar={false}
-newestOnTop={false}
-closeOnClick={false}
-rtl={false}
-pauseOnFocusLoss
-draggable
-pauseOnHover
-theme="colored"
-transition={Bounce}
-/>      <CCardBody className="tabscard">
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition={Bounce}
+      />      <CCardBody className="tabscard">
         <CNav variant="tabs" role="tablist" className="ferfar-tab-nav">
           <CNavItem className="ferfar-tab-item">
             <CNavLink

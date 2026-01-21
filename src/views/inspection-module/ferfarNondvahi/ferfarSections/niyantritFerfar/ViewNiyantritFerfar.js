@@ -89,8 +89,9 @@ function ViewNiyantritFerfar() {
 
   const handleFerfarClick = (ferfar) => {
         ferfar.ferfar_type='6'
+        console.log(ferfar,"=================ferfar==================")
 
-    navigate(`/ferfar-details/${ferfar.id}`, { state: { ferfar } })
+    navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } })
   }
 
   const getStatusBadge = (status) => {

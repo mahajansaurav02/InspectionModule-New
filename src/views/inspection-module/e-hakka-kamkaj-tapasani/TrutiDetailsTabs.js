@@ -42,6 +42,11 @@ const TrutiDetailsTabs = ({ ferfar }) => {
   const [activeKey, setActiveKey] = useState(1)
   const [documentHistory, setDocumentHistory] = useState([1])
   const [remark, setRemark] = useState('')
+    const [base64Image, setBase64Image] = useState(null)
+    const [base64Mime, setBase64Mime] = useState(null)
+      const [ferfarImage, setFerfarImage] = useState('')
+      const [isRemarkSubmitLoading, setIsRemarkSubmitLoading] = useState(false)
+    
   const [priority, setPriority] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
@@ -75,6 +80,15 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     'अपलोड केलेले दस्तऐवज वाचण्यायोग्य आहे/नाही',
   ])
 
+
+
+    useEffect(() => {
+      get712View()
+      // getFerfarView()
+    }, [])
+  
+
+
   const handleTabChange = (key) => {
     setActiveKey(key)
     setDocumentHistory((prev) => {
@@ -99,8 +113,40 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     }
   }
 
+
+  const get712View = async () => {
+    try {
+      setIsLoading(true)
+  
+      const payload = {
+        lgd_code: "536349",
+        pinCode: "12",
+      }
+  
+       const res = await api.post(
+              "/callExternalSatBaraApi",
+              payload
+            )
+      
+  
+      const { base64, mimeType } = res.data.data
+  
+      setBase64Mime(mimeType)
+      setBase64Image(`data:${mimeType};base64,${base64}`)
+  
+    } catch (err) {
+      console.error("Failed to load 7/12 document:", err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  
+
+
+
   const handleSubmit = async () => {
 
+    setIsRemarkSubmitLoading(true);
 
     if (!priority) {
       toast.warn('कृपया अभिप्रायाचे प्राधान्य प्रकार निवडा')
@@ -112,7 +158,6 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     if (priority === 'Medium') remarkType = 'गंभीर'
     if (priority === 'Low') remarkType = 'साधारण'
 
-    setIsSubmitting(true);
     console.log(ferfar, '========application=ji========')
     let inte = parseInt(ferfar.ehakkaType)
     const payload = {
@@ -147,7 +192,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
       const res = await api.post(`/inpsection/saveEHakkaForInspection`, payload);
 
       if (res.status === 201 || res.status === 200) {
-        setIsSubmitting(false);
+        setIsRemarkSubmitLoading(false);
         setSubmitSuccess(true);
 
         setTimeout(() => {
@@ -162,7 +207,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
       }
     } catch (err) {
       console.error('Submit error:', err);
-      setIsSubmitting(false);
+      setIsRemarkSubmitLoading(false);
       alert(err?.response?.data?.message || 'Failed to submit remark');
     }
   }
@@ -217,19 +262,18 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     }
   }
 
-  const getDocumentForTab = (tabKey) => {
+ const getDocumentForTab = (tabKey) => {
     switch (tabKey) {
       case 1:
-        return { type: '7/12', content: '/satbaaraa.pdf' }
+        return { type: '7/12', content: base64Image }
       case 2:
-        return { type: 'ferfar', content: '/ferfar.png' }
+        return { type: 'ferfar', content: ferfarImage }
       case 3:
-        return { type: 'document', content: '/document_app.pdf' }
+        return { type: 'other', content: '/document_app.pdf' }
       default:
         return { type: '', content: '' }
     }
   }
-
   const renderDocumentContent = (doc, tabKey) => {
     if (doc.type === '7/12' || doc.type === 'document') {
       return (

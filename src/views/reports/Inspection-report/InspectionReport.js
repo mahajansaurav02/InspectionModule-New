@@ -35,7 +35,6 @@ import InspectionRemarksPrint from '../InspectionPrint/InspectionRemarksPrint'
 import api from 'src/api/api'
 import { toast } from 'react-toastify'
 
-// Your existing mock data remains the same...
 const mockApiData = {
   tapasaniAdhikariName: 'श्री. रमेश पाटील',
   tapasaniAdhikariPadnam: 'उप विभागीय अधिकारी',
@@ -353,6 +352,7 @@ const InspectionReport = () => {
   const [reportData, setReportData] = useState({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [akrushakData, setAkrushakData] = useState(null)
   const componentRef = useRef()
   const printComponentRef = useRef()
 
@@ -393,22 +393,87 @@ const InspectionReport = () => {
   }
 
   const sequentialFerfarList = React.useMemo(() => {
+    if (!allFerfarList || allFerfarList.length === 0) {
+      return Object.keys(ferfarTypeLabel).map((type) => ({
+        ferfarType: Number(type),
+        mutNos: [], 
+      }))
+    }
+
+
+    const getAkrushakRate = (data) => {
+  if (!data) return '-'
+
+  if (data.nprate != null && data.nprate > 0) {
+    return `${data.nprate} रुपये`
+  }
+
+  if (data.mnparate != null && data.mnparate > 0) {
+    return `${data.mnparate} रुपये`
+  }
+
+  if (data.tenpaise != null && data.tenpaise > 0) {
+    return `${data.tenpaise} पैसे`
+  }
+
+  if (data.fivepaise != null && data.fivepaise > 0) {
+    return `${data.fivepaise} पैसे`
+  }
+
+  return '-'
+}
+
     const map = new Map()
 
-    // Group mutNos by ferfarType
-    allFerfarList?.forEach((item) => {
+    allFerfarList.forEach((item) => {
       if (!map.has(item.ferfarType)) {
         map.set(item.ferfarType, new Set())
       }
       map.get(item.ferfarType).add(item.mutNo)
     })
 
-    // Force sequence from 1 to 8
-    return Object.keys(ferfarTypeLabel).map((type) => ({
-      ferfarType: Number(type),
-      mutNos: map.has(Number(type)) ? Array.from(map.get(Number(type))) : [],
-    }))
+    return Object.keys(ferfarTypeLabel).map((type) => {
+      const typeNum = Number(type)
+      const values = map.get(typeNum)
+
+      return {
+        ferfarType: typeNum,
+        mutNos: values ? Array.from(values) : [],
+      }
+    })
   }, [allFerfarList])
+
+
+const getAkrushakDarCheck= async ()=>{
+
+
+   setIsLoading(true)
+    try {
+      if (!cCode) {
+        alert('Village code not found....Please Select Village First')
+        return
+      }
+
+      const res = await api.get(
+        `/inpsection/getAkrushakDar?ccode=${cCode}`,
+      )
+
+      console.log(res.data[0], 'hiiiiiiiii')
+
+      setAkrushakData(res.data[0])
+
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+
+
+
+}
+
 
   const getFerfarData = async () => {
     setIsLoading(true)
@@ -424,7 +489,6 @@ const InspectionReport = () => {
 
       console.log(res.data, 'ferfar data response')
 
-      // store full list
       setAllFerfarList(res.data)
 
       toast.success('Data fetched successfully!', { autoClose: 2000 })
@@ -452,15 +516,14 @@ const InspectionReport = () => {
         return
       }
 
-      //  const res = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
-      const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
+       const response = await api.get(`/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`)
+      const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=1`)
       // const res = await api.get(`https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above`)
 
       console.log(res.data, 'EhakkData data response')
+      console.log(response.data, 'EhakkData data response')
 
-      // store full list
-      // setAllFerfarList(res.data)
-
+    
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
       toast.error(
@@ -481,12 +544,12 @@ const InspectionReport = () => {
     setReportData({})
     getFerfarData()
     getEhakkData()
+    getAkrushakDarCheck()
 
     try {
       const data = await fetchInspectionData()
       const remarkData = await fetchFerfarInspectionData()
 
-      // Organize ferfar remarks by kramank
       const organizedFerfarRemarks = {}
       const remarkKeys = [
         'adeshFerfarRemark',
@@ -508,7 +571,6 @@ const InspectionReport = () => {
       setReportData(data)
       setFerfarRemarkList(organizedFerfarRemarks)
 
-      // Set mock remarks for other sections
       setEChawadiRemarks({
         gawNamunaPurna: {
           nirank: 'निरंक केलेले नमुने योग्यरित्या प्रक्रिया झाले आहेत.',
@@ -549,7 +611,6 @@ const InspectionReport = () => {
 
       console.log(res.data, 'selected ferfar data response')
 
-      // store full list
       setActiveRemarkData(res.data)
 
       toast.success('Data fetched successfully!', { autoClose: 2000 })
@@ -561,13 +622,10 @@ const InspectionReport = () => {
     }
 
     setActiveRemarkType(`ferfar-${kramank}`)
-    // setActiveRemarkData(ferfarRemarkList[kramank] || [])
     setShowAbhiprayModal(true)
   }
 
-  // ====================================================================================================
-  // HELPER FUNCTION for Badge Logic
-  // ====================================================================================================
+  
   const getRemarkTypeBadge = (typeOfRemark) => {
     const type = typeOfRemark != null ? Number(typeOfRemark) : 0
 
@@ -643,7 +701,6 @@ const InspectionReport = () => {
     setLoading(true)
     setError(null)
 
-    // Get both report containers
     const mainReportContainer = document.getElementById('main-report-container')
     const remarksReportContainer = document.getElementById('remarks-report-container')
 
@@ -653,11 +710,9 @@ const InspectionReport = () => {
       return
     }
 
-    // Get the HTML content from both containers
     const mainReportHTML = mainReportContainer.innerHTML
     const remarksReportHTML = remarksReportContainer.innerHTML
 
-    // Create the HTML content with BOTH reports
     const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -995,12 +1050,10 @@ const InspectionReport = () => {
         </html>
     `
 
-    // Open new window and write content
     const printWindow = window.open('', '_blank')
     printWindow.document.write(htmlContent)
     printWindow.document.close()
 
-    // Wait for window to load
     printWindow.onload = function () {
       setTimeout(() => {
         setLoading(false)
@@ -1330,7 +1383,6 @@ const InspectionReport = () => {
     printWindow.document.close()
   }
 
-  // Abhipray button cell component
   const AbhiprayButtonCell = (abhipray, section) => (
     <CTableDataCell className="text-center">
       <CButton
@@ -1346,7 +1398,6 @@ const InspectionReport = () => {
 
   const pendingList = reportData.eHakkArjData?.pralambitArjList || []
 
-  // 1. > 180 (Checks for '180' AND 'जास्त')
   const count180Plus = pendingList.filter(
     (item) =>
       item.ehakkatype &&
@@ -1354,7 +1405,6 @@ const InspectionReport = () => {
       item.ehakkatype.includes('जास्त'),
   ).length
 
-  // 2. 90 to 180 (Checks for '90' AND '180' - avoids overlapping with >180 because >180 has 'जास्त')
   const count90to180 = pendingList.filter(
     (item) =>
       item.ehakkatype &&
@@ -1362,7 +1412,6 @@ const InspectionReport = () => {
       (item.ehakkatype.includes('180') || item.ehakkatype.includes('१८०')),
   ).length
 
-  // 3. 30 to 90 (Checks for '30' AND '90')
   const count30to90 = pendingList.filter(
     (item) =>
       item.ehakkatype &&
@@ -1370,7 +1419,6 @@ const InspectionReport = () => {
       (item.ehakkatype.includes('90') || item.ehakkatype.includes('९०')),
   ).length
 
-  // 4. < 30 (Checks for '30' AND 'कमी')
   const countLess30 = pendingList.filter(
     (item) =>
       item.ehakkatype &&
@@ -1380,80 +1428,79 @@ const InspectionReport = () => {
 
   if (!reportData.tapasaniAdhikariName && !loading) {
     return (
-    <CContainer fluid className="inspection-container d-flex justify-content-center align-items-center">
-      {/* This wrapper controls the "Medium" size */}
-      <div className="report-card-wrapper">
-        <CCard className="inspection-card">
-          <CCardHeader className="header-gradient text-end p-4">
-             <h3 className="mb-0 fw-bold">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी</h3>
-          </CCardHeader>
+      <CContainer fluid className="inspection-container d-flex justify-content-center align-items-center">
+        <div className="report-card-wrapper">
+          <CCard className="inspection-card">
+            <CCardHeader className="header-gradient text-end p-4">
+              <h3 className="mb-0 fw-bold">ग्राम महसूल अधिकारी दप्तर निरीक्षण टिप्पणी</h3>
+            </CCardHeader>
 
-          <CCardBody className="p-4">
-            <CRow className="g-3">
-              {/* Row 1 */}
-              <CCol md={6}>
-                <div className="info-box border-primary">
-                  <span className="label-text">
-                    <CIcon icon={cilUser} size="md" className="me-1" /> तपासणी अधिकारी
-                  </span>
-                  <p className="value-text">{fullName || "—"}</p>
-                </div>
-              </CCol>
+            <CCardBody className="p-4">
+              <CRow className="g-3">
+                {/* Row 1 */}
+                <CCol md={6}>
+                  <div className="info-box border-primary">
+                    <span className="label-text">
+                      <CIcon icon={cilUser} size="md" className="me-1" /> तपासणी अधिकारी
+                    </span>
+                    <p className="value-text">{fullName || "—"}</p>
+                  </div>
+                </CCol>
 
-              <CCol md={6}>
-                <div className="info-box border-secondary">
-                  <span className="label-text">
-                    <CIcon icon={cilCalendar} size="sm" className="me-1" /> तपासणी दिनांक
-                  </span>
-                  <p className="value-text">{reportData.tapasaniDinanck || "—"}</p>
-                </div>
-              </CCol>
+                <CCol md={6}>
+                  <div className="info-box border-secondary">
+                    <span className="label-text">
+                      <CIcon icon={cilCalendar} size="sm" className="me-1" /> तपासणी दिनांक
+                    </span>
+                    <p className="value-text">{reportData.tapasaniDinanck || "—"}</p>
+                  </div>
+                </CCol>
 
-              {/* Row 2 */}
-              <CCol md={6}>
-                <div className="info-box border-success">
-                  <span className="label-text">
-                    <CIcon icon={cilLocationPin} size="sm" className="me-1" /> साजाचे नाव
-                  </span>
-                  <p className="value-text">{villageName || "—"}</p>
-                </div>
-              </CCol>
+                {/* Row 2 */}
+                <CCol md={6}>
+                  <div className="info-box border-success">
+                    <span className="label-text">
+                      <CIcon icon={cilLocationPin} size="sm" className="me-1" /> साजाचे नाव
+                    </span>
+                    <p className="value-text">{villageName || "—"}</p>
+                  </div>
+                </CCol>
 
-              <CCol md={6}>
-                <div className="info-box border-warning">
-                  <span className="label-text">
-                    <CIcon icon={cilUser} size="sm" className="me-1" /> ग्राम महसूल अधिकारी
-                  </span>
-                  <p className="value-text">{reportData.sajacheNaw || "—"}</p>
-                </div>
-              </CCol>
+                <CCol md={6}>
+                  <div className="info-box border-warning">
+                    <span className="label-text">
+                      <CIcon icon={cilUser} size="sm" className="me-1" /> ग्राम महसूल अधिकारी
+                    </span>
+                    <p className="value-text">{reportData.sajacheNaw || "—"}</p>
+                  </div>
+                </CCol>
 
-              {/* Row 3 - Full Width */}
-              <CCol xs={12}>
-                <div className="info-box border-danger detail-box">
-                  <span className="label-text">गावाचा संपूर्ण तपशील</span>
-                  <p className="value-text">
-                    <strong>गाव:</strong> {villageName} | <strong>तालुका:</strong> {talukaMarathiName} | <strong>जिल्हा:</strong> {distMarathiName}
-                  </p>
-                </div>
-              </CCol>
-            </CRow>
+                {/* Row 3 - Full Width */}
+                <CCol xs={12}>
+                  <div className="info-box border-danger detail-box">
+                    <span className="label-text">गावाचा संपूर्ण तपशील</span>
+                    <p className="value-text">
+                      <strong>गाव:</strong> {villageName} | <strong>तालुका:</strong> {talukaMarathiName} | <strong>जिल्हा:</strong> {distMarathiName}
+                    </p>
+                  </div>
+                </CCol>
+              </CRow>
 
-            {error && (
-              <CAlert color="danger" className="mt-3 small py-2">
-                {error}
-              </CAlert>
-            )}
+              {error && (
+                <CAlert color="danger" className="mt-3 small py-2">
+                  {error}
+                </CAlert>
+              )}
 
-            <div className="text-center mt-4">
-              <CButton className="generate-btn" onClick={handleGetData}>
-                अहवाल तयार करा
-              </CButton>
-            </div>
-          </CCardBody>
-        </CCard>
-      </div>
-    </CContainer>
+              <div className="text-center mt-4">
+                <CButton className="generate-btn" onClick={handleGetData}>
+                  अहवाल तयार करा
+                </CButton>
+              </div>
+            </CCardBody>
+          </CCard>
+        </div>
+      </CContainer>
     )
   }
 
@@ -1521,43 +1568,42 @@ const InspectionReport = () => {
                     </CTableHead>
 
                     <CTableBody>
-                      {sequentialFerfarList.map((item, index) => (
-                        <CTableRow key={item.ferfarType}>
-                          <CTableHeaderCell>
-                            {index + 1}
-                          </CTableHeaderCell>
+                      {sequentialFerfarList.map((item, index) => {
+                        const hasData = Array.isArray(item.mutNos) && item.mutNos.length > 0
 
-                          {/* Ferfar Numbers */}
+                        return (
+                          <CTableRow key={item.ferfarType}>
+                            <CTableHeaderCell>{index + 1}</CTableHeaderCell>
 
-                          {/* Ferfar Type Name */}
-                          <CTableDataCell className="text-center">
-                            {ferfarTypeLabel[item.ferfarType]}
-                          </CTableDataCell>
+                            {/* Ferfar Type Name */}
+                            <CTableDataCell className="text-center">
+                              {ferfarTypeLabel[item.ferfarType]}
+                            </CTableDataCell>
 
-                          <CTableDataCell>
-                            {item.mutNos.length > 0
-                              ? item.mutNos.join(', ')
-                              : '-'}
-                          </CTableDataCell>
-                          {/* Remark Button */}
-                          <CTableDataCell>
-                            <CButton
-                              size="sm"
-                              color="primary"
-                              disabled={item.mutNos.length === 0}
-                              onClick={() =>
-                                handleViewFerfarRemark(item.ferfarType)
-                              }
-                            >
-                              अभिप्राय बघा
-                            </CButton>
-                          </CTableDataCell>
-                        </CTableRow>
-                      ))}
+                            {/* Mut Numbers */}
+                            <CTableDataCell>
+                              {hasData ? item.mutNos.join(', ') : '-'}
+                            </CTableDataCell>
+
+                            {/* Remark Button */}
+                            <CTableDataCell>
+                              <CButton
+                                size="sm"
+                                color="primary"
+                                disabled={!hasData}
+                                onClick={() => handleViewFerfarRemark(item.ferfarType)}
+                              >
+                                अभिप्राय बघा
+                              </CButton>
+                            </CTableDataCell>
+                          </CTableRow>
+                        )
+                      })}
                     </CTableBody>
+
                   </CTable>
 
-                      
+
 
                   <hr />
 
@@ -1764,9 +1810,19 @@ const InspectionReport = () => {
                           गावाचा अकृषक दर भरला आहे काय ?
                         </CTableDataCell>
                         <CTableDataCell>
-                          {reportData.eChawadiData?.akrushakDarBharlaKay} (दर (प्रति चौ.मी):{' '}
-                          {reportData.eChawadiData?.akrushakDarRakkam})
-                        </CTableDataCell>
+  {akrushakData?.declaration === 'N' ? 'नाही' : 'होय'}
+  {' '} (दर (प्रति चौ.मी): {
+    akrushakData?.nprate > 0
+      ? `${akrushakData.nprate} रुपये`
+      : akrushakData?.mnparate > 0
+      ? `${akrushakData.mnparate} रुपये`
+      : akrushakData?.tenpaise > 0
+      ? `${akrushakData.tenpaise} पैसे`
+      : akrushakData?.fivepaise > 0
+      ? `${akrushakData.fivepaise} पैसे`
+      : '-'
+  })
+</CTableDataCell>
                         {AbhiprayButtonCell(
                           reportData.eChawadiData?.akrushakDarBharlaKay,
                           'echawadi',
@@ -1942,7 +1998,7 @@ const InspectionReport = () => {
             setActiveRemarkType(null)
             setActiveRemarkData([])
           }}
-          size="lg"
+          size="xl"
           alignment="center"
           className="no-print"
         >
@@ -1951,17 +2007,17 @@ const InspectionReport = () => {
               {activeRemarkType?.startsWith('ferfar')
                 ? 'फेरफार तपासणी अभिप्राय'
                 : activeRemarkType === 'ehakk-truti'
-                ? 'ई-हक्क अभिप्राय (त्रुटीपूर्ततेसाठी केलेले अर्ज)'
-                : activeRemarkType === 'ehakk'
-                ? 'ई-हक्क अभिप्राय (तलाठी स्तरावरील प्रलंबित अर्ज)'
-                : activeRemarkType === 'echawadi'
-                ? 'ई-चावडी अभिप्राय'
-                : activeRemarkType === 'vasuli'
-                ? 'वसुली अभिप्राय'
-                : 'अभिप्राय'}
+                  ? 'ई-हक्क अभिप्राय (त्रुटीपूर्ततेसाठी केलेले अर्ज)'
+                  : activeRemarkType === 'ehakk'
+                    ? 'ई-हक्क अभिप्राय (तलाठी स्तरावरील प्रलंबित अर्ज)'
+                    : activeRemarkType === 'echawadi'
+                      ? 'ई-चावडी अभिप्राय'
+                      : activeRemarkType === 'vasuli'
+                        ? 'वसुली अभिप्राय'
+                        : 'अभिप्राय'}
             </CModalTitle>
           </CModalHeader>
-          <CModalBody className="px-4 py-4">
+          <CModalBody className="px-4 py-4 ">
             {/* ================= HEADER SECTION ================= */}
 
             {activeRemarkData?.length > 0 ? (
@@ -2026,25 +2082,25 @@ const InspectionReport = () => {
                   {/* 1. FERFAR DATA */}
                   {activeRemarkType?.startsWith('ferfar')
                     ? activeRemarkData.map((item, index) => (
-                        <CTableRow key={index}>
-                          <CTableDataCell className="px-3 py-2">
-                            {item.mutNo ? (
-                              <span className="badge bg-primary fs-6 px-3 py-1">{item.mutNo}</span>
-                            ) : (
-                              '-'
-                            )}
-                          </CTableDataCell>
-                          <CTableDataCell className="text-center px-3 py-2">
-                            {getRemarkTypeBadge(item.typeOfRemark)}
-                          </CTableDataCell>
-                          <CTableDataCell className="px-3 py-2">
-                            {item.remark || '-'}
-                          </CTableDataCell>
-                        </CTableRow>
-                      ))
+                      <CTableRow key={index}>
+                        <CTableDataCell className="px-3 py-2">
+                          {item.mutNo ? (
+                            <span className="badge bg-primary fs-6 px-3 py-1">{item.mutNo}</span>
+                          ) : (
+                            '-'
+                          )}
+                        </CTableDataCell>
+                        <CTableDataCell className="text-center px-3 py-2">
+                          {getRemarkTypeBadge(item.typeOfRemark)}
+                        </CTableDataCell>
+                        <CTableDataCell className="px-3 py-2">
+                          {item.remark || '-'}
+                        </CTableDataCell>
+                      </CTableRow>
+                    ))
                     : /* 2. EHAKK TRUTI DATA */
                     activeRemarkType === 'ehakk-truti'
-                    ? activeRemarkData.map((item, index) => (
+                      ? activeRemarkData.map((item, index) => (
                         <CTableRow key={index}>
                           <CTableDataCell className="px-3 py-2">
                             {item.arjNo && (
@@ -2059,36 +2115,36 @@ const InspectionReport = () => {
                           </CTableDataCell>
                         </CTableRow>
                       ))
-                    : /* 3. EHAKK PENDING (PRALAMBIT) DATA - NEW */
-                    activeRemarkType === 'ehakk'
-                    ? activeRemarkData.map((item, index) => (
-                        <CTableRow key={index}>
-                          <CTableDataCell className="px-3 py-2">
-                            {item.applicationId ? (
-                              <span className="badge bg-primary px-3 py-1">
-                                {item.applicationId}
-                              </span>
-                            ) : (
-                              '-'
-                            )}
-                          </CTableDataCell>
-                          <CTableDataCell className="px-3 py-2">
-                            {item.ehakkatype || '-'}
-                          </CTableDataCell>
-                          <CTableDataCell className="text-center px-3 py-2">
-                            {getRemarkTypeBadge(item.remarkType)}
-                          </CTableDataCell>
-                          <CTableDataCell className="px-3 py-2">
-                            {item.remark || '-'}
-                          </CTableDataCell>
-                        </CTableRow>
-                      ))
-                    : /* 4. GENERIC DATA */
-                      activeRemarkData.map((item, index) => (
-                        <CTableRow key={index}>
-                          <CTableDataCell className="px-3 py-2">{item.remark}</CTableDataCell>
-                        </CTableRow>
-                      ))}
+                      : /* 3. EHAKK PENDING (PRALAMBIT) DATA - NEW */
+                      activeRemarkType === 'ehakk'
+                        ? activeRemarkData.map((item, index) => (
+                          <CTableRow key={index}>
+                            <CTableDataCell className="px-3 py-2">
+                              {item.applicationId ? (
+                                <span className="badge bg-primary px-3 py-1">
+                                  {item.applicationId}
+                                </span>
+                              ) : (
+                                '-'
+                              )}
+                            </CTableDataCell>
+                            <CTableDataCell className="px-3 py-2">
+                              {item.ehakkatype || '-'}
+                            </CTableDataCell>
+                            <CTableDataCell className="text-center px-3 py-2">
+                              {getRemarkTypeBadge(item.remarkType)}
+                            </CTableDataCell>
+                            <CTableDataCell className="px-3 py-2">
+                              {item.remark || '-'}
+                            </CTableDataCell>
+                          </CTableRow>
+                        ))
+                        : /* 4. GENERIC DATA */
+                        activeRemarkData.map((item, index) => (
+                          <CTableRow key={index}>
+                            <CTableDataCell className="px-3 py-2">{item.remark}</CTableDataCell>
+                          </CTableRow>
+                        ))}
                 </CTableBody>
               </CTable>
             ) : (
