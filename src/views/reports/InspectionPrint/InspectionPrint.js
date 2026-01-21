@@ -16,7 +16,17 @@ import {
 import '@coreui/coreui/dist/css/coreui.min.css'
 import '../Inspection-report/InspectionReport.css'
 
-const InspectionPrint = React.forwardRef(({ reportData }, ref) => {
+const InspectionPrint = React.forwardRef(({ reportData, sequentialFerfarList }, ref) => {
+  const getDynamicSherat = (kramank) => {
+    if (!sequentialFerfarList) return 'माहिती उपलब्ध नाही'
+
+    const foundItem = sequentialFerfarList.find((item) => item.ferfarType === kramank)
+
+    if (foundItem && foundItem.mutNos && foundItem.mutNos.length > 0) {
+      return `फेरफार क्र. ${foundItem.mutNos.join(', ')}`
+    }
+    return 'निरंक'
+  }
   return (
     <div ref={ref} className="print-view">
       <div className="print-page">
@@ -77,8 +87,7 @@ const InspectionPrint = React.forwardRef(({ reportData }, ref) => {
                         <CTableRow key={index}>
                           <CTableHeaderCell scope="row">{item.kramank}.</CTableHeaderCell>
                           <CTableDataCell className="text-start">{item.tapshil}</CTableDataCell>
-                          <CTableDataCell>{item.sherat}</CTableDataCell>
-                          {/* <CTableDataCell>&nbsp;</CTableDataCell> */}
+                          <CTableDataCell>{getDynamicSherat(item.kramank)}</CTableDataCell>
                         </CTableRow>
                       ))}
                     </CTableBody>

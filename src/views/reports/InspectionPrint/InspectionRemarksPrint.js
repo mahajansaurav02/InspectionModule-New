@@ -16,7 +16,25 @@ import {
 import '@coreui/coreui/dist/css/coreui.min.css'
 
 const InspectionRemarksPrint = React.forwardRef(
-  ({ reportData, ferfarRemarkList, eChawadiRemarks, vasuliRemarks, eHakkRemarks }, ref) => {
+  (
+    {
+      reportData,
+      // ferfarRemarkList,
+      eChawadiRemarks,
+      vasuliRemarks,
+      eHakkRemarks,
+      sequentialFerfarList,
+    },
+    ref,
+  ) => {
+    const getDynamicSherat = (kramank) => {
+      if (!sequentialFerfarList || sequentialFerfarList.length === 0) return '-'
+      const foundItem = sequentialFerfarList.find((item) => item.ferfarType === kramank)
+      if (foundItem && foundItem.mutNos && foundItem.mutNos.length > 0) {
+        return `फेरफार क्र. ${foundItem.mutNos.join(', ')}`
+      }
+      return 'निरंक'
+    }
     return (
       <div ref={ref} className="print-view remarks-report">
         <div className="print-page">
@@ -72,13 +90,27 @@ const InspectionRemarksPrint = React.forwardRef(
                           <CTableRow key={index}>
                             <CTableHeaderCell scope="row">{item.kramank}.</CTableHeaderCell>
                             <CTableDataCell className="text-start">{item.tapshil}</CTableDataCell>
-                            <CTableDataCell>{item.sherat}</CTableDataCell>
+                            <CTableDataCell>{getDynamicSherat(item.kramank)}</CTableDataCell>
                             <CTableDataCell className="text-start">
-                              {ferfarRemarkList[item.kramank]?.map((remark, remarkIndex) => (
-                                <div key={remarkIndex} className="mb-1">
-                                  <strong>फेरफार {remark.mutNo}:</strong> {remark.remark}
-                                </div>
-                              )) || 'शेरा उपलब्ध नाही'}
+                              {(() => {
+                                // 1. Dynamic Data
+                                const dynamicItem = sequentialFerfarList?.find(
+                                  (d) => d.ferfarType === item.kramank,
+                                )
+                                if (
+                                  dynamicItem &&
+                                  dynamicItem.data &&
+                                  dynamicItem.data.length > 0
+                                ) {
+                                  return dynamicItem.data.map((remItem, idx) => (
+                                    <div key={idx} className="mb-1 border-bottom pb-1">
+                                      <strong>फेरफार {remItem.mutNo}:</strong>{' '}
+                                      {remItem.remark || 'शेरा उपलब्ध नाही'}
+                                    </div>
+                                  ))
+                                }
+                                return 'शेरा उपलब्ध नाही'
+                              })()}
                             </CTableDataCell>
                           </CTableRow>
                         ))}
