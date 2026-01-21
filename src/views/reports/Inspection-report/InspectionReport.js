@@ -35,7 +35,6 @@ import InspectionRemarksPrint from '../InspectionPrint/InspectionRemarksPrint'
 import api from 'src/api/api'
 import { toast } from 'react-toastify'
 
-// Your existing mock data remains the same...
 const mockApiData = {
   tapasaniAdhikariName: 'श्री. रमेश पाटील',
   tapasaniAdhikariPadnam: 'उप विभागीय अधिकारी',
@@ -353,6 +352,7 @@ const InspectionReport = () => {
   const [reportData, setReportData] = useState({})
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
+  const [akrushakData, setAkrushakData] = useState(null)
   const componentRef = useRef()
   const printComponentRef = useRef()
 
@@ -393,6 +393,35 @@ const InspectionReport = () => {
   }
 
   const sequentialFerfarList = React.useMemo(() => {
+    if (!allFerfarList || allFerfarList.length === 0) {
+      return Object.keys(ferfarTypeLabel).map((type) => ({
+        ferfarType: Number(type),
+        mutNos: [],
+      }))
+    }
+
+    const getAkrushakRate = (data) => {
+      if (!data) return '-'
+
+      if (data.nprate != null && data.nprate > 0) {
+        return `${data.nprate} रुपये`
+      }
+
+      if (data.mnparate != null && data.mnparate > 0) {
+        return `${data.mnparate} रुपये`
+      }
+
+      if (data.tenpaise != null && data.tenpaise > 0) {
+        return `${data.tenpaise} पैसे`
+      }
+
+      if (data.fivepaise != null && data.fivepaise > 0) {
+        return `${data.fivepaise} पैसे`
+      }
+
+      return '-'
+    }
+
     const map = new Map()
 
     allFerfarList?.forEach((item) => {
@@ -417,6 +446,29 @@ const InspectionReport = () => {
     })
   }, [allFerfarList])
 
+  const getAkrushakDarCheck = async () => {
+    setIsLoading(true)
+    try {
+      if (!cCode) {
+        alert('Village code not found....Please Select Village First')
+        return
+      }
+
+      const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`)
+
+      console.log(res.data[0], 'hiiiiiiiii')
+
+      setAkrushakData(res.data[0])
+
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   const getFerfarData = async () => {
     setIsLoading(true)
     try {
@@ -431,7 +483,6 @@ const InspectionReport = () => {
 
       console.log(res.data, 'ferfar data response')
 
-      // store full list
       setAllFerfarList(res.data)
 
       toast.success('Data fetched successfully!', { autoClose: 2000 })
@@ -451,14 +502,16 @@ const InspectionReport = () => {
         return
       }
 
-      const res = await api.get(
+      const response = await api.get(
         `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`,
       )
-      console.log(res.data, 'EhakkData data response')
-      // const res = await api.get(`/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=4`)
+      const res = await api.get(
+        `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=1`,
+      )
+      // const res = await api.get(`https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above`)
 
-      // store full list
-      // setAllFerfarList(res.data)
+      console.log(res.data, 'EhakkData data response')
+      console.log(response.data, 'EhakkData data response')
 
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
@@ -496,6 +549,7 @@ const InspectionReport = () => {
     setReportData({})
     getFerfarData()
     getEhakkData()
+    getAkrushakDarCheck()
 
     try {
       const data = await fetchInspectionData()
@@ -532,7 +586,6 @@ const InspectionReport = () => {
       setReportData(data)
       setFerfarRemarkList(organizedFerfarRemarks)
 
-      // Set mock remarks for other sections
       setEChawadiRemarks({
         gawNamunaPurna: {
           nirank: 'निरंक केलेले नमुने योग्यरित्या प्रक्रिया झाले आहेत.',
@@ -573,7 +626,6 @@ const InspectionReport = () => {
 
       console.log(res.data, 'selected ferfar data response')
 
-      // store full list
       setActiveRemarkData(res.data)
 
       toast.success('Data fetched successfully!', { autoClose: 2000 })
@@ -585,13 +637,9 @@ const InspectionReport = () => {
     }
 
     setActiveRemarkType(`ferfar-${kramank}`)
-    // setActiveRemarkData(ferfarRemarkList[kramank] || [])
     setShowAbhiprayModal(true)
   }
 
-  // ====================================================================================================
-  // HELPER FUNCTION for Badge Logic
-  // ====================================================================================================
   const getRemarkTypeBadge = (typeOfRemark) => {
     const type = typeOfRemark != null ? Number(typeOfRemark) : 0
 
@@ -667,7 +715,6 @@ const InspectionReport = () => {
     setLoading(true)
     setError(null)
 
-    // Get both report containers
     const mainReportContainer = document.getElementById('main-report-container')
     const remarksReportContainer = document.getElementById('remarks-report-container')
 
@@ -677,11 +724,9 @@ const InspectionReport = () => {
       return
     }
 
-    // Get the HTML content from both containers
     const mainReportHTML = mainReportContainer.innerHTML
     const remarksReportHTML = remarksReportContainer.innerHTML
 
-    // Create the HTML content with BOTH reports
     const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -1019,12 +1064,10 @@ const InspectionReport = () => {
         </html>
     `
 
-    // Open new window and write content
     const printWindow = window.open('', '_blank')
     printWindow.document.write(htmlContent)
     printWindow.document.close()
 
-    // Wait for window to load
     printWindow.onload = function () {
       setTimeout(() => {
         setLoading(false)
@@ -1354,7 +1397,6 @@ const InspectionReport = () => {
     printWindow.document.close()
   }
 
-  // Abhipray button cell component
   const AbhiprayButtonCell = (abhipray, section) => (
     <CTableDataCell className="text-center">
       <CButton
@@ -1370,7 +1412,6 @@ const InspectionReport = () => {
 
   const pendingList = reportData.eHakkArjData?.pralambitArjList || []
 
-  // 1. > 180 (Checks for '180' AND 'जास्त')
   const count180Plus = pendingList.filter(
     (item) =>
       item.ehakkatype &&
@@ -1378,7 +1419,6 @@ const InspectionReport = () => {
       item.ehakkatype.includes('जास्त'),
   ).length
 
-  // 2. 90 to 180 (Checks for '90' AND '180' - avoids overlapping with >180 because >180 has 'जास्त')
   const count90to180 = pendingList.filter(
     (item) =>
       item.ehakkatype &&
@@ -1386,7 +1426,6 @@ const InspectionReport = () => {
       (item.ehakkatype.includes('180') || item.ehakkatype.includes('१८०')),
   ).length
 
-  // 3. 30 to 90 (Checks for '30' AND '90')
   const count30to90 = pendingList.filter(
     (item) =>
       item.ehakkatype &&
@@ -1394,7 +1433,6 @@ const InspectionReport = () => {
       (item.ehakkatype.includes('90') || item.ehakkatype.includes('९०')),
   ).length
 
-  // 4. < 30 (Checks for '30' AND 'कमी')
   const countLess30 = pendingList.filter(
     (item) =>
       item.ehakkatype &&
@@ -1549,33 +1587,35 @@ const InspectionReport = () => {
                     </CTableHead>
 
                     <CTableBody>
-                      {sequentialFerfarList.map((item, index) => (
-                        <CTableRow key={item.ferfarType}>
-                          <CTableHeaderCell>{index + 1}</CTableHeaderCell>
+                      {sequentialFerfarList.map((item, index) => {
+                        const hasData = Array.isArray(item.mutNos) && item.mutNos.length > 0
 
-                          {/* Ferfar Numbers */}
+                        return (
+                          <CTableRow key={item.ferfarType}>
+                            <CTableHeaderCell>{index + 1}</CTableHeaderCell>
 
-                          {/* Ferfar Type Name */}
-                          <CTableDataCell className="text-center">
-                            {ferfarTypeLabel[item.ferfarType]}
-                          </CTableDataCell>
+                            {/* Ferfar Type Name */}
+                            <CTableDataCell className="text-center">
+                              {ferfarTypeLabel[item.ferfarType]}
+                            </CTableDataCell>
 
-                          <CTableDataCell>
-                            {item.mutNos.length > 0 ? item.mutNos.join(', ') : '-'}
-                          </CTableDataCell>
-                          {/* Remark Button */}
-                          <CTableDataCell>
-                            <CButton
-                              size="sm"
-                              color="primary"
-                              disabled={item.mutNos.length === 0}
-                              onClick={() => handleViewFerfarRemark(item.ferfarType)}
-                            >
-                              अभिप्राय बघा
-                            </CButton>
-                          </CTableDataCell>
-                        </CTableRow>
-                      ))}
+                            <CTableDataCell>
+                              {item.mutNos.length > 0 ? item.mutNos.join(', ') : '-'}
+                            </CTableDataCell>
+                            {/* Remark Button */}
+                            <CTableDataCell>
+                              <CButton
+                                size="sm"
+                                color="primary"
+                                disabled={item.mutNos.length === 0}
+                                onClick={() => handleViewFerfarRemark(item.ferfarType)}
+                              >
+                                अभिप्राय बघा
+                              </CButton>
+                            </CTableDataCell>
+                          </CTableRow>
+                        )
+                      })}
                     </CTableBody>
                   </CTable>
 
@@ -1784,8 +1824,17 @@ const InspectionReport = () => {
                           गावाचा अकृषक दर भरला आहे काय ?
                         </CTableDataCell>
                         <CTableDataCell>
-                          {reportData.eChawadiData?.akrushakDarBharlaKay} (दर (प्रति चौ.मी):{' '}
-                          {reportData.eChawadiData?.akrushakDarRakkam})
+                          {akrushakData?.declaration === 'N' ? 'नाही' : 'होय'} (दर (प्रति चौ.मी):{' '}
+                          {akrushakData?.nprate > 0
+                            ? `${akrushakData.nprate} रुपये`
+                            : akrushakData?.mnparate > 0
+                            ? `${akrushakData.mnparate} रुपये`
+                            : akrushakData?.tenpaise > 0
+                            ? `${akrushakData.tenpaise} पैसे`
+                            : akrushakData?.fivepaise > 0
+                            ? `${akrushakData.fivepaise} पैसे`
+                            : '-'}
+                          )
                         </CTableDataCell>
                         {AbhiprayButtonCell(
                           reportData.eChawadiData?.akrushakDarBharlaKay,
@@ -1964,7 +2013,7 @@ const InspectionReport = () => {
             setActiveRemarkType(null)
             setActiveRemarkData([])
           }}
-          size="lg"
+          size="xl"
           alignment="center"
           className="no-print"
         >
@@ -1983,7 +2032,7 @@ const InspectionReport = () => {
                 : 'अभिप्राय'}
             </CModalTitle>
           </CModalHeader>
-          <CModalBody className="px-4 py-4">
+          <CModalBody className="px-4 py-4 ">
             {/* ================= HEADER SECTION ================= */}
 
             {activeRemarkData?.length > 0 ? (
