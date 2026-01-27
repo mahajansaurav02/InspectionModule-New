@@ -254,7 +254,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
       case '7/12':
         return '७/१२ दस्तऐवज'
       case 'ferfar':
-        return 'फेरफार दस्तऐवज'
+        return 'अर्ज दस्तावेज'
       case 'document':
         return 'अर्ज दस्तऐवज'
       default:

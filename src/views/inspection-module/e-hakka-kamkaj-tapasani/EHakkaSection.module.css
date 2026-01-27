@@ -1,127 +1,165 @@
-.headerWrapper {
+:root {
+  --header-gradient: linear-gradient(90deg, #2b2570, #1e0dab, #00c6ff);
+}
+
+
+.pageWrapper {
+  padding: 40px 20px;
+  background-color: #f8fafc;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.echawadi-title-wrapper {
   text-align: center;
   margin-bottom: 3rem;
 }
 
-.header {
-  font-size: clamp(1.8rem, 4vw, 2.5rem);
+.echawadi-title {
+font-size: clamp(1.8rem, 4vw, 2.5rem);
   font-weight: 700;
   color: var(--text-dark);
   position: relative;
   display: inline-block;
   padding-bottom: 0.75rem;
+  margin-bottom: 2.5rem;
 }
 
-/* Underline effect */
-.header::after {
-  content: '';
+.echawadi-title::after {
+   content: '';
   position: absolute;
-  width: 60%;
-  height: 3px;
-  left: 20%;
+  width: 50%;
+  height: 5px;
+  left: 25%;
   bottom: 0;
-  background: linear-gradient(90deg, #2b2570, #1e0dab, #00c6ff);
+  background: var(--header-gradient);
   border-radius: 2px;
 }
-
-.cards-container {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-  padding: 20px;
-  max-width: 800px; /* Constrain container width for better readability */
+/* Limit the overall width to 'Medium' (~900px) */
+.cardsContainer {
+  width: 100%;
+  max-width: 900px; 
   margin: 0 auto;
 }
 
-/* Accordion/Dropdown container */
-.main-card-accordion {
+.headerWrapper {
+  width: 100%;
+  max-width: 900px;
+  background: #1e3a8a;
+  border-bottom: 4px solid #f59e0b;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 25px;
+  text-align: center;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+  color: #ffffff;
+  font-size: 1.6rem; /* Slightly smaller for medium scale */
+  font-weight: 700;
+  margin: 0;
+}
+
+.mainCardAccordion {
   background: #ffffff;
   border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
-  transition: box-shadow 0.3s ease;
+  border: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+  transition: border-color 0.2s;
 }
 
-.main-card-accordion:hover {
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
+.mainCardAccordion:hover {
+  border-color: #3d4e69;
 }
 
-/* Accordion header (the clickable part) */
-.accordion-header {
+.accordionHeader {
+  padding: 18px 24px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 25px;
-  background: #dcedf7;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  border-bottom: 2px solid transparent;
 }
 
-.accordion-header:hover {
-  background: #cbe0ee;
-}
-
-.accordion-header:active {
-  background: #c1d5e3;
-}
-
-.accordion-title {
-  color: #330948a4;
+.accordionTitle {
+  font-size: 1.1rem;
+  color: #1e293b;
+  font-weight: 700;
   margin: 0;
-  font-size: 18px;
-  font-weight: bold;
 }
 
-.accordion-icon {
-  font-size: 24px;
-  color: #330948a4;
+.accordionIcon {
+  color: #1e3a8a;
   transition: transform 0.3s ease;
 }
 
-.accordion-icon.expanded {
+.expanded {
   transform: rotate(180deg);
 }
 
-/* Accordion body (the dropdown content) */
-.accordion-body {
+.accordionBody {
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease-in-out;
-  background-color: #f9fbfd;
+  transition: max-height 0.4s ease-out;
+  background-color: #fcfcfd;
 }
 
-.accordion-body.open {
-  max-height: 500px; /* A large enough value to accommodate content */
+.open {
+  max-height: 1000px;
+  border-top: 1px solid #f1f5f9;
 }
 
-/* Sub-card styling within the dropdown */
-.sub-card {
-  padding: 15px 25px;
-  border-bottom: 1px solid #e0e0e0;
+/* Sub-Card Grid: Optimized for Medium Width */
+.subCardGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr); /* Forces two columns for better balance */
+  gap: 15px;
+  padding: 20px;
+}
+
+@media (max-width: 600px) {
+  .subCardGrid {
+    grid-template-columns: 1fr; /* Stack on mobile */
+  }
+}
+
+.subCard {
+  background: #ffffff;
+  padding: 15px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  border-left: 5px solid #64748b;
   cursor: pointer;
-  transition: background 0.3s, transform 0.2s, box-shadow 0.2s;
-  display: block; /* Ensure it takes full width */
+  transition: all 0.2s ease;
 }
 
-.sub-card:last-child {
-  border-bottom: none;
+.subCard:hover {
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.05);
 }
 
-.sub-card:hover {
-  background: #e9f2ff;
-  transform: translateX(5px);
+.subCardTitle {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
 }
 
-.sub-card-title {
-  color: #162027;
-  margin: 0;
-  font-size: 16px;
+.subCardDescription {
+  font-size: 0.8rem;
   font-weight: 600;
+  color: #475569;
+  background: #f1f5f9;
+  padding: 4px 8px;
+  border-radius: 4px;
+  display: inline-block;
 }
 
-.sub-card-description {
-  font-size: 14px;
-  color: #003b79;
-  margin: 0;
-}
+/* High Visibility Priority Colors */
+.priorityHigh { border-left-color: #dc2626 !important; background-color: #fef2f2; }
+.priorityMedium { border-left-color: #d97706 !important; background-color: #fffbeb; }
+.priorityLow { border-left-color: #16a34a !important; background-color: #f0fdf4; }
