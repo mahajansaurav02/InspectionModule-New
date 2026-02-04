@@ -503,7 +503,7 @@ const InspectionReport = () => {
       }
 
       const response = await api.get(
-        `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=5`,
+        `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
       )
       const res = await api.get(
         `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=1`,

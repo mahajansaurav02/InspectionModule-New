@@ -136,7 +136,15 @@ const FerfarDetailsTabs = ({ ferfar }) => {
 
       const payload = {
         lgd_code: "536349",
-        pinCode: "12",
+        pinCode: "151",
+        pin1: "25",
+        pin2: "26",
+        pin3: "29",
+        pin4: "",
+        pin5: "",
+        pin6: "",
+        pin7: "",
+        pin8: "",
       }
 
       const res = await api.post(
