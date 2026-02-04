@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import {
   CContainer,
   CRow,
@@ -34,6 +34,7 @@ import PrintUtility from '../InspectionPrint/PrintUtility'
 import InspectionRemarksPrint from '../InspectionPrint/InspectionRemarksPrint'
 import api from 'src/api/api'
 import { toast } from 'react-toastify'
+import axios from 'axios'
 
 const mockApiData = {
   tapasaniAdhikariName: 'श्री. रमेश पाटील',

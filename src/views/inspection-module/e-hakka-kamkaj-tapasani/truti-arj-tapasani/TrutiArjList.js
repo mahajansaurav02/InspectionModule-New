@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CCard,
   CCardBody,
@@ -31,7 +31,7 @@ import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify'
 
 function TrutiArjList() {
   // Sample data - replace with your actual data source
@@ -63,14 +63,11 @@ function TrutiArjList() {
       return
     }
     try {
-
-
       const res = await api.get(`/inpsection/getEhakkaTrutiApplication?ccode=${cCode}`)
 
       console.log(res.data, 'trutiApplication list')
       setTrutiArjList(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
-
     } catch (err) {
       toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
     } finally {
@@ -97,7 +94,7 @@ function TrutiArjList() {
   )
 
   const handleApplicationClick = (application) => {
-    console.log(application, "\application")
+    console.log(application, 'application')
     application.ehakkaType = 5
     navigate(`/truti-applications-details/${application.applicationId}`, { state: { application } }) // Your 7/12 view logic
   }
@@ -126,10 +123,12 @@ function TrutiArjList() {
     <CCard className="mb-4 custom-card">
       <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-      <CCardHeader style={{
-        background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-      }}
-        className="d-flex justify-content-between align-items-center text-white">
+      <CCardHeader
+        style={{
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+        }}
+        className="d-flex justify-content-between align-items-center text-white"
+      >
         <span
           onClick={() => navigate(-2)}
           style={{
@@ -149,8 +148,7 @@ function TrutiArjList() {
         >
           <IoArrowBackOutline />
         </span>
-        <h4 className="mb-0 text-center flex-grow-1">
-          त्रुटी अर्ज यादी</h4>
+        <h4 className="mb-0 text-center flex-grow-1">त्रुटी अर्ज यादी</h4>
         <div className="d-flex align-items-center">
           <CTooltip content="Search applications">
             <div className="position-relative">
@@ -207,7 +205,6 @@ function TrutiArjList() {
                     </CTableHead>
                     <CTableBody>
                       {paginatedData.map((item, index) => (
-
                         <CTableRow key={item.id}>
                           <CTableDataCell>{index + 1}</CTableDataCell>
                           <CTableDataCell>
@@ -260,7 +257,6 @@ function TrutiArjList() {
                   itemsPerPage={itemsPerPage}
                   onPageChange={(page) => setCurrentPage(page)}
                 />
-
               </>
             )}
           </>
