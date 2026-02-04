@@ -43,6 +43,10 @@ const OdcAhvalTapasani = React.lazy(() =>
   import('./views/inspection-module/ODC-ahval-tapasani/OdcAhvalTapasani.js'),
 )
 
+const FerfarDetailsPage = React.lazy(() =>
+  import('./views/inspection-module/ferfarNondvahi/ferfarSections/FerfarDetailsPage'),
+)
+
 //Circular officer
 const CircularForm1 = React.lazy(() => import('./views/Mandal_Office/Reports/circular-form-1'))
 const CircularForm2 = React.lazy(() => import('./views/Mandal_Office/Reports/circular-form-2'))
@@ -107,6 +111,13 @@ const routes = [
     name: 'ferfarNondwahiSection1',
     element: ferfarNondwahiSection1,
   },
+
+  {
+    path: '/ferfar-details/:id',
+    name: 'Ferfar Details',
+    element: FerfarDetailsPage,
+  },
+
   {
     path: '/inspection-module/e-hakka-kamkaj-tapasani/eHakkaSection',
     name: 'eHakkaSection',
