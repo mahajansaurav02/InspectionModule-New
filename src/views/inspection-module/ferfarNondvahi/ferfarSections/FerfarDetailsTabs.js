@@ -39,12 +39,14 @@ import { Bounce, ToastContainer, toast } from 'react-toastify'
 
 
 
-const FerfarDetailsTabs = ({ ferfar }) => {
+const FerfarDetailsTabs = ({ ferfar,selectedSurvey }) => {
   const [activeKey, setActiveKey] = useState(1)
   const [documentHistory, setDocumentHistory] = useState([1])
   const [remark, setRemark] = useState('')
   const [base64Image, setBase64Image] = useState(null)
   const [base64Mime, setBase64Mime] = useState(null)
+  const [base64FerfarImage, setBase64FerfarImage] = useState(null)
+  const [base64FerfarMime, setBase64FerfarMime] = useState(null)
   const [ferfarImage, setFerfarImage] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [isRemarkSubmitLoading, setIsRemarkSubmitLoading] = useState(false)
@@ -78,9 +80,10 @@ const FerfarDetailsTabs = ({ ferfar }) => {
   ])
 
   useEffect(() => {
-    get712View()
+    get712View(selectedSurvey)
+    getFerfarView(ferfar)
     // getFerfarView()
-  }, [])
+  }, [selectedSurvey, ferfar])
 
   const handleTabChange = (key) => {
     setActiveKey(key)
@@ -130,75 +133,121 @@ const FerfarDetailsTabs = ({ ferfar }) => {
       fileInputRef.current.click()
     }
   }
-  const get712View = async () => {
-    try {
-      setIsLoading(true)
+ const get712View = async (surveyNumber) => {
+  try {
+    setIsLoading(true);
 
-      const payload = {
-        lgd_code: "536349",
-        pinCode: "151",
-        pin1: "25",
-        pin2: "26",
-        pin3: "29",
-        pin4: "",
-        pin5: "",
-        pin6: "",
-        pin7: "",
-        pin8: "",
-      }
+    // 🔹 Split survey number
+    const parts = surveyNumber ? surveyNumber.split("/") : [];
 
-      const res = await api.post(
-        "/callExternalSatBaraApi",
-        payload
-      )
+    // Ensure max 9 fields (pinCode + pin1–pin8)
+    const payload = {
+      lgd_code: lgdCode,
+      pinCode: parts[0] || "",
+      pin1: parts[1] || "",
+      pin2: parts[2] || "",
+      pin3: parts[3] || "",
+      pin4: parts[4] || "",
+      pin5: parts[5] || "",
+      pin6: parts[6] || "",
+      pin7: parts[7] || "",
+      pin8: parts[8] || "",
+    };
 
-      const { base64, mimeType } = res.data.data
+    const res = await api.post("/callExternalSatBaraApi", payload);
 
-      // ✅ Store exactly what backend sends
-      setBase64Mime(mimeType)
-      setBase64Image(`data:${mimeType};base64,${base64}`)
+    const { base64, mimeType } = res.data.data;
+console.log(res)
+    // if()
 
-    } catch (err) {
-      console.error("Failed to load 7/12 document:", err)
-    } finally {
-      setIsLoading(false)
-    }
+
+    setBase64Mime(mimeType);
+    setBase64Image(`data:${mimeType};base64,${base64}`);
+
+  } catch (err) {
+    console.error("Failed to load 7/12 document:", err);
+    errorToast(`Failed to load 7/12 document ${surveyNumber || ''}`);
+  } finally {
+    setIsLoading(false);
   }
+};
 
-  const getFerfarView = async () => {
-    console.log(ferfar, "======ferfar=========")
-    setIsSatbaraLoading(true)
-    try {
-      const token = 'UcW60oyb7mdxakkWQOYHYqYLaYuquDBmkyir3wBBSkWLsGcoC9JpjidlJuxmdEtI'
-      const response = await axios.post(
-        `https://api.mahabhumi.gov.in/api/eferfar/getMRView`,
-        null,
-        {
-          headers: {
-            Authorization: 'Bearer ' + URLS.ApiToken,
-            'API-KEY': URLS.ApiKey,
-            'SECRET-KEY': URLS.SecretKey,
-          },
-          params: {
-            lgd_code: '536349',
-            mut_no: ferfar.mutNo,
-          },
-        },
-      )
 
-      const encryptedData = response.data.data
-      const key = 'hCFaaYFOfOhIXNoeC3dL6YnHWwRPS1Jy'
-      const iv = 'C3dL6YnHWwRPS1Jy'
-      const base64String = atob(encryptedData)
 
-      // setFerfarImage(parsedData)
-    } catch (err) {
-      errorToast('Failed to load 7/12 document')
-      console.error(err)
-    } finally {
-      setIsSatbaraLoading(false)
-    }
+ const getFerfarView = async (ferfar) => {
+  try {
+    setIsLoading(true);
+console.log(ferfar,'======ferfar=========')
+    // 🔹 Split survey number
+    // const parts = surveyNumber ? surveyNumber.split("/") : [];
+
+    // Ensure max 9 fields (pinCode + pin1–pin8)
+    const payload = {
+      lgd_code: lgdCode,
+   mut_no: ferfar.mutNo,
+    };
+
+    const res = await api.post("/callExternalFerfarApi", payload);
+
+    const { base64, mimeType } = res.data.data;
+console.log(res)
+    // if()
+
+
+    setBase64FerfarMime(mimeType);
+    setBase64FerfarImage(`data:${mimeType};base64,${base64}`);
+
+  } catch (err) {
+    console.error("Failed to load Ferfar document:", err);
+    errorToast(`Failed to load Ferfar document ${ferfar.mutNo || ''}`);
+  } finally {
+    setIsLoading(false);
   }
+};
+
+
+
+
+
+
+
+
+
+
+  // const getFerfarView = async () => {
+  //   console.log(ferfar, "======ferfar=========")
+  //   setIsSatbaraLoading(true)
+  //   try {
+  //     const token = 'UcW60oyb7mdxakkWQOYHYqYLaYuquDBmkyir3wBBSkWLsGcoC9JpjidlJuxmdEtI'
+  //     const response = await axios.post(
+  //       `https://api.mahabhumi.gov.in/api/eferfar/getMRView`,
+  //       null,
+  //       {
+  //         headers: {
+  //           Authorization: 'Bearer ' + URLS.ApiToken,
+  //           'API-KEY': URLS.ApiKey,
+  //           'SECRET-KEY': URLS.SecretKey,
+  //         },
+  //         params: {
+  //           lgd_code: '536349',
+  //           mut_no: ferfar.mutNo,
+  //         },
+  //       },
+  //     )
+
+  //     const encryptedData = response.data.data
+  //     const key = 'hCFaaYFOfOhIXNoeC3dL6YnHWwRPS1Jy'
+  //     const iv = 'C3dL6YnHWwRPS1Jy'
+  //     const base64String = atob(encryptedData)
+
+  //     // setFerfarImage(parsedData)
+  //   } catch (err) {
+  //     errorToast('Failed to load 7/12 document')
+  //     console.error(err)
+  //   } finally {
+  //     setIsSatbaraLoading(false)
+  //   }
+  // }
 
 
   const handleSubmit = async () => {
@@ -324,13 +373,26 @@ const FerfarDetailsTabs = ({ ferfar }) => {
         break
 
       case 'ferfar':
-        if (!ferfarImage) {
+
+if (!base64FerfarImage || !base64FerfarMime) {
           toast.error('फेरफार दस्तऐवज उपलब्ध नाही')
           return
         }
-        fileName = 'ferfar-pavati.png'
-        base64Data = ferfarImage
-        mimeType = 'image/png'
+
+        mimeType = base64FerfarMime
+
+        // ✅ Decide extension based on MIME
+        const ex =
+          mimeType === 'image/jpg' || mimeType === 'image/jpeg'
+            ? 'jpg'
+            : mimeType === 'image/png'
+              ? 'png'
+              : mimeType === 'application/pdf'
+                ? 'pdf'
+                : 'bin'
+
+        fileName = `ferfar-${cCode}.${ex}`
+        base64Data = base64FerfarImage
         break
 
       case 'other':
@@ -391,31 +453,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
     }
   }
 
-  // Helper function to detect MIME type from base64 string
-  const getMimeType = (base64String) => {
-    if (base64String.startsWith('data:')) {
-      const mimeMatch = base64String.match(/^data:(.*?);base64,/)
-      if (mimeMatch && mimeMatch[1]) {
-        return mimeMatch[1]
-      }
-    }
 
-    // Default MIME types based on file extension or content
-    if (base64Image?.includes('/pdf')) {
-      return 'application/pdf'
-    }
-
-    if (base64Image?.includes('/png')) {
-      return 'image/png'
-    }
-
-    if (base64Image?.includes('/jpeg') || base64Image?.includes('/jpg')) {
-      return 'image/jpeg'
-    }
-
-    // Default to PDF for 7/12, PNG for ferfar
-    return 'application/pdf'
-  }
   const handleZoom = (direction) => {
     setZoomLevel((prev) => {
       const newLevel = direction === 'in' ? prev + 10 : prev - 10
@@ -441,7 +479,7 @@ const FerfarDetailsTabs = ({ ferfar }) => {
       case 1:
         return { type: '7/12', content: base64Image }
       case 2:
-        return { type: 'ferfar', content: ferfarImage }
+        return { type: 'ferfar', content: base64FerfarImage }
       case 3:
         return { type: 'other', content: '/document_app.pdf' }
       default:
@@ -479,16 +517,25 @@ const FerfarDetailsTabs = ({ ferfar }) => {
       if (!doc.content) {
         return <div className="text-muted">फेरफार दस्तऐवज उपलब्ध नाही</div>
       }
-
-      return (
+ return (
         <div className="image-container">
           <img
             src={doc.content}
             alt="Ferfar Document"
-            style={{ width: '100%', height: 'auto' }}
+            style={{
+              width: '100%',
+              height: 'auto',
+              transform: `scale(${zoomLevel / 100})`,
+              transformOrigin: 'top center',
+            }}
+            onError={(e) => {
+              console.error('7/12 image failed to load')
+              e.target.src = '/placeholder-image.png'
+            }}
           />
         </div>
       )
+   
     }
 
     // PDFs / others
@@ -762,11 +809,35 @@ const FerfarDetailsTabs = ({ ferfar }) => {
           </CTabPane>
 
           <CTabPane visible={activeKey === 2}>
+            {isLoading ? (
+              <div className="document-loading">
+                <div className="loading-spinner" />
+                <p className="loading-text">Loading document...</p>
+                <p className="loading-subtext">Please wait while we prepare your document</p>
+              </div>
+            ) : (
+              <>
+                {documentControls}
+                {renderDocumentView()}
+              </>
+            )}
             {documentControls}
             {renderDocumentView()}
           </CTabPane>
 
           <CTabPane visible={activeKey === 3}>
+            {isLoading ? (
+              <div className="document-loading">
+                <div className="loading-spinner" />
+                <p className="loading-text">Loading document...</p>
+                <p className="loading-subtext">Please wait while we prepare your document</p>
+              </div>
+            ) : (
+              <>
+                {documentControls}
+                {renderDocumentView()}
+              </>
+            )}
             {documentControls}
             {renderDocumentView()}
           </CTabPane>
