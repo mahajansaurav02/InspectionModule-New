@@ -821,8 +821,8 @@ if (!base64FerfarImage || !base64FerfarMime) {
                 {renderDocumentView()}
               </>
             )}
-            {documentControls}
-            {renderDocumentView()}
+            {/* {documentControls}
+            {renderDocumentView()} */}
           </CTabPane>
 
           <CTabPane visible={activeKey === 3}>
@@ -838,8 +838,8 @@ if (!base64FerfarImage || !base64FerfarMime) {
                 {renderDocumentView()}
               </>
             )}
-            {documentControls}
-            {renderDocumentView()}
+            {/* {documentControls}
+            {renderDocumentView()} */}
           </CTabPane>
 
           <CTabPane visible={activeKey === 4}>{renderDocumentView()}</CTabPane>
