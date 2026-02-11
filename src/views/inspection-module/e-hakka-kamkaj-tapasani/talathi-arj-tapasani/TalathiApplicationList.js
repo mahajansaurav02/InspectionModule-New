@@ -102,18 +102,24 @@ function TrutiArjList() {
 
     try {
 
-setApplicationType(conditionId)
+      setApplicationType(conditionId)
       const response = await api.get(`/${currentCondition.apiUrl}?ccode=${cCode}&talukaCode=${talukaCode}&districtCode=${districtCode}`)
 
-      const fetchedData = response.data.data.content || response.data.data || response.data
+      console.log(response, '----------response-------------------------')
 
-      if (Array.isArray(fetchedData)) {
-                toast.success('Data fetched successfully!', { autoClose: 2000 })
+      if (response.status === 200) {
+        const fetchedData = response.data
 
-        setData(fetchedData)
-      } else {
-        setData([])
-        setApiError('माहितीची संरचना अयोग्य आहे.')
+
+
+        if (Array.isArray(fetchedData)) {
+          toast.success('Data fetched successfully!', { autoClose: 2000 })
+          console.log(fetchedData, '----------fetchedData')
+          setData(fetchedData)
+        } else {
+          setData([])
+          setApiError('माहितीची संरचना अयोग्य आहे.')
+        }
       }
     } catch (error) {
       console.error('Error fetching application list:', error)
@@ -131,11 +137,13 @@ setApplicationType(conditionId)
   }, [conditionId, fetchApplications])
 
   // --- Filtering and Pagination Logic ---
-  const filteredData = data.filter(
-    (item) =>
-      item.applicationNo?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.date?.toLowerCase().includes(searchTerm.toLowerCase()),
-  )
+  const filteredData = data.filter((item) => {
+    const appId = item?.applicationId?.toString() || ''
+    const appDate = item?.appDate?.toString().toLowerCase() || ''
+    const search = searchTerm.toLowerCase()
+
+    return appId.includes(search) || appDate.includes(search)
+  })
 
   const totalItems = filteredData.length
   const totalPages = Math.ceil(totalItems / itemsPerPage)
@@ -145,7 +153,7 @@ setApplicationType(conditionId)
   )
 
   const handleApplicationClick = (application) => {
-application.ehakkaType=applicationType
+    application.ehakkaType = applicationType
     navigate(`/truti-applications-details/${application.id}`, { state: { application } })
   }
 
@@ -191,70 +199,70 @@ application.ehakkaType=applicationType
           </CTooltip>
         </div>
       </CCardHeader> */}
-{/* above code is old */}
+      {/* above code is old */}
 
-<CCardHeader
-  className="text-white"
-  style={{
-    background:
-      'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
-  }}
->
-  <div className="d-flex align-items-center justify-content-between w-100">
+      <CCardHeader
+        className="text-white"
+        style={{
+          background:
+            'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+        }}
+      >
+        <div className="d-flex align-items-center justify-content-between w-100">
 
-    {/* 🔙 Back Icon (LEFT) */}
-    <span
-      onClick={() => navigate(-2)}
-      style={{
-        cursor: 'pointer',
-        fontSize: '22px',
-        color: 'white',
-        transition: 'all 0.25s ease',
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
-        e.currentTarget.style.opacity = '0.85'
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.transform = 'none'
-        e.currentTarget.style.opacity = '1'
-      }}
-    >
-      <IoArrowBackOutline />
-    </span>
-
-    {/* 🏷️ CENTER TITLE (from CONDITION_MAPPING) */}
-    <h4 className="mb-0 text-center flex-grow-1">
-      {currentCondition ? currentCondition.title : 'तलाठी स्तरावर प्रलंबित अर्जांची यादी'}
-    </h4>
-
-    {/* 🔍 Search (RIGHT) */}
-    <div className="d-flex align-items-center">
-      <CTooltip content="Search applications">
-        <div className="position-relative">
-          <CIcon
-            icon={cilSearch}
-            className="position-absolute top-50 start-0 translate-middle-y ms-2"
-          />
-          <CFormInput
-            type="text"
-            placeholder="शोधा..."
-            className="ps-5"
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value)
-              setCurrentPage(1)
+          {/* 🔙 Back Icon (LEFT) */}
+          <span
+            onClick={() => navigate(-2)}
+            style={{
+              cursor: 'pointer',
+              fontSize: '22px',
+              color: 'white',
+              transition: 'all 0.25s ease',
             }}
-          />
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateX(-4px) scale(1.1)'
+              e.currentTarget.style.opacity = '0.85'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'none'
+              e.currentTarget.style.opacity = '1'
+            }}
+          >
+            <IoArrowBackOutline />
+          </span>
+
+          {/* 🏷️ CENTER TITLE (from CONDITION_MAPPING) */}
+          <h4 className="mb-0 text-center flex-grow-1">
+            {currentCondition ? currentCondition.title : 'तलाठी स्तरावर प्रलंबित अर्जांची यादी'}
+          </h4>
+
+          {/* 🔍 Search (RIGHT) */}
+          <div className="d-flex align-items-center">
+            <CTooltip content="Search applications">
+              <div className="position-relative">
+                <CIcon
+                  icon={cilSearch}
+                  className="position-absolute top-50 start-0 translate-middle-y ms-2"
+                />
+                <CFormInput
+                  type="text"
+                  placeholder="शोधा..."
+                  className="ps-5"
+                  value={searchTerm}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value)
+                    setCurrentPage(1)
+                  }}
+                />
+              </div>
+            </CTooltip>
+          </div>
+
         </div>
-      </CTooltip>
-    </div>
-
-  </div>
-</CCardHeader>
+      </CCardHeader>
 
 
-  {/* ===================================================================================================================== */}
+      {/* ===================================================================================================================== */}
 
       <CCardBody>
         <VillageDetailsList />
@@ -296,24 +304,24 @@ application.ehakkaType=applicationType
                               className="btn btn-link text-primary text-decoration-underline p-0"
                               onClick={() => handleApplicationClick(item)}
                             >
-                              {item.applicationNo}
+                              {item.applicationId}
                             </button>
                           </CTableDataCell>
-                          <CTableDataCell>{item.date}</CTableDataCell>
-                          <CTableDataCell>{getStatusBadge(item.status)}</CTableDataCell>
+                          <CTableDataCell>{item.appDate}</CTableDataCell>
+                          <CTableDataCell>{getStatusBadge(item.isRemarkSubmitted)}</CTableDataCell>
                         </CTableRow>
                       ))}
                     </CTableBody>
                   </CTable>
                 </div>
 
-              <SmartPagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  totalItems={totalItems}
-  itemsPerPage={itemsPerPage}
-  onPageChange={(page) => setCurrentPage(page)}
-/>
+                <SmartPagination
+                  currentPage={currentPage}
+                  totalPages={totalPages}
+                  totalItems={totalItems}
+                  itemsPerPage={itemsPerPage}
+                  onPageChange={(page) => setCurrentPage(page)}
+                />
 
               </>
             )}

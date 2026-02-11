@@ -296,24 +296,24 @@ console.log(res)
       formData.append('data', JSON.stringify(dataPayload))
 
       // ✅ Append file only if exists
-      if (attachedFile) {
-        formData.append('File', attachedFile)
-      } else {
-        toast.warn('कृपया दस्तावेज निवडा', {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
-        setIsRemarkSubmitLoading(false)
+      // if (attachedFile) {
+      //   formData.append('File', attachedFile)
+      // } else {
+      //   toast.warn('कृपया दस्तावेज निवडा', {
+      //     position: "top-right",
+      //     autoClose: 5000,
+      //     hideProgressBar: false,
+      //     closeOnClick: false,
+      //     pauseOnHover: true,
+      //     draggable: true,
+      //     progress: undefined,
+      //     theme: "colored",
+      //     transition: Bounce,
+      //   });
+      //   setIsRemarkSubmitLoading(false)
 
-        return
-      }
+      //   return
+      // }
 
       // 🔍 Debug FormData (IMPORTANT)
       for (const [key, value] of formData.entries()) {
@@ -339,7 +339,18 @@ console.log(res)
     } catch (err) {
       console.error('Submit error:', err)
       setSubmitStatus('error')
-      alert(err?.response?.data?.message || 'Failed to submit remark')
+      // alert()
+      toast.warn(err?.response?.data?.message || 'Failed to submit remark'  , {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+          transition: Bounce,
+        });
     } finally {
       setIsRemarkSubmitLoading(false)
     }
