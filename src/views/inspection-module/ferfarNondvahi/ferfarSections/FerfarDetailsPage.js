@@ -8,7 +8,7 @@ const FerfarDetailsPage = () => {
   const location = useLocation()
   const ferfar = location.state?.ferfar
 
-  const [selectedSurvey, setSelectedSurvey] = useState("")
+  const [selectedSurvey, setSelectedSurvey] = useState('')
 
   // ✅ Memo runs every render safely
   const surveyOptions = useMemo(() => {
@@ -47,7 +47,7 @@ const FerfarDetailsPage = () => {
         </h5>
 
         <div className="d-flex align-items-center">
-          <label className="fw-bold me-2 mb-0" style={{ fontSize: 14 }}>
+          <label className="fw-bold me-2 mb-0" style={{ fontSize: 16, whiteSpace: 'nowrap' }}>
             सर्वे क्रमांक निवडा :
           </label>
 
@@ -56,10 +56,10 @@ const FerfarDetailsPage = () => {
             value={selectedSurvey}
             onChange={(e) => setSelectedSurvey(e.target.value)}
             style={{
-              borderRadius: "16px",
-              fontSize: "1.3rem",
-              padding: "0.4rem 2.5rem 0.4rem 1.2rem",
-              minWidth: "220px",
+              borderRadius: '16px',
+              fontSize: '1.3rem',
+              padding: '0.4rem 2.5rem 0.4rem 1.2rem',
+              minWidth: '220px',
             }}
           >
             {surveyOptions.map((opt, index) => (

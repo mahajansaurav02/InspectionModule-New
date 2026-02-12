@@ -506,9 +506,11 @@ const InspectionReport = () => {
       const response = await api.get(
         `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
       )
+      // =======comment below api ======
       const res = await api.get(
         `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=1`,
       )
+      //=========api comment end ===
       // const res = await api.get(`https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above`)
 
       console.log(res.data, 'EhakkData data response')

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CCard,
   CCardBody,
@@ -38,7 +38,9 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify'
+import InfoIcon from '@mui/icons-material/Info'
+import '../../FerfarList.css'
 
 function ViewReEntryFerfarList() {
   const navigate = useNavigate()
@@ -74,16 +76,12 @@ function ViewReEntryFerfarList() {
       return
     }
     try {
-
-
       const res = await api.get(`/inpsection/getReEntryFerfarDetails?ccode=${cCode}`)
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
-
     } catch (err) {
       console.error(err)
-            toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
-
+      toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
     } finally {
       setIsLoading(false)
     }
@@ -120,12 +118,15 @@ function ViewReEntryFerfarList() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
-                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-        <CCardHeader style={{
-          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-        }}
-          className="d-flex justify-content-between align-items-center bg-primary text-white">
+        <CCardHeader
+          style={{
+            background:
+              'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+          }}
+          className="d-flex justify-content-between align-items-center bg-primary text-white"
+        >
           <span
             onClick={() => navigate(-2)}
             style={{
@@ -145,9 +146,17 @@ function ViewReEntryFerfarList() {
           >
             <IoArrowBackOutline />
           </span>
-          <h4 className="mb-0 text-center flex-grow-1">
-            📋 पुनर्प्रवेश फेरफार यादी</h4>
+          <h4 className="mb-0 text-center flex-grow-1">📋 पुनर्प्रवेश फेरफार यादी</h4>
           <div className="d-flex align-items-center">
+            <CTooltip
+              content="मंडळ अधिकारी यांनी ग्राम महसूल अधिकारी यांना पूर्वलोकन नामंजूर शेरा नमूद करून परत केलेले सर्व फेरफार उपलब्ध होणार आहेत."
+              placement="bottom-end"
+            >
+              <span className="tooltip-icon-btn me-4">
+                <InfoIcon sx={{ color: 'white', fontSize: 24 }} />
+              </span>
+            </CTooltip>
+
             <CTooltip content="Search ferfar">
               <div className="position-relative">
                 <CIcon
@@ -228,7 +237,6 @@ function ViewReEntryFerfarList() {
                     itemsPerPage={itemsPerPage}
                     onPageChange={(page) => setCurrentPage(page)}
                   />
-
                 </>
               )}
             </>

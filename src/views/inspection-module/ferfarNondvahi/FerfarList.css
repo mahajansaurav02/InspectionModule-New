@@ -1,3 +1,22 @@
 .table-dark{
     background-color: rgb(123, 4, 4);
 }
+/* Tooltip Button Style */
+.tooltip-icon-btn {
+  cursor: pointer;
+  width: 21px;
+  height: 21px;
+  border-radius: 50%;
+  background-color: rgb(20, 19, 19);
+  box-shadow: 0 4px 6px rgb(229, 226, 226);
+  display: flex; /* Centers the icon */
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); /* Smooth animation */
+}
+
+/* Hover Effect */
+.tooltip-icon-btn:hover {
+  transform: scale(1.15); /* Enlarge button */
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4); /* Deeper shadow */
+}

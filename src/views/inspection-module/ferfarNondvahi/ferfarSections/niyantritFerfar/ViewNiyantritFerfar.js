@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CCard,
   CCardBody,
@@ -39,7 +39,10 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify'
+import InfoIcon from '@mui/icons-material/Info'
+import '../../FerfarList.css'
+
 // const token = localStorage.getItem('token')
 
 function ViewNiyantritFerfar() {
@@ -61,16 +64,13 @@ function ViewNiyantritFerfar() {
     setIsLoading(true)
     const cCode = '272400110296420000'
     try {
-     
-  const res = await api.get(`${URLS.BaseURL}/inpsection/getWarg2FherfarData?ccode=${cCode}`)
+      const res = await api.get(`${URLS.BaseURL}/inpsection/getWarg2FherfarData?ccode=${cCode}`)
 
       setFerfarList1(res.data)
-              toast.success('Data fetched successfully!', { autoClose: 2000 })
-
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
-      console.error(err,"=========================err=============")
-            toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
-
+      console.error(err, '=========================err=============')
+      toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
     } finally {
       setIsLoading(false)
     }
@@ -88,8 +88,8 @@ function ViewNiyantritFerfar() {
   )
 
   const handleFerfarClick = (ferfar) => {
-        ferfar.ferfar_type='6'
-        console.log(ferfar,"=================ferfar==================")
+    ferfar.ferfar_type = '6'
+    console.log(ferfar, '=================ferfar==================')
 
     navigate(`/ferfar-details/${ferfar.mutNo}`, { state: { ferfar } })
   }
@@ -109,13 +109,16 @@ function ViewNiyantritFerfar() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
-                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-        <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-  className="d-flex justify-content-between align-items-center text-white">
-    <span
+        <CCardHeader
+          style={{
+            background:
+              'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+          }}
+          className="d-flex justify-content-between align-items-center text-white"
+        >
+          <span
             onClick={() => navigate(-2)}
             style={{
               cursor: 'pointer',
@@ -139,6 +142,15 @@ function ViewNiyantritFerfar() {
             📋 नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले फेरफार{' '}
           </h4>
           <div className="d-flex align-items-center">
+            <CTooltip
+              content="गाव नमुना एक-क मधील नियंत्रीत सत्ता प्रकार असलेले भूमापन क्रमांकवर घेण्यात आलेले सर्व फेरफार तपासणी अधिकारी यांना उपलब्ध करून देण्यात आले आहे."
+              placement="bottom-end"
+            >
+              <span className="tooltip-icon-btn me-4">
+                <InfoIcon sx={{ color: 'white', fontSize: 24 }} />
+              </span>
+            </CTooltip>
+
             <CTooltip content="Search ferfar">
               <div className="position-relative">
                 <CIcon
@@ -212,14 +224,13 @@ function ViewNiyantritFerfar() {
                     </CTable>
                   </div>
 
-                 <SmartPagination
-  currentPage={currentPage}
-  totalPages={totalPages}
-  totalItems={totalItems}
-  itemsPerPage={itemsPerPage}
-  onPageChange={(page) => setCurrentPage(page)}
-/>
-
+                  <SmartPagination
+                    currentPage={currentPage}
+                    totalPages={totalPages}
+                    totalItems={totalItems}
+                    itemsPerPage={itemsPerPage}
+                    onPageChange={(page) => setCurrentPage(page)}
+                  />
                 </>
               )}
             </>

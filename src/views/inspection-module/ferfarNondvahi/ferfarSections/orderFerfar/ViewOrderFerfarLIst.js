@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CContainer,
   CCard,
@@ -39,9 +39,10 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import { useSelector } from 'react-redux'
 import getReqHeaders from 'src/instance/getHeader'
 import 'src/views/inspection-module/ferfarNondvahi/FerfarHome.module.css'
-import SmartPagination from 'src/components/SmartPagination';
-import { toast, ToastContainer } from 'react-toastify';
-
+import SmartPagination from 'src/components/SmartPagination'
+import { toast, ToastContainer } from 'react-toastify'
+import InfoIcon from '@mui/icons-material/Info'
+import '../../FerfarList.css'
 
 function ViewOrderFerfarList() {
   const navigate = useNavigate()
@@ -53,8 +54,6 @@ function ViewOrderFerfarList() {
   const [ferfarList1, setFerfarList1] = useState([])
   const [dropdownVal, setDropdownVal] = useState()
   let VillageData = localStorage.getItem('selectedVillageData')
-
-
 
   const { user, roles, token } = useSelector((state) => state.auth || {})
   const finalState = useSelector((state) => state)
@@ -72,14 +71,13 @@ function ViewOrderFerfarList() {
     villageName,
   } = selectedVillageData[0]
 
-  const itemsPerPage = 5
+  const itemsPerPage = 10
 
   useEffect(() => {
     getAdeshFerfarList()
   }, [])
 
   const getAdeshFerfarList = async () => {
-
     setIsLoading(true)
     try {
       console.log(cCode)
@@ -104,10 +102,8 @@ function ViewOrderFerfarList() {
     }
   }
 
-
   const pressBack = () => {
     navigate(-2)
-
   }
   // Filter data based on search term from the API data
   const filteredData = ferfarList1.filter(
@@ -148,7 +144,7 @@ function ViewOrderFerfarList() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
-                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
         {/* <CCardHeader style={{
     background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
@@ -206,7 +202,6 @@ function ViewOrderFerfarList() {
           className="text-white"
         >
           <div className="d-flex align-items-center justify-content-between w-100">
-
             <span
               onClick={() => navigate(-2)}
               style={{
@@ -228,12 +223,21 @@ function ViewOrderFerfarList() {
             </span>
 
             {/* 🏷️ Center Title */}
-            <h4 className="mb-0 text-center flex-grow-1">
-              📋 आदेश फेरफार यादी
-            </h4>
+            <h4 className="mb-0 text-center flex-grow-1">📋 आदेश फेरफार यादी</h4>
 
             {/* 🔍 Search */}
             <div className="d-flex align-items-center">
+              {/* Tooltip  */}
+              <CTooltip
+                content="ग्राम महसूल अधिकारी यांनी upload केलेली आदेशाची प्रत, फेरफाराचा अंमल झाले नंतर तयार होणारा ७/१२ ची प्रत आणि फेरफाराची प्रत हे तपासणी अधिकारी यांना उपलब्ध होणार आहेत."
+                placement="bottom-end"
+              >
+                <span className="tooltip-icon-btn me-4">
+                  <InfoIcon sx={{ color: 'white', fontSize: 24 }} />
+                </span>
+              </CTooltip>
+
+              {/* B. Search Bar */}
               <CTooltip content="Search ferfar">
                 <div className="position-relative">
                   <CIcon
@@ -253,10 +257,8 @@ function ViewOrderFerfarList() {
                 </div>
               </CTooltip>
             </div>
-
           </div>
         </CCardHeader>
-
 
         {/* ======================================================================================================= */}
         <br />
@@ -322,7 +324,6 @@ function ViewOrderFerfarList() {
                     itemsPerPage={itemsPerPage}
                     onPageChange={(page) => setCurrentPage(page)}
                   />
-
                 </>
               )}
             </>

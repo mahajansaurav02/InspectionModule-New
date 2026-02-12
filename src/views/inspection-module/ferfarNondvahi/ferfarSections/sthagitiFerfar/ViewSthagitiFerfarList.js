@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CCard,
   CCardBody,
@@ -38,7 +38,9 @@ import { useSelector } from 'react-redux'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify'
+import InfoIcon from '@mui/icons-material/Info'
+import '../../FerfarList.css'
 
 function ViewSthagitiFerfarList() {
   const navigate = useNavigate()
@@ -76,16 +78,12 @@ function ViewSthagitiFerfarList() {
       return
     }
     try {
-
-
       const res = await api.get(`/inpsection/getStayFerfarForInspection?ccode=${cCode}`)
       setFerfarList1(res.data)
-              toast.success('Data fetched successfully!', { autoClose: 2000 })
-
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
       console.error(err)
-     toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
-
+      toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
     } finally {
       setIsLoading(false)
     }
@@ -123,13 +121,16 @@ function ViewSthagitiFerfarList() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
-                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-        <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-   className="d-flex justify-content-between align-items-center text-white">
-    <span
+        <CCardHeader
+          style={{
+            background:
+              'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+          }}
+          className="d-flex justify-content-between align-items-center text-white"
+        >
+          <span
             onClick={() => navigate(-2)}
             style={{
               cursor: 'pointer',
@@ -151,6 +152,15 @@ function ViewSthagitiFerfarList() {
 
           <h4 className="mb-0 text-center flex-grow-1">📋 स्थगिती असलेले फेरफार </h4>
           <div className="d-flex align-items-center">
+            <CTooltip
+              content="आदेश फेरफार,कलम १५५,रि-एन्ट्री,तांत्रिक कारणाने नामंजूर केलेले फेरफार,इतर फेरफार या टेम्प्लेट वापरून केलेले फेरफार व्यतिरिक्त (दिनांक १ ऑगस्ट २०२४ ते ३१ जुलै २०२४ या कालावधीतील) फेरफार टेम्प्लेट चा वापर करून घेण्यात आलेले सर्व फेरफार उपलब्ध आहे."
+              placement="bottom-end"
+            >
+              <span className="tooltip-icon-btn me-4">
+                <InfoIcon sx={{ color: 'white', fontSize: 24 }} />
+              </span>
+            </CTooltip>
+
             <CTooltip content="Search ferfar">
               <div className="position-relative">
                 <CIcon
@@ -231,7 +241,6 @@ function ViewSthagitiFerfarList() {
                     itemsPerPage={itemsPerPage}
                     onPageChange={(page) => setCurrentPage(page)}
                   />
-
                 </>
               )}
             </>

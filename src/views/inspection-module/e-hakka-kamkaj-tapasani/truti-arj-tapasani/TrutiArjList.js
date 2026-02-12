@@ -41,7 +41,7 @@ function TrutiArjList() {
   const [searchTerm, setSearchTerm] = React.useState('')
   const [isLoading, setIsLoading] = React.useState(false)
   const [trutiArjList, setTrutiArjList] = useState([])
-  const itemsPerPage = 8
+  const itemsPerPage = 10
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)

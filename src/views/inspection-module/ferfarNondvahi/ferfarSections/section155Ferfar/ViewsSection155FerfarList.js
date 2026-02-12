@@ -36,8 +36,10 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import 'src/views/inspection-module/ferfarNondvahi/FerfarList.css'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
-import SmartPagination from 'src/components/SmartPagination';
-import { toast, ToastContainer } from 'react-toastify';
+import SmartPagination from 'src/components/SmartPagination'
+import { toast, ToastContainer } from 'react-toastify'
+import InfoIcon from '@mui/icons-material/Info'
+import '../../FerfarList.css'
 
 function ViewsSection155FerfarList() {
   const navigate = useNavigate()
@@ -82,7 +84,6 @@ function ViewsSection155FerfarList() {
       const res = await api.get(`${URLS.BaseURL}/inpsection/getKalamFerfar?ccode=${cCode}`)
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
-
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
       console.error(err)
@@ -130,7 +131,6 @@ function ViewsSection155FerfarList() {
       <CCard className="mb-4 custom-card">
         <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-
         <CCardHeader
           style={{
             background:
@@ -159,7 +159,18 @@ function ViewsSection155FerfarList() {
           </span>
 
           <h4 className="mb-0 text-center flex-grow-1">📋 कलम १५५ अंतर्गत फेरफार यादी</h4>
+
           <div className="d-flex align-items-center">
+            {/* Tooltip */}
+            <CTooltip
+              content="तहसीलदार यांनी प्ररित केलेल्या आदेशाची प्रत, फेरफाराचा अंमल झाले नंतर तयार होणारा ७/१२ ची प्रत आणि फेरफाराची प्रत हे तपासणी अधिकारी यांना उपलब्ध होणार आहेत."
+              placement="bottom-end"
+            >
+              <span className="tooltip-icon-btn me-4">
+                <InfoIcon sx={{ color: 'white', fontSize: 24 }} />
+              </span>
+            </CTooltip>
+
             <CTooltip content="Search ferfar">
               <div className="position-relative">
                 <CIcon
@@ -242,7 +253,6 @@ function ViewsSection155FerfarList() {
                     itemsPerPage={itemsPerPage}
                     onPageChange={(page) => setCurrentPage(page)}
                   />
-
                 </>
               )}
             </>

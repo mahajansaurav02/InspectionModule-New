@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CCard,
   CCardBody,
@@ -33,8 +33,10 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
-import SmartPagination from 'src/components/SmartPagination';
-import { toast, ToastContainer } from 'react-toastify';
+import SmartPagination from 'src/components/SmartPagination'
+import { toast, ToastContainer } from 'react-toastify'
+import InfoIcon from '@mui/icons-material/Info'
+import '../../FerfarList.css'
 
 function ViewOtherFerfarList() {
   const navigate = useNavigate()
@@ -74,9 +76,8 @@ function ViewOtherFerfarList() {
 
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
-
     } catch (err) {
-            toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
+      toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
 
       console.error(err)
     } finally {
@@ -122,12 +123,15 @@ function ViewOtherFerfarList() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
-                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-        <CCardHeader style={{
-          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-        }}
-          className="d-flex justify-content-between align-items-center bg-primary text-white">
+        <CCardHeader
+          style={{
+            background:
+              'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+          }}
+          className="d-flex justify-content-between align-items-center bg-primary text-white"
+        >
           <span
             onClick={() => navigate(-2)}
             style={{
@@ -149,8 +153,18 @@ function ViewOtherFerfarList() {
           </span>
 
           <h4 className="mb-0 text-center flex-grow-1">
-            📋 इतर फेरफार या टेम्प्लेटने केलेले फेरफार यादी</h4>
+            📋 इतर फेरफार या टेम्प्लेटने केलेले फेरफार यादी
+          </h4>
           <div className="d-flex align-items-center">
+            <CTooltip
+              content="फेरफार प्रकाराचा templet प्रणाली मध्ये उपलब्ध असतानाही सर्व प्रकारचे ‘इतर फेरफार’ या templet चा वापर करून घेतले गेलेले फेरफार उपलब्ध असणार."
+              placement="bottom-end"
+            >
+              <span className="tooltip-icon-btn me-4">
+                <InfoIcon sx={{ color: 'white', fontSize: 24 }} />
+              </span>
+            </CTooltip>
+
             <CTooltip content="Search ferfar">
               <div className="position-relative">
                 <CIcon
@@ -230,7 +244,6 @@ function ViewOtherFerfarList() {
                     itemsPerPage={itemsPerPage}
                     onPageChange={(page) => setCurrentPage(page)}
                   />
-
                 </>
               )}
             </>

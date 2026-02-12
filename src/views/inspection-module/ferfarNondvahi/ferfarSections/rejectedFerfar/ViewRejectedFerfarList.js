@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import {
   CContainer,
   CCard,
@@ -39,7 +39,9 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from 'react-toastify'
+import InfoIcon from '@mui/icons-material/Info'
+import '../../FerfarList.css'
 
 function ViewRejectedFerfarList() {
   const navigate = useNavigate()
@@ -74,14 +76,11 @@ function ViewRejectedFerfarList() {
       return
     }
     try {
-
-
       const res = await api.get(`/inpsection/getTantrikFerfarForInspection?ccode=${cCode}`)
       setFerfarList(res.data)
-              toast.success('Data fetched successfully!', { autoClose: 2000 })
-
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
-            toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
+      toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
 
       console.error(err)
     } finally {
@@ -127,12 +126,15 @@ function ViewRejectedFerfarList() {
     <>
       {/* <FerfarNavbar /> */}
       <CCard className="mb-4 custom-card">
-                <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+        <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
-        <CCardHeader style={{
-    background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)'
-  }}
-        className="d-flex justify-content-between align-items-center bg-danger text-white">
+        <CCardHeader
+          style={{
+            background:
+              'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+          }}
+          className="d-flex justify-content-between align-items-center bg-danger text-white"
+        >
           <span
             onClick={() => navigate(-2)}
             style={{
@@ -153,8 +155,18 @@ function ViewRejectedFerfarList() {
             <IoArrowBackOutline />
           </span>
           <h4 className="mb-0 text-center flex-grow-1">
-            📋 तांत्रिक कारणास्तव नामंजूर केलेल्या फेरफारांची यादी</h4>
+            📋 तांत्रिक कारणास्तव नामंजूर केलेल्या फेरफारांची यादी
+          </h4>
           <div className="d-flex align-items-center">
+            <CTooltip
+              content="सर्व फेरफार जे तांत्रिक कारणास्तव नामंजूर केले आहेत त्याची पुर्वालोकन ची प्रत व ७/१२ ,गाव नमूना ६ तपासणी अधिकारी यांना उपलब्ध होणार आहेत."
+              placement="bottom-end"
+            >
+              <span className="tooltip-icon-btn me-4">
+                <InfoIcon sx={{ color: 'white', fontSize: 24 }} />
+              </span>
+            </CTooltip>
+
             <CTooltip content="Search ferfar">
               <div className="position-relative">
                 <CIcon
@@ -234,7 +246,6 @@ function ViewRejectedFerfarList() {
                     itemsPerPage={itemsPerPage}
                     onPageChange={(page) => setCurrentPage(page)}
                   />
-
                 </>
               )}
             </>
