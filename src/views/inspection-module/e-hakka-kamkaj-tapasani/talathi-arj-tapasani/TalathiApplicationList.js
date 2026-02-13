@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react'
-import { IoArrowBackOutline } from "react-icons/io5";
+import { IoArrowBackOutline } from 'react-icons/io5'
 import axios from 'axios'
 import {
   CCard,
@@ -30,7 +30,8 @@ import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
-import { toast } from 'react-toastify';
+import { toast } from 'react-toastify'
+import moment from 'moment'
 
 const CONDITION_MAPPING = {
   // We are using '1', '2', '3', '4' assuming those are the IDs passed in the path.
@@ -81,7 +82,7 @@ function TrutiArjList() {
   const [apiError, setApiError] = useState(null)
   const [applicationType, setApplicationType] = useState(null)
 
-  const itemsPerPage = 8
+  const itemsPerPage = 10
 
   // Function to fetch data based on the current condition
   const fetchApplications = useCallback(async () => {
@@ -101,16 +102,15 @@ function TrutiArjList() {
     // 🚨 Adjust payload for your API requirements (e.g., divisionCode, status, etc.)
 
     try {
-
       setApplicationType(conditionId)
-      const response = await api.get(`/${currentCondition.apiUrl}?ccode=${cCode}&talukaCode=${talukaCode}&districtCode=${districtCode}`)
+      const response = await api.get(
+        `/${currentCondition.apiUrl}?ccode=${cCode}&talukaCode=${talukaCode}&districtCode=${districtCode}`,
+      )
 
       console.log(response, '----------response-------------------------')
 
       if (response.status === 200) {
         const fetchedData = response.data
-
-
 
         if (Array.isArray(fetchedData)) {
           toast.success('Data fetched successfully!', { autoClose: 2000 })
@@ -204,12 +204,10 @@ function TrutiArjList() {
       <CCardHeader
         className="text-white"
         style={{
-          background:
-            'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
+          background: 'linear-gradient(90deg, #02024f 0%, #0b3c91 40%, #0e6ba8 70%, #1fb6e0 100%)',
         }}
       >
         <div className="d-flex align-items-center justify-content-between w-100">
-
           {/* 🔙 Back Icon (LEFT) */}
           <span
             onClick={() => navigate(-2)}
@@ -257,10 +255,8 @@ function TrutiArjList() {
               </div>
             </CTooltip>
           </div>
-
         </div>
       </CCardHeader>
-
 
       {/* ===================================================================================================================== */}
 
@@ -307,7 +303,10 @@ function TrutiArjList() {
                               {item.applicationId}
                             </button>
                           </CTableDataCell>
-                          <CTableDataCell>{item.appDate}</CTableDataCell>
+                          {/* <CTableDataCell>{item.appDate}</CTableDataCell> */}
+                          <CTableDataCell>
+                            {item.appDate ? moment(item.appDate).format('DD/MM/YYYY') : '-'}
+                          </CTableDataCell>
                           <CTableDataCell>{getStatusBadge(item.isRemarkSubmitted)}</CTableDataCell>
                         </CTableRow>
                       ))}
@@ -322,7 +321,6 @@ function TrutiArjList() {
                   itemsPerPage={itemsPerPage}
                   onPageChange={(page) => setCurrentPage(page)}
                 />
-
               </>
             )}
           </>

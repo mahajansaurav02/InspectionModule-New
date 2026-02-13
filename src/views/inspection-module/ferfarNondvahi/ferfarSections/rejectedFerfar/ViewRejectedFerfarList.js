@@ -67,7 +67,7 @@ function ViewRejectedFerfarList() {
     villageName,
   } = selectedVillageData[0]
 
-  const itemsPerPage = 5
+  const itemsPerPage = 10
 
   const getRejectedFerfar = async () => {
     setIsLoading(true)

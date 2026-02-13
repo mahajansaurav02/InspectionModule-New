@@ -2,17 +2,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
 
 :root {
-  --primary-color: #2c3e50; /* Deep Navy/Charcoal */
-  --accent-color: #3498db; /* Bright Blue */
-  --background-light: #f4f7f9; /* Soft Off-White */
+  --primary-color: #2c3e50;
+  --accent-color: #3498db;
+  --background-light: #f4f7f9;
   --card-bg: #ffffff;
   --text-dark: #212121;
   --text-light: #757575;
   --table-header-bg: #2c3e50;
   --table-row-odd-bg: #fcfcfc;
   --table-row-even-bg: #f5f5f5;
-  --success-color: #2ecc71; /* Green */
-  --danger-color: #e74c3c; /* Red */
+  --success-color: #2ecc71;
+  --danger-color: #e74c3c;
 }
 
 body {
@@ -27,23 +27,20 @@ body {
   background-color: var(--background-light);
   min-height: 150vh;
   display: flex;
-  flex-direction: column; /* Crucial for vertical stacking */
-  /* Adjust alignment for content if needed, but flex-start is usually best */
+  flex-direction: column;
   align-items: center;
 }
 
-/* Limit the container width on large screens and center it */
 .report-content-area {
   width: 100%;
   max-width: 1400px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Allows the content area to use all height */
+  flex-grow: 1;
   gap: 1.5rem;
 }
 
-/* Headings */
 .report-title,
 .report-subtitle {
   text-align: center;
@@ -92,12 +89,13 @@ body {
 .remark-controls-section {
   flex-shrink: 0;
   width: 100%;
-  max-width: 1500px;
+  max-width: 100%; 
   margin-top: 1.5rem;
   padding: 1.5rem;
   background: var(--card-bg);
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
 }
 
 .remark-section {
@@ -154,7 +152,7 @@ body {
 }
 
 .cancel-button {
-  background-color: #95a5a6; /* Silver/Grey */
+  background-color: #95a5a6;
   color: white;
 }
 
@@ -163,12 +161,23 @@ body {
 }
 
 .submit-button {
-  background-color: var(--success-color); /* Green for confirmation */
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
   color: white;
+  font-weight: 500;
+  padding: 10px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  min-width: 120px;
+  text-align: center;
+  border: none;
+  font-size: 1rem;
 }
 
 .submit-button:hover:not(:disabled) {
-  background-color: #27ae60;
+  background-color: #388bde !important;
+  border-color: #1e7e34 !important;
 }
 
 .submit-button:disabled {
@@ -177,9 +186,15 @@ body {
   opacity: 0.8;
 }
 
-/* Alert Styling */
+.submit-button:disabled {
+  background-color: #b2e4c9;
+  cursor: not-allowed;
+  opacity: 0.8;
+}
+
+
 .modern-alert {
-  background-color: #e8f7fd !important; /* Light blue/info color */
+  background-color: #e8f7fd !important;
   border-left: 5px solid var(--accent-color) !important;
   color: var(--primary-color) !important;
   border-radius: 8px;

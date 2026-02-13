@@ -67,8 +67,14 @@ function ViewSthagitiFerfarList() {
     villageName,
   } = selectedVillageData[0]
   // Filter data based on search term
-  const filteredData = ferfarList1.filter((ferfar) =>
-    String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase()),
+  // const filteredData = ferfarList1.filter((ferfar) =>
+  //   String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase()),
+  // )
+  const filteredData = ferfarList1.filter(
+    (ferfar) =>
+      String(ferfar.mutNo).toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (ferfar.stayOrderDate &&
+        moment(ferfar.stayOrderDate).format('DD/MM/YYYY').includes(searchTerm)),
   )
 
   const getStayFerfarForInspection = async () => {
@@ -222,9 +228,15 @@ function ViewSthagitiFerfarList() {
                                 {ferfar.mutNo}
                               </button>
                             </CTableDataCell>
+
                             <CTableDataCell className="text-center">
-                              {ferfar.mutDate ? moment(ferfar.mutDate).format('DD/MM/YYYY') : 'N/A'}
+                              {ferfar.stayOrderDate
+                                ? moment(ferfar.stayOrderDate).format('DD/MM/YYYY')
+                                : '-'}
                             </CTableDataCell>
+                            {/* <CTableDataCell className="text-center">
+                              {ferfar.mutDate ? moment(ferfar.mutDate).format('DD/MM/YYYY') : 'N/A'}
+                            </CTableDataCell> */}
                             <CTableDataCell className="text-center">
                               {getStatusBadge(ferfar.isRemarkSubmitted)}
                             </CTableDataCell>

@@ -1,28 +1,52 @@
-/* Assuming you are using Poppins and your color variables */
+.akrushak-dar-container {
+  width: 100%;
+  max-width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+  box-sizing: border-box;
+}
 
-/* Styles for the new remark area container */
+.report-area {
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: 1.5rem;
+  box-sizing: border-box;
+}
+
+
 .remark-controls-section {
-  /* Background light gray for distinction */
-  background-color: #f8f9fa !important;
-  border: 1px solid #e9ecef !important;
-  border-radius: 8px !important;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  padding: 1.5rem;
+  margin-top: 1.5rem;
 }
 
 .remark-title {
   font-size: 1.25rem;
   font-weight: 600;
-  color: var(--primary-color, #2c3e50); /* Use your defined primary color */
+  color: var(--primary-color, #2c3e50);
   border-bottom: 2px solid var(--accent-color, #3498db);
   padding-bottom: 5px;
   display: inline-block;
+  margin-bottom: 1rem;
 }
 
 .remark-textarea {
+  width: 100%;
+  min-width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   resize: vertical;
   min-height: 100px;
   font-size: 0.95rem;
   border-radius: 6px;
   transition: border-color 0.2s;
+  padding: 0.75rem;
 }
 
 .remark-textarea:focus {
@@ -30,9 +54,9 @@
   box-shadow: 0 0 0 0.25rem rgba(52, 152, 219, 0.25);
 }
 
-/* Button styles (using CoreUI/Bootstrap colors) */
+
 .button-container .submit-button {
-  background-color: #28a745 !important; /* Success/Green */
+  background-color: #28a745 !important;
   border-color: #28a745 !important;
   font-weight: 500;
 }
@@ -43,7 +67,7 @@
 }
 
 .button-container .cancel-button {
-  background-color: #6c757d !important; /* Secondary/Grey */
+  background-color: #6c757d !important;
   border-color: #6c757d !important;
   color: white;
   font-weight: 500;
@@ -54,11 +78,17 @@
   border-color: #545b62 !important;
 }
 
-/* Custom styling for the table header to use your primary color */
+
 .akrushak-table thead.bg-info {
   background-color: var(--primary-color, #2c3e50) !important;
   color: white;
 }
+
 .akrushak-table th {
   border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+
+.remark-textarea.form-control {
+  width: 100%;
 }

@@ -17,7 +17,6 @@ import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
 
 export const MagniDurustiReporttapa = () => {
-
   const [khatedarList, setKhatedarList] = useState([])
   const [remark, setRemark] = useState('')
   const [loading, setLoading] = useState(false)
@@ -29,8 +28,15 @@ export const MagniDurustiReporttapa = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  let { cCode, distMarathiName, lgdCode, talukaCode, talukaMarathiName, villageName, districtCode } =
-    selectedVillageData[0]
+  let {
+    cCode,
+    distMarathiName,
+    lgdCode,
+    talukaCode,
+    talukaMarathiName,
+    villageName,
+    districtCode,
+  } = selectedVillageData[0]
   const navigate = useNavigate()
   const { user, roles, token } = useSelector((state) => state.auth || {})
   const revenueYear = user?.revenueYear[0]?.revenueYear
@@ -81,17 +87,15 @@ export const MagniDurustiReporttapa = () => {
     initHeaders()
   }, [token, user])
 
-
   useEffect(() => {
     if (!reqHeaders || Object.keys(reqHeaders).length === 0) return
 
     getMahsulDurustiList()
   }, [reqHeaders])
 
-
   const handleSubmit = async () => {
     // 1. Start Loading
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     const payload = {
       districtCode,
@@ -99,32 +103,31 @@ export const MagniDurustiReporttapa = () => {
       ccode: cCode,
       revenueYear,
       remark,
-      echawdiType: 2
-    };
+      echawdiType: 2,
+    }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
-        setIsSubmitting(false);
-        setSubmitSuccess(true);
+        setIsSubmitting(false)
+        setSubmitSuccess(true)
 
         // 3. Wait for 2 seconds so the user sees the success animation, then redirect
         setTimeout(() => {
-          setSubmitSuccess(false);
-          setShowConfirmModal(false);
-          setRemark('');
-          navigate(-1); // Redirect back
-        }, 2000);
-
+          setSubmitSuccess(false)
+          setShowConfirmModal(false)
+          setRemark('')
+          navigate(-1) // Redirect back
+        }, 2000)
       } else {
-        throw new Error('Unexpected response status');
+        throw new Error('Unexpected response status')
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      setIsSubmitting(false); // Stop loading on error
-      alert(err?.response?.data?.message || 'Failed to submit remark');
+      console.error('Submit error:', err)
+      setIsSubmitting(false) // Stop loading on error
+      alert(err?.response?.data?.message || 'Failed to submit remark')
     }
   }
 
@@ -140,7 +143,9 @@ export const MagniDurustiReporttapa = () => {
         console.log('Village code not found')
         return
       }
-      const response = await api.get(`/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${talukaCode}&cCode=${cCode}&activeFlag=E&revenueYear=2025-26`)
+      const response = await api.get(
+        `/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${talukaCode}&cCode=${cCode}&activeFlag=E&revenueYear=2025-26`,
+      )
 
       if (response.data.length <= 0) {
         toast.info('No records found', { autoClose: 2000 })
@@ -264,12 +269,12 @@ export const MagniDurustiReporttapa = () => {
               </li>
               <li>
                 सादर केलेल्या अहवालामध्ये जास्ती अथवा कमी झालेल्या दुरुस्त्या जसे की - जमीन महसूल
-                (ज.म.), अकृषक, जिल्हा परिषद (जि.प.), ग्रामपंचायत (ग्रा.प.), रस्ते हमी (रो.हमी), शिक्षण
-                कर व संकीर्ण प्रकारातील दुरुस्त्या समाविष्ट आहेत.
+                (ज.म.), अकृषक, जिल्हा परिषद (जि.प.), ग्रामपंचायत (ग्रा.प.), रस्ते हमी (रो.हमी),
+                शिक्षण कर व संकीर्ण प्रकारातील दुरुस्त्या समाविष्ट आहेत.
               </li>
               <li>
-                वरील सर्व दुरुस्त्या मागणीच्या अनुषंगाने योग्य रीतीने करण्यात आलेल्या आहेत याची खात्री
-                करण्यात यावी.
+                वरील सर्व दुरुस्त्या मागणीच्या अनुषंगाने योग्य रीतीने करण्यात आलेल्या आहेत याची
+                खात्री करण्यात यावी.
               </li>
             </ul>
           </CAlert>
@@ -332,7 +337,11 @@ export const MagniDurustiReporttapa = () => {
             <button className="cancel-button" onClick={handleCancel}>
               रद्द करा
             </button>
-            <button className="submit-button" onClick={() => setShowConfirmModal(true)} disabled={!remark?.trim()}>
+            <button
+              className="submit-button"
+              onClick={() => setShowConfirmModal(true)}
+              disabled={!remark?.trim()}
+            >
               अभिप्राय जतन करा
             </button>
           </div>
@@ -340,7 +349,7 @@ export const MagniDurustiReporttapa = () => {
         <ConfirmSubmitModal
           visible={showConfirmModal}
           loading={isSubmitting} // This must match your useState name
-          success={submitSuccess}   // This must match your useState name
+          success={submitSuccess} // This must match your useState name
           onCancel={() => setShowConfirmModal(false)}
           onConfirm={handleSubmit}
         />
