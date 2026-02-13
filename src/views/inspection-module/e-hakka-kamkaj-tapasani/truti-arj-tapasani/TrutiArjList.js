@@ -32,6 +32,7 @@ import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDe
 import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
 import { toast, ToastContainer } from 'react-toastify'
+import moment from 'moment'
 
 function TrutiArjList() {
   // Sample data - replace with your actual data source
@@ -216,7 +217,10 @@ function TrutiArjList() {
                             </button>{' '}
                           </CTableDataCell>
                           <CTableDataCell>{item.rejReason}</CTableDataCell>
-                          <CTableDataCell>{item.appDate}</CTableDataCell>
+                          {/* <CTableDataCell>{item.appDate}</CTableDataCell> */}
+                          <CTableDataCell>
+                            {item.appDate ? moment(item.appDate).format('DD/MM/YYYY') : '-'}
+                          </CTableDataCell>
                           <CTableDataCell>{getStatusBadge(item.isRemarkSubmitted)}</CTableDataCell>
                           {/* <CTableDataCell>
                             <CTooltip content="7/12 पहा">

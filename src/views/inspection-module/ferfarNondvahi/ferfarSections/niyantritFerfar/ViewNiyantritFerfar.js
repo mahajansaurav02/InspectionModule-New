@@ -53,7 +53,7 @@ function ViewNiyantritFerfar() {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const itemsPerPage = 5
+  const itemsPerPage = 10
 
   // Filter data based on search term
   const filteredData = ferfarList1.filter((ferfar) =>

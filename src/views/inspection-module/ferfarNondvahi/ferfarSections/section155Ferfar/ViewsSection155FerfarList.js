@@ -48,7 +48,7 @@ function ViewsSection155FerfarList() {
   const [currentPage, setCurrentPage] = useState(1)
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const itemsPerPage = 5
+  const itemsPerPage = 10
   const [ferfarList1, setFerfarList1] = useState([])
 
   let VillageData = localStorage.getItem('selectedVillageData')

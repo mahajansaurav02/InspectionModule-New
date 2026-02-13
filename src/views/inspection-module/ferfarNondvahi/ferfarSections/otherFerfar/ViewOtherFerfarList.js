@@ -45,7 +45,7 @@ function ViewOtherFerfarList() {
   const [isLoading, setIsLoading] = useState(false)
   const [ferfarList1, setFerfarList1] = useState([])
   // const token = localStorage.getItem('token')
-  const itemsPerPage = 20
+  const itemsPerPage = 10
   let VillageData = localStorage.getItem('selectedVillageData')
   const { user, roles, token } = useSelector((state) => state.auth || {})
 

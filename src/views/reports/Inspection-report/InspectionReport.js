@@ -69,36 +69,7 @@ const mockApiData = {
     trutiPurttaArj: '4',
 
     // ARRAY
-    trutiArjList: [
-      {
-        id: 1,
-        tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
-        arjNo: '789',
-        shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
-        typeOfRemark: 2,
-      },
-      {
-        id: 1,
-        tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
-        arjNo: '125',
-        shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.000',
-        typeOfRemark: 1,
-      },
-      {
-        id: 1,
-        tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
-        arjNo: '252',
-        shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
-        typeOfRemark: 3,
-      },
-      {
-        id: 1,
-        tapshil: 'भूधारकास परत पाठविण्यात आलेले अर्ज ',
-        arjNo: '1156',
-        shera: 'मृत्यू दाखला अस्पष्ट आहे, पुन्हा अपलोड करा.',
-        typeOfRemark: 1,
-      },
-    ],
+    trutiArjList: [],
 
     pralambitArj: {
       '180 दिवसापेक्षा जास्त': 0,
@@ -503,20 +474,49 @@ const InspectionReport = () => {
         return
       }
 
+      // 1. Fetch the real-time data from Type Five API
       const response = await api.get(
         `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
       )
-      // =======comment below api ======
-      const res = await api.get(
+      console.log(response.data, 'EhakkData API Response')
+
+      if (response.data && Array.isArray(response.data)) {
+        // 2. Filter records where applicationId is NOT null
+        console.log(response.data, 'response.data=========================')
+
+        const realTimeTrutiList = response.data
+          .filter((item) => item.applicationId !== null)
+          .map((item) => ({
+            arjNo: item.applicationId,
+            shera: item.remark,
+            // typeOfRemark: item.remarkType,
+            // typeOfRemark: item.remarkType == 'गंभीर' ? 1 : item.remarkType == 'अतीगंभीर' ? 3 : 2,
+            typeOfRemark:
+              item.remarkType === 'साधारण'
+                ? 1
+                : item.remarkType === 'गंभीर'
+                ? 2
+                : item.remarkType === 'अतीगंभीर'
+                ? 3
+                : 1,
+            ehakkatype: item.ehakkatype,
+          }))
+        // 3. Update the reportData state with this real data, replacing the dummy list
+        setReportData((prev) => ({
+          ...prev,
+          eHakkArjData: {
+            ...prev.eHakkArjData,
+            trutiArjList: realTimeTrutiList,
+          },
+        }))
+      }
+
+      // Keep existing calls if you need them for other counts
+      await api.get(
         `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=1`,
       )
-      //=========api comment end ===
-      // const res = await api.get(`https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above`)
 
-      console.log(res.data, 'EhakkData data response')
-      console.log(response.data, 'EhakkData data response')
-
-      toast.success('Data fetched successfully!', { autoClose: 2000 })
+      toast.success('ई-हक्क डेटा यशस्वीरित्या अपडेट झाला!', { autoClose: 2000 })
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
       console.error(err)
@@ -551,7 +551,6 @@ const InspectionReport = () => {
     setError(null)
     setReportData({})
     getFerfarData()
-    getEhakkData()
     getAkrushakDarCheck()
 
     try {
@@ -566,6 +565,9 @@ const InspectionReport = () => {
         toast.success('प्रलंबित अर्जांची यादी अपडेट झाली (Mock API)', { autoClose: 2000 })
       }
       // --- NEW CHANGE END ---
+
+      setReportData(data)
+      await getEhakkData()
 
       // Organize ferfar remarks by kramank
       const organizedFerfarRemarks = {}
@@ -586,7 +588,6 @@ const InspectionReport = () => {
         }
       })
 
-      setReportData(data)
       setFerfarRemarkList(organizedFerfarRemarks)
 
       setEChawadiRemarks({
@@ -1673,7 +1674,7 @@ const InspectionReport = () => {
                                   className="remark-btn no-print"
                                   size="sm"
                                   onClick={() => {
-                                    // NEW LOGIC: Pass the whole list and use a special type
+                                    // Pass the whole list and use a special type
                                     setActiveRemarkType('ehakk-truti')
                                     setActiveRemarkData(reportData.eHakkArjData.trutiArjList)
                                     setShowAbhiprayModal(true)
@@ -2126,6 +2127,7 @@ const InspectionReport = () => {
                             )}
                           </CTableDataCell>
                           <CTableDataCell className="text-center px-3 py-2">
+                            {/* {item.} */}
                             {getRemarkTypeBadge(item.typeOfRemark)}
                           </CTableDataCell>
                           <CTableDataCell className="px-3 py-2">

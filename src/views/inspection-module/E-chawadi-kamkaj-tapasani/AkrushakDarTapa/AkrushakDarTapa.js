@@ -26,10 +26,6 @@ import { useSelector } from 'react-redux'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
 import { toast, ToastContainer } from 'react-toastify'
 
-
-
-
-
 const AkrushakDarTapa = () => {
   const [akrushakRateList, setAkrushakRateList] = useState([])
   const [isLoading, setIsLoading] = useState(false)
@@ -38,9 +34,6 @@ const AkrushakDarTapa = () => {
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-
-
 
   const navigate = useNavigate()
 
@@ -78,7 +71,6 @@ const AkrushakDarTapa = () => {
       // console.log(check, "checkkkk")
       setAkrushakRateList(res.data || [])
       toast.success('Data fetched successfully!', { autoClose: 2000 })
-
     } catch (err) {
       toast.error(err?.response?.data?.message || err?.message, { autoClose: 2000 })
     } finally {
@@ -98,7 +90,7 @@ const AkrushakDarTapa = () => {
 
   const handleSubmit = async () => {
     // 1. Start Loading
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     const payload = {
       districtCode,
@@ -106,39 +98,33 @@ const AkrushakDarTapa = () => {
       ccode: cCode,
       revenueYear,
       remark,
-      echawdiType: 3
-    };
+      echawdiType: 3,
+    }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
-        setIsSubmitting(false);
-        setSubmitSuccess(true);
+        setIsSubmitting(false)
+        setSubmitSuccess(true)
 
         // 3. Wait for 2 seconds so the user sees the success animation, then redirect
         setTimeout(() => {
-          setSubmitSuccess(false);
-          setShowConfirmModal(false);
-          setRemark('');
-          navigate(-1); // Redirect back
-        }, 2000);
-
+          setSubmitSuccess(false)
+          setShowConfirmModal(false)
+          setRemark('')
+          navigate(-1) // Redirect back
+        }, 2000)
       } else {
-        throw new Error('Unexpected response status');
+        throw new Error('Unexpected response status')
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      setIsSubmitting(false); // Stop loading on error
-      alert(err?.response?.data?.message || 'Failed to submit remark');
+      console.error('Submit error:', err)
+      setIsSubmitting(false) // Stop loading on error
+      alert(err?.response?.data?.message || 'Failed to submit remark')
     }
   }
-
-
-
-
-
 
   const handleCancel = () => {
     setRemark('')
@@ -153,7 +139,15 @@ const AkrushakDarTapa = () => {
       <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
       <CContainer fluid className="p-4 akrushak-dar-container">
-        <div className="shadow-lg p-4 rounded bg-white report-area">
+        <div
+          className="shadow-lg rounded bg-white report-area"
+          style={{
+            width: '100%',
+            maxWidth: '100%',
+            boxSizing: 'border-box',
+            padding: '1.5rem',
+          }}
+        >
           <h4 className="mb-4 text-center text-primary fw-bold border-bottom pb-2">
             📋 अकृषक दर नमूद केल्याची तपासणी
           </h4>
@@ -195,7 +189,9 @@ const AkrushakDarTapa = () => {
                   <CTableRow>
                     <CTableHeaderCell rowSpan={2}>गावाचे नाव</CTableHeaderCell>
                     <CTableHeaderCell colSpan={4}>अकृषक दर</CTableHeaderCell>
-                    <CTableHeaderCell rowSpan={2}>दर भरण्याबाबत घोषणा केली आहे काय?</CTableHeaderCell>
+                    <CTableHeaderCell rowSpan={2}>
+                      दर भरण्याबाबत घोषणा केली आहे काय?
+                    </CTableHeaderCell>
                   </CTableRow>
                   <CTableRow>
                     <CTableHeaderCell>न.प </CTableHeaderCell>
@@ -223,8 +219,23 @@ const AkrushakDarTapa = () => {
           {/* --- END TABLE CONTENT --- */}
 
           {/* --- MODERN REMARK AND CONTROL SECTION --- */}
-          <div className="remark-controls-section p-4 mt-4 border rounded bg-light">
-            <h5 className="remark-title mb-3">शेरा</h5>
+          <div
+            className="remark-controls-section"
+            style={{
+              width: '100%',
+              maxWidth: '100%',
+              minWidth: '100%',
+              boxSizing: 'border-box',
+              marginTop: '1.5rem',
+              padding: '1.5rem',
+              backgroundColor: '#f8f9fa',
+              border: '1px solid #e9ecef',
+              borderRadius: '8px',
+            }}
+          >
+            <h5 className="remark-title mb-3" style={{ marginBottom: '1rem' }}>
+              शेरा
+            </h5>
 
             <CFormTextarea
               rows={4}
@@ -232,6 +243,13 @@ const AkrushakDarTapa = () => {
               placeholder="येथे तपासणीनंतर आपला शेरा/अभिप्राव नोंदवा..."
               value={remark}
               onChange={(e) => setRemark(e.target.value)}
+              style={{
+                width: '100%',
+                minWidth: '100%',
+                maxWidth: '100%',
+                boxSizing: 'border-box',
+                minHeight: '120px',
+              }}
             />
 
             <div className="d-flex justify-content-end gap-3 button-container">
@@ -254,7 +272,7 @@ const AkrushakDarTapa = () => {
         <ConfirmSubmitModal
           visible={showConfirmModal}
           loading={isSubmitting} // This must match your useState name
-          success={submitSuccess}   // This must match your useState name
+          success={submitSuccess} // This must match your useState name
           onCancel={() => setShowConfirmModal(false)}
           onConfirm={handleSubmit}
         />
