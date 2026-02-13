@@ -474,6 +474,7 @@ const InspectionReport = () => {
         return
       }
 
+      // check push
       // 1. Fetch the real-time data from Type Five API
       const response = await api.get(
         `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
