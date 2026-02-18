@@ -269,7 +269,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
       case 2:
         return { type: 'ferfar', content: ferfarImage }
       case 3:
-        return { type: 'other', content: '/document_app.pdf' }
+        return { type: 'other', content: '/one.pdf' }
       default:
         return { type: '', content: '' }
     }
@@ -402,7 +402,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
-                साफ करा
+                रिसेट करा 
               </CButton>
 
               <CButton

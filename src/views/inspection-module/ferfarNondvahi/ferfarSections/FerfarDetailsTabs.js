@@ -492,7 +492,7 @@ if (!base64FerfarImage || !base64FerfarMime) {
       case 2:
         return { type: 'ferfar', content: base64FerfarImage }
       case 3:
-        return { type: 'other', content: '/document_app.pdf' }
+        return { type: 'other', content: '/one.pdf' }
       default:
         return { type: '', content: '' }
     }
@@ -670,7 +670,7 @@ if (!base64FerfarImage || !base64FerfarMime) {
             </div>
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
-                साफ करा
+                रिसेट करा 
               </CButton>
 
               <CButton disabled={!remark.trim()}

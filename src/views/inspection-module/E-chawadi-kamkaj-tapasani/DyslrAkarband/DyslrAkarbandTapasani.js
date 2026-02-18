@@ -671,7 +671,7 @@ transition: Bounce,
                       size="sm"
                       onClick={handleFirstRemarkClear}
                     >
-                      साफ करा
+                      रिसेट करा 
                     </Button>
                   </div>
                 </Card>
@@ -833,7 +833,7 @@ transition: Bounce,
                       size="sm"
                       onClick={handleSecondRemarkClear}
                     >
-                      साफ करा
+                      रिसेट करा 
                     </Button>
                   </div>
                 </Card>
