@@ -26,7 +26,7 @@ function Section155Ferfar() {
 
   return (
     <>
-      <FerfarNavbar />
+      <FerfarNavbar ishidden={true} />
 
       <CContainer className="mt-4">
         <CCard className="shadow-lg border-0">

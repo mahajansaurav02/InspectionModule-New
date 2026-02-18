@@ -135,7 +135,11 @@ const AkrushakDarTapa = () => {
 
   return (
     <>
-      <FerfarNavbar />
+      <FerfarNavbar
+        tooltipData={
+          'तपासणी अधिकारी यांना सदर गावाचे DBA यांनी ५ पैसे, १० पैसे असे अकृषिक दर भरून घोषणा केली आहे का तसेच, नगरपालिका आणि महानगरपालिका गावे निवडून त्याचे गटनिहाय अकृषिक दर भरून घोषणा केली आहे कि नाही याची माहिती उपलब्ध होणार आहे.'
+        }
+      />
       <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
       <CContainer fluid className="p-4 akrushak-dar-container">

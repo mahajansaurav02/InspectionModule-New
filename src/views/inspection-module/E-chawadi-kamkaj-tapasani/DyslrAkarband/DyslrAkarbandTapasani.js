@@ -17,7 +17,6 @@ import { useSelector } from 'react-redux'
 import { Bounce, toast, ToastContainer } from 'react-toastify'
 // import { async } from 'crypto-random-string'
 
-
 // Add the new functions from the second code snippet
 var prevTotalArea = 0.0,
   prevAssessment = 0,
@@ -41,7 +40,6 @@ const DyslrAkarbandTapasani = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-
   const tableRef = useRef(null)
   const rejectedTableRef = useRef(null)
   const firstRemarkRef = useRef(null)
@@ -62,8 +60,6 @@ const DyslrAkarbandTapasani = () => {
   const { user, roles, token } = useSelector((state) => state.auth || {})
   const revenueYear = user?.revenueYear[0]?.revenueYear
 
-
-
   let {
     cCode,
     distMarathiName,
@@ -83,12 +79,12 @@ const DyslrAkarbandTapasani = () => {
       if (tab === 'akarband' && firstRemarkRef.current) {
         firstRemarkRef.current.scrollIntoView({
           behavior: 'smooth',
-          block: 'center'
+          block: 'center',
         })
       } else if (tab === 'akarbandRejected' && secondRemarkRef.current) {
         secondRemarkRef.current.scrollIntoView({
           behavior: 'smooth',
-          block: 'center'
+          block: 'center',
         })
       }
     }, 100)
@@ -96,52 +92,50 @@ const DyslrAkarbandTapasani = () => {
 
   const handleFirstRemarkSubmit = async () => {
     // 1. Start Loading
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     const payload = {
       districtCode,
       talukaCode,
       ccode: cCode,
       revenueYear,
-      remark:firstRemark,
-      echawdiType: 5
-    };
+      remark: firstRemark,
+      echawdiType: 5,
+    }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
-        setIsSubmitting(false);
-        setSubmitSuccess(true);
+        setIsSubmitting(false)
+        setSubmitSuccess(true)
 
         // 3. Wait for 2 seconds so the user sees the success animation, then redirect
         setTimeout(() => {
-          setSubmitSuccess(false);
-          setShowConfirmModal(false);
-          setFirstRemark('');
-          navigate(-1); // Redirect back
-        }, 2000);
-
+          setSubmitSuccess(false)
+          setShowConfirmModal(false)
+          setFirstRemark('')
+          navigate(-1) // Redirect back
+        }, 2000)
       } else {
-        throw new Error('Unexpected response status');
+        throw new Error('Unexpected response status')
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      setIsSubmitting(false); // Stop loading on error
-           toast.error(err?.response?.data?.message || 'Failed to submit remark', {
-position: "top-right",
-autoClose: 5000,
-hideProgressBar: false,
-closeOnClick: false,
-pauseOnHover: true,
-draggable: true,
-progress: undefined,
-theme: "colored",
-transition: Bounce,
-});
+      console.error('Submit error:', err)
+      setIsSubmitting(false) // Stop loading on error
+      toast.error(err?.response?.data?.message || 'Failed to submit remark', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+        transition: Bounce,
+      })
     }
-
   }
 
   const handleFirstRemarkClear = () => {
@@ -149,7 +143,7 @@ transition: Bounce,
   }
 
   const handleSecondRemarkSubmit = async () => {
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     const payload = {
       districtCode,
@@ -157,44 +151,43 @@ transition: Bounce,
       ccode: cCode,
       revenueYear,
       remark: secondRemark,
-      echawdiType: 6
-    };
+      echawdiType: 6,
+    }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
-        setIsSubmitting(false);
-        setSubmitSuccess(true);
+        setIsSubmitting(false)
+        setSubmitSuccess(true)
 
         // 3. Wait for 2 seconds so the user sees the success animation, then redirect
         setTimeout(() => {
-          setSubmitSuccess(false);
-          setShowConfirmModal(false);
-          setSecondRemark('');
-          navigate(-1); // Redirect back
-        }, 2000);
-
+          setSubmitSuccess(false)
+          setShowConfirmModal(false)
+          setSecondRemark('')
+          navigate(-1) // Redirect back
+        }, 2000)
       } else {
-        throw new Error('Unexpected response status');
+        throw new Error('Unexpected response status')
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      setIsSubmitting(false); // Stop loading on error
+      console.error('Submit error:', err)
+      setIsSubmitting(false) // Stop loading on error
       // alert(err?.response?.data?.message || 'Failed to submit remark');
 
       toast.error(err?.response?.data?.message || 'Failed to submit remark', {
-position: "top-right",
-autoClose: 5000,
-hideProgressBar: false,
-closeOnClick: false,
-pauseOnHover: true,
-draggable: true,
-progress: undefined,
-theme: "colored",
-transition: Bounce,
-});
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+        transition: Bounce,
+      })
     }
   }
 
@@ -211,8 +204,9 @@ transition: Bounce,
         return
       }
 
-      const response = await api.get(`/inpsection/form1OdcDiff?districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${cCode}`)
-
+      const response = await api.get(
+        `/inpsection/form1OdcDiff?districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${cCode}`,
+      )
 
       if (response.data) {
         const filteredData = response.data.filter((r) => {
@@ -421,9 +415,8 @@ transition: Bounce,
               </span>
             ),
         }))
-          if (mappedData.length > 0) {
-                  toast.success('Data fetched successfully!', { autoClose: 2000 })
-          
+        if (mappedData.length > 0) {
+          toast.success('Data fetched successfully!', { autoClose: 2000 })
         }
         setTableData(mappedData)
       }
@@ -444,9 +437,7 @@ transition: Bounce,
 
     setLoadingRejected(true)
     try {
-
       const response = await api.get(`/inpsection/getFormDyslrDeleteEntries?cCode=${cCode}`)
-
 
       if (response.data && response.data.form1DyslrData) {
         const mappedData = response.data.form1DyslrData.map((r) => {
@@ -471,8 +462,7 @@ transition: Bounce,
           }
         })
         if (mappedData.length > 0) {
-                  toast.success('Data fetched successfully!', { autoClose: 2000 })
-          
+          toast.success('Data fetched successfully!', { autoClose: 2000 })
         }
         setRejectedTableData(mappedData)
       }
@@ -486,9 +476,13 @@ transition: Bounce,
 
   return (
     <>
-      <FerfarNavbar />
-              <ToastContainer position="top-right" autoClose={2000} theme="colored" />
-      
+      <FerfarNavbar
+        tooltipData={
+          '1.आकारबंद (गाव नमुना क्र. १)Dyslr :उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद भरलेला आहे. त्याचा अहवाल तपासणीसाठी उपलब्ध होणार आहे.  2.आकारबंद (गाव नमुना क्र. १) Dyslr कमी केलेलं भूमापन क्रमांक: उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद मध्ये ग्राम महसूल अधिकारी यांच्या कडील आकारबंद live नुसार उपलब्ध नसलेले भूमापन क्रमांक कमी करण्यात आले आहे. त्याचा अहवाल तपासणीसाठी उपलब्ध होणार आहे.'
+        }
+      />
+      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
+
       <div className={styles.wrapper}>
         <h4 className="text-center fw-bold mb-4 text-primary">
           उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील
@@ -511,8 +505,8 @@ transition: Bounce,
                   size="sm"
                   className="ms-2 p-0 text-decoration-none"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    scrollToRemark('akarband');
+                    e.stopPropagation()
+                    scrollToRemark('akarband')
                   }}
                   title="शेरा साठी जा"
                 >
@@ -541,8 +535,8 @@ transition: Bounce,
                   style={{ margin: '10px' }}
                   className="ms-2 p-0 text-decoration-none"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    scrollToRemark('akarband');
+                    e.stopPropagation()
+                    scrollToRemark('akarband')
                   }}
                   title="शेरा साठी जा"
                 >
@@ -666,11 +660,7 @@ transition: Bounce,
                       {firstRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
                     </Button>
 
-                    <Button
-                      variant="outline-secondary"
-                      size="sm"
-                      onClick={handleFirstRemarkClear}
-                    >
+                    <Button variant="outline-secondary" size="sm" onClick={handleFirstRemarkClear}>
                       साफ करा
                     </Button>
                   </div>
@@ -689,8 +679,8 @@ transition: Bounce,
                   size="sm"
                   className="ms-2 p-0 text-decoration-none"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    scrollToRemark('akarbandRejected');
+                    e.stopPropagation()
+                    scrollToRemark('akarbandRejected')
                   }}
                   title="शेरा साठी जा"
                 >
@@ -705,8 +695,8 @@ transition: Bounce,
                 <ul className="mt-2 mb-0 text-start">
                   <li>
                     उप-अधीक्षक, भूमिअभिलेख यांनी हस्तलिखित नुसार आकारबंद मध्ये ग्राम महसूल अधिकारी
-                    यांच्या कडील आकारबंद live नुसार उपलब्ध नसलेले भूमापन क्रमांक कमी करण्यात आले आहे.
-                    त्याचा अहवाल उपलब्ध करून देण्यात आला आहे.
+                    यांच्या कडील आकारबंद live नुसार उपलब्ध नसलेले भूमापन क्रमांक कमी करण्यात आले
+                    आहे. त्याचा अहवाल उपलब्ध करून देण्यात आला आहे.
                   </li>
                 </ul>
 
@@ -716,8 +706,8 @@ transition: Bounce,
                   style={{ margin: '10px', padding: '5px' }}
                   className="ms-2 p-0 text-decoration-none"
                   onClick={(e) => {
-                    e.stopPropagation();
-                    scrollToRemark('akarbandRejected');
+                    e.stopPropagation()
+                    scrollToRemark('akarbandRejected')
                   }}
                   title="शेरा साठी जा"
                 >
@@ -749,7 +739,6 @@ transition: Bounce,
                       <Button variant="success" className={styles.downloadButton}>
                         Download as XLS
                       </Button>
-
                     </DownloadTableExcel>
                   </div>
                   <div className={styles.tableContainer}>
@@ -824,15 +813,12 @@ transition: Bounce,
                       variant="success"
                       size="sm"
                       disabled={secondRemarkSubmitting}
-                      onClick={() => setShowConfirmModal(true)}                  >
+                      onClick={() => setShowConfirmModal(true)}
+                    >
                       {secondRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
                     </Button>
 
-                    <Button
-                      variant="outline-secondary"
-                      size="sm"
-                      onClick={handleSecondRemarkClear}
-                    >
+                    <Button variant="outline-secondary" size="sm" onClick={handleSecondRemarkClear}>
                       साफ करा
                     </Button>
                   </div>
@@ -845,7 +831,7 @@ transition: Bounce,
         <ConfirmSubmitModal
           visible={showConfirmModal}
           loading={isSubmitting} // This must match your useState name
-          success={submitSuccess}   // This must match your useState name
+          success={submitSuccess} // This must match your useState name
           onCancel={() => setShowConfirmModal(false)}
           onConfirm={activeTab === 'akarband' ? handleFirstRemarkSubmit : handleSecondRemarkSubmit}
         />

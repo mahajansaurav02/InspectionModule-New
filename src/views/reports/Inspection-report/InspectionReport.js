@@ -341,6 +341,10 @@ const InspectionReport = () => {
   const [ehakkaCounts, setEhakkaCounts] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [revenueTargetData, setRevenueTargetData] = useState(null)
+  const [vasuliDetails, setVasuliDetails] = useState({
+    jaminMahsul029: { mangni: 0, vasuli: 0, percentage: 0 },
+    itarMahsul045: { mangni: 0, vasuli: 0, percentage: 0 },
+  })
   const { user, roles, token } = useSelector((state) => state.auth || {})
   const revenueYear = user?.revenueYear[0]?.revenueYear
   let VillageData = localStorage.getItem('selectedVillageData')
@@ -559,6 +563,50 @@ const InspectionReport = () => {
     }
   }
 
+  const fetchVasuliDetails = async () => {
+    try {
+      if (!cCode) {
+        toast.error('गाव कोड सापडला नाही. कृपया गाव निवडा.')
+        return
+      }
+
+      const response = await api.get(
+        `/inpsection/getTotalVasuliForReport?revenueYear=${revenueYear}&ccode=${cCode}`,
+      )
+
+      console.log('Vasuli Details API Response:', response.data)
+
+      const data = response.data || {}
+
+      // ---- Row 1: जमीन महसूल वसुली (०२९) ----
+      const jaminDemand = Number(data.totalDemand) || 0
+      const jaminCollected = Number(data.totalCollected) || 0
+      const jaminPercentage = jaminDemand ? ((jaminCollected / jaminDemand) * 100).toFixed(2) : 0
+
+      // ---- Row 2: इतर जमीन महसूल वसुली (०४५) = EGS + Education Cess ----
+      const itarDemand = (Number(data.totalEgsDemand) || 0) + (Number(data.totalEduCessDemand) || 0)
+      const itarCollected =
+        (Number(data.totalEgsCollected) || 0) + (Number(data.totalEduCessCollected) || 0)
+      const itarPercentage = itarDemand ? ((itarCollected / itarDemand) * 100).toFixed(2) : 0
+
+      setVasuliDetails({
+        jaminMahsul029: {
+          mangni: jaminDemand,
+          vasuli: jaminCollected,
+          percentage: jaminPercentage,
+        },
+        itarMahsul045: {
+          mangni: itarDemand,
+          vasuli: itarCollected,
+          percentage: itarPercentage,
+        },
+      })
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'वसुली डेटा मिळवताना त्रुटी')
+      console.error(err)
+    }
+  }
+
   const getEhakkDataRemarkCount = async () => {
     setIsLoading(true)
 
@@ -641,6 +689,7 @@ const InspectionReport = () => {
     getAkrushakDarCheck()
     getEhakkDataRemarkCount()
     getRevenueTargetData()
+    await fetchVasuliDetails()
 
     try {
       const data = await fetchInspectionData()
@@ -800,6 +849,7 @@ const InspectionReport = () => {
       //   ])
       case 'echawadi':
         setActiveRemarkType('echawadi')
+        // Combine remarks for I, II, and III into a single array to show in the modal
         setActiveRemarkData([
           { remark: `I) ${eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही'}` },
           { remark: `II) ${eChawadiRemarks?.gawNamunaPurna?.kamkajPurna || 'शेरा उपलब्ध नाही'}` },
@@ -1638,6 +1688,20 @@ const InspectionReport = () => {
       </CContainer>
     )
   }
+  // Compute totals including all three rows
+  const totalDemandAll =
+    (Number(vasuliDetails.jaminMahsul029?.mangni) || 0) +
+    (Number(vasuliDetails.itarMahsul045?.mangni) || 0) +
+    (Number(revenueTargetData?.annualVillageTarget) || 0)
+
+  const totalCollectedAll =
+    (Number(vasuliDetails.jaminMahsul029?.vasuli) || 0) +
+    (Number(vasuliDetails.itarMahsul045?.vasuli) || 0) +
+    (Number(revenueTargetData?.grandTotal) || 0)
+
+  const totalPercentageAll = totalDemandAll
+    ? ((totalCollectedAll / totalDemandAll) * 100).toFixed(2)
+    : 0
 
   return (
     <>
@@ -1996,6 +2060,73 @@ const InspectionReport = () => {
                       </CTableRow>
                     </CTableHead>
                     <CTableBody>
+                      {/* Row 1: जमीन महसूल वसुली (०२९) */}
+                      <CTableRow>
+                        <CTableDataCell className="text-start">
+                          जमीन महसूल वसुली (०२९)
+                        </CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.jaminMahsul029.mangni}</CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.jaminMahsul029.vasuli}</CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.jaminMahsul029.percentage}%</CTableDataCell>
+                        <CTableDataCell rowSpan={3} className="align-middle">
+                          <CButton
+                            className="remark-btn no-print"
+                            color="primary"
+                            size="sm"
+                            onClick={() => handleViewAbhipray('vasuli')}
+                          >
+                            अभिप्राय बघा
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+
+                      {/* Row 2: इतर जमीन महसूल वसुली (०४५) */}
+                      <CTableRow>
+                        <CTableDataCell className="text-start">
+                          इतर जमीन महसूल वसुली (०४५)
+                        </CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.itarMahsul045.mangni}</CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.itarMahsul045.vasuli}</CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.itarMahsul045.percentage}%</CTableDataCell>
+                      </CTableRow>
+
+                      {/* Row 3: उद्दिष्टानुसार वसुली (from revenueTargetData) */}
+                      <CTableRow>
+                        <CTableDataCell className="text-start">उद्दिष्टानुसार वसुली</CTableDataCell>
+                        <CTableDataCell>
+                          {revenueTargetData?.annualVillageTarget ?? 0}
+                        </CTableDataCell>
+                        <CTableDataCell>{revenueTargetData?.grandTotal ?? 0}</CTableDataCell>
+                        <CTableDataCell>
+                          {getPercentage(
+                            revenueTargetData?.annualVillageTarget,
+                            revenueTargetData?.grandTotal,
+                          )}
+                        </CTableDataCell>
+                      </CTableRow>
+
+                      {/* Total Row - sum of all three rows */}
+                      <CTableRow className="bg-warning">
+                        <CTableHeaderCell className="text-start">एकूण</CTableHeaderCell>
+                        <CTableHeaderCell>{totalDemandAll}</CTableHeaderCell>
+                        <CTableHeaderCell>{totalCollectedAll}</CTableHeaderCell>
+                        <CTableHeaderCell colSpan={2}>{totalPercentageAll}%</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableBody>
+                  </CTable>
+
+                  {/* <h4 className="mt-4 text-primary">ड. वसुली बाबत तपशील</h4>
+                  <CTable bordered responsive className="text-center">
+                    <CTableHead>
+                      <CTableRow className="bg-light">
+                        <CTableHeaderCell>तपशील</CTableHeaderCell>
+                        <CTableHeaderCell>मागणी</CTableHeaderCell>
+                        <CTableHeaderCell>वसुली</CTableHeaderCell>
+                        <CTableHeaderCell>टक्केवारी</CTableHeaderCell>
+                        <CTableHeaderCell style={{ width: '14%' }}>शेरा</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
                       <CTableRow>
                         <CTableDataCell className="text-start">
                           जमीन महसूल वसुली (०२९)
@@ -2058,7 +2189,7 @@ const InspectionReport = () => {
                         </CTableHeaderCell>
                       </CTableRow>
                     </CTableBody>
-                  </CTable>
+                  </CTable> */}
 
                   <hr />
 
