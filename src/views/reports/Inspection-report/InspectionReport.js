@@ -21,7 +21,7 @@ import {
   CModalFooter,
   CModalTitle,
 } from '@coreui/react'
-  import { useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import CIcon from '@coreui/icons-react'
 import { cilUser, cilCalendar, cilLocationPin, cilDescription } from '@coreui/icons'
@@ -341,7 +341,11 @@ const InspectionReport = () => {
   const [ehakkaCounts, setEhakkaCounts] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [revenueTargetData, setRevenueTargetData] = useState(null)
- const { user, roles, token } = useSelector((state) => state.auth || {})
+  const [vasuliDetails, setVasuliDetails] = useState({
+    jaminMahsul029: { mangni: 0, vasuli: 0, percentage: 0 },
+    itarMahsul045: { mangni: 0, vasuli: 0, percentage: 0 },
+  })
+  const { user, roles, token } = useSelector((state) => state.auth || {})
   const revenueYear = user?.revenueYear[0]?.revenueYear
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = JSON.parse(VillageData)
@@ -484,7 +488,6 @@ const InspectionReport = () => {
         `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
       )
 
-
       // console.log(response.data, 'EhakkData data response')
 
       toast.success('Data fetched successfully!', { autoClose: 2000 })
@@ -546,12 +549,11 @@ const InspectionReport = () => {
         `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=${revenueYear}&ccode=${cCode}`,
       )
 
-
       console.log(response.data, 'EhakkData data response')
-if(response.data){
-  console.log(response.data, 'Revenue Target data response')
-  setRevenueTargetData(response.data) 
-}
+      if (response.data) {
+        console.log(response.data, 'Revenue Target data response')
+        setRevenueTargetData(response.data)
+      }
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
       toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
@@ -561,64 +563,102 @@ if(response.data){
     }
   }
 
+  const fetchVasuliDetails = async () => {
+    try {
+      if (!cCode) {
+        toast.error('गाव कोड सापडला नाही. कृपया गाव निवडा.')
+        return
+      }
+
+      const response = await api.get(
+        `/inpsection/getTotalVasuliForReport?revenueYear=${revenueYear}&ccode=${cCode}`,
+      )
+
+      console.log('Vasuli Details API Response:', response.data)
+
+      const data = response.data || {}
+
+      // ---- Row 1: जमीन महसूल वसुली (०२९) ----
+      const jaminDemand = Number(data.totalDemand) || 0
+      const jaminCollected = Number(data.totalCollected) || 0
+      const jaminPercentage = jaminDemand ? ((jaminCollected / jaminDemand) * 100).toFixed(2) : 0
+
+      // ---- Row 2: इतर जमीन महसूल वसुली (०४५) = EGS + Education Cess ----
+      const itarDemand = (Number(data.totalEgsDemand) || 0) + (Number(data.totalEduCessDemand) || 0)
+      const itarCollected =
+        (Number(data.totalEgsCollected) || 0) + (Number(data.totalEduCessCollected) || 0)
+      const itarPercentage = itarDemand ? ((itarCollected / itarDemand) * 100).toFixed(2) : 0
+
+      setVasuliDetails({
+        jaminMahsul029: {
+          mangni: jaminDemand,
+          vasuli: jaminCollected,
+          percentage: jaminPercentage,
+        },
+        itarMahsul045: {
+          mangni: itarDemand,
+          vasuli: itarCollected,
+          percentage: itarPercentage,
+        },
+      })
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'वसुली डेटा मिळवताना त्रुटी')
+      console.error(err)
+    }
+  }
 
   const getEhakkDataRemarkCount = async () => {
-    setIsLoading(true);
+    setIsLoading(true)
 
     try {
       if (!cCode) {
-        alert("Village code not found....Please Select Village First");
-        return;
+        alert('Village code not found....Please Select Village First')
+        return
       }
 
       // eHakka types you want to call
-      const ehakkaTypes = [1, 2, 3, 4];
+      const ehakkaTypes = [1, 2, 3, 4]
 
       // create API promises
       const requests = ehakkaTypes.map((type) =>
         api.get(
-          `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=${type}`
-        )
-      );
+          `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=${type}`,
+        ),
+      )
 
       // call all APIs together
-      const responses = await Promise.all(requests);
+      const responses = await Promise.all(requests)
 
       // store complete data by type
-      let allData = [];       // ✅ single array
-      const ehakkaCounts = {};
+      let allData = [] // ✅ single array
+      const ehakkaCounts = {}
 
       responses.forEach((res, index) => {
-        const type = ehakkaTypes[index];
+        const type = ehakkaTypes[index]
 
-        const data = res.data || [];
+        const data = res.data || []
 
         // count
-        ehakkaCounts[type] = data.length;
+        ehakkaCounts[type] = data.length
 
         // push data into single array
-        allData.push(...data);
-      });
+        allData.push(...data)
+      })
 
-      console.log("All EHakka Data:", allData);
-      console.log("Counts:", ehakkaCounts);
+      console.log('All EHakka Data:', allData)
+      console.log('Counts:', ehakkaCounts)
 
-      setEhakkaData(allData);
-      setEhakkaCounts(ehakkaCounts);
+      setEhakkaData(allData)
+      setEhakkaCounts(ehakkaCounts)
 
-      toast.success("Data fetched successfully!", { autoClose: 2000 });
-
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {
-      toast.error(
-        err?.response?.data?.message || "Failed to fetch data",
-        { autoClose: 2000 }
-      );
-      console.error(err);
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
+      console.error(err)
     } finally {
-      setIsLoading(false);
+      setIsLoading(false)
     }
-  };
-
+  }
 
   // --- NEW: Mock API Call for Pending Applications ---
   const getPendingApplications = async () => {
@@ -649,6 +689,7 @@ if(response.data){
     getAkrushakDarCheck()
     getEhakkDataRemarkCount()
     getRevenueTargetData()
+    await fetchVasuliDetails()
 
     try {
       const data = await fetchInspectionData()
@@ -742,7 +783,7 @@ if(response.data){
   }
 
   const getRemarkTypeBadge = (typeOfRemark) => {
-    const type = typeOfRemark?.toString();
+    const type = typeOfRemark?.toString()
 
     const baseStyle = {
       padding: '6px 16px',
@@ -754,40 +795,40 @@ if(response.data){
       textAlign: 'center',
       minWidth: '100px',
       lineHeight: '1.4',
-    };
+    }
 
     switch (type) {
-      case "1":
-      case "साधारण":
-        return <span style={{ ...baseStyle, backgroundColor: "#2eb85c" }}>साधारण</span>;
+      case '1':
+      case 'साधारण':
+        return <span style={{ ...baseStyle, backgroundColor: '#2eb85c' }}>साधारण</span>
 
-      case "2":
-      case "गंभीर":
-        return <span style={{ ...baseStyle, backgroundColor: "#f9b115" }}>गंभीर</span>;
+      case '2':
+      case 'गंभीर':
+        return <span style={{ ...baseStyle, backgroundColor: '#f9b115' }}>गंभीर</span>
 
-      case "3":
-      case "अतीगंभीर":
-        return <span style={{ ...baseStyle, backgroundColor: '#e55353' }}>अतीगंभीर</span>;
+      case '3':
+      case 'अतीगंभीर':
+        return <span style={{ ...baseStyle, backgroundColor: '#e55353' }}>अतीगंभीर</span>
 
       default:
         return (
           <span
             style={{
               ...baseStyle,
-              backgroundColor: "#6c757d",
+              backgroundColor: '#6c757d',
             }}
           >
             —
           </span>
-        );
+        )
     }
-  };
+  }
 
-const getPercentage=(mangni, vasuli) => {
-  if(mangni === null || mangni === undefined || mangni === 0) return '0%';
-  const percentage = (vasuli / mangni) * 100;
-  return `${percentage.toFixed(2)}%`;
-}
+  const getPercentage = (mangni, vasuli) => {
+    if (mangni === null || mangni === undefined || mangni === 0) return '0%'
+    const percentage = (vasuli / mangni) * 100
+    return `${percentage.toFixed(2)}%`
+  }
 
   const handleViewAbhipray = (section) => {
     console.log(ehakkaData, 'ehakkaData in abhipray=============')
@@ -801,10 +842,22 @@ const getPercentage=(mangni, vasuli) => {
         setActiveRemarkType('ehakk-truti')
         setActiveRemarkData(reportData.eHakkArjData?.trutiArjList || [])
         break
+      // case 'echawadi':
+      //   setActiveRemarkType('echawadi')
+      //   setActiveRemarkData([
+      //     { remark: eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही' },
+      //   ])
       case 'echawadi':
         setActiveRemarkType('echawadi')
+        // Combine remarks for I, II, and III into a single array to show in the modal
         setActiveRemarkData([
-          { remark: eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही' },
+          { remark: `I) ${eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही'}` },
+          { remark: `II) ${eChawadiRemarks?.gawNamunaPurna?.kamkajPurna || 'शेरा उपलब्ध नाही'}` },
+          {
+            remark: `III) ${
+              eChawadiRemarks?.gawNamunaPurna?.aghoshanaKeliNaslele || 'शेरा उपलब्ध नाही'
+            }`,
+          },
         ])
         break
       case 'vasuli':
@@ -1635,6 +1688,20 @@ const getPercentage=(mangni, vasuli) => {
       </CContainer>
     )
   }
+  // Compute totals including all three rows
+  const totalDemandAll =
+    (Number(vasuliDetails.jaminMahsul029?.mangni) || 0) +
+    (Number(vasuliDetails.itarMahsul045?.mangni) || 0) +
+    (Number(revenueTargetData?.annualVillageTarget) || 0)
+
+  const totalCollectedAll =
+    (Number(vasuliDetails.jaminMahsul029?.vasuli) || 0) +
+    (Number(vasuliDetails.itarMahsul045?.vasuli) || 0) +
+    (Number(revenueTargetData?.grandTotal) || 0)
+
+  const totalPercentageAll = totalDemandAll
+    ? ((totalCollectedAll / totalDemandAll) * 100).toFixed(2)
+    : 0
 
   return (
     <>
@@ -1834,10 +1901,18 @@ const getPercentage=(mangni, vasuli) => {
                         <CTableBody>
                           <CTableRow>
                             {/* ================= नवीन Dynamic Counts वापरा ================= */}
-                            <CTableDataCell className="fw-bold">{ehakkaCounts[1] || 0}</CTableDataCell>
-                            <CTableDataCell className="fw-bold">{ehakkaCounts[2] || 0}</CTableDataCell>
-                            <CTableDataCell className="fw-bold">{ehakkaCounts[3] || 0}</CTableDataCell>
-                            <CTableDataCell className="fw-bold">{ehakkaCounts[4] || 0}</CTableDataCell>
+                            <CTableDataCell className="fw-bold">
+                              {ehakkaCounts[1] || 0}
+                            </CTableDataCell>
+                            <CTableDataCell className="fw-bold">
+                              {ehakkaCounts[2] || 0}
+                            </CTableDataCell>
+                            <CTableDataCell className="fw-bold">
+                              {ehakkaCounts[3] || 0}
+                            </CTableDataCell>
+                            <CTableDataCell className="fw-bold">
+                              {ehakkaCounts[4] || 0}
+                            </CTableDataCell>
 
                             <CTableDataCell>
                               <CButton
@@ -1884,11 +1959,18 @@ const getPercentage=(mangni, vasuli) => {
                         <CTableDataCell>
                           {reportData.eChawadiData?.gawNamunaPurna.nirank}
                         </CTableDataCell>
-                        {AbhiprayButtonCell(
-                          reportData.eChawadiData?.gawNamunaPurna?.nirank,
-                          'echawadi',
-                        )}
+                        <CTableDataCell rowSpan={3} className="align-middle text-center">
+                          <CButton
+                            className="remark-btn no-print"
+                            color="primary"
+                            size="sm"
+                            onClick={() => handleViewAbhipray('echawadi')}
+                          >
+                            अभिप्राय बघा
+                          </CButton>
+                        </CTableDataCell>
                       </CTableRow>
+
                       <CTableRow>
                         <CTableDataCell></CTableDataCell>
                         <CTableDataCell className="text-start ps-5">
@@ -1897,11 +1979,8 @@ const getPercentage=(mangni, vasuli) => {
                         <CTableDataCell>
                           {reportData.eChawadiData?.gawNamunaPurna.kamkajPurna}
                         </CTableDataCell>
-                        {AbhiprayButtonCell(
-                          reportData.eChawadiData?.gawNamunaPurna?.kamkajPurna,
-                          'echawadi',
-                        )}
                       </CTableRow>
+
                       <CTableRow>
                         <CTableDataCell></CTableDataCell>
                         <CTableDataCell className="text-start ps-5">
@@ -1910,10 +1989,6 @@ const getPercentage=(mangni, vasuli) => {
                         <CTableDataCell>
                           {reportData.eChawadiData?.gawNamunaPurna.aghoshanaKeliNaslele}
                         </CTableDataCell>
-                        {AbhiprayButtonCell(
-                          reportData.eChawadiData?.gawNamunaPurna?.aghoshanaKeliNaslele,
-                          'echawadi',
-                        )}
                       </CTableRow>
 
                       <CTableRow>
@@ -1941,12 +2016,12 @@ const getPercentage=(mangni, vasuli) => {
                           {akrushakData?.nprate > 0
                             ? `${akrushakData.nprate} रुपये`
                             : akrushakData?.mnparate > 0
-                              ? `${akrushakData.mnparate} रुपये`
-                              : akrushakData?.tenpaise > 0
-                                ? `${akrushakData.tenpaise} पैसे`
-                                : akrushakData?.fivepaise > 0
-                                  ? `${akrushakData.fivepaise} पैसे`
-                                  : '-'}
+                            ? `${akrushakData.mnparate} रुपये`
+                            : akrushakData?.tenpaise > 0
+                            ? `${akrushakData.tenpaise} पैसे`
+                            : akrushakData?.fivepaise > 0
+                            ? `${akrushakData.fivepaise} पैसे`
+                            : '-'}
                           )
                         </CTableDataCell>
                         {AbhiprayButtonCell(
@@ -1974,6 +2049,73 @@ const getPercentage=(mangni, vasuli) => {
                   <hr />
 
                   <h4 className="mt-4 text-primary">ड. वसुली बाबत तपशील</h4>
+                  <CTable bordered responsive className="text-center">
+                    <CTableHead>
+                      <CTableRow className="bg-light">
+                        <CTableHeaderCell>तपशील</CTableHeaderCell>
+                        <CTableHeaderCell>मागणी</CTableHeaderCell>
+                        <CTableHeaderCell>वसुली</CTableHeaderCell>
+                        <CTableHeaderCell>टक्केवारी</CTableHeaderCell>
+                        <CTableHeaderCell style={{ width: '14%' }}>शेरा</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableHead>
+                    <CTableBody>
+                      {/* Row 1: जमीन महसूल वसुली (०२९) */}
+                      <CTableRow>
+                        <CTableDataCell className="text-start">
+                          जमीन महसूल वसुली (०२९)
+                        </CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.jaminMahsul029.mangni}</CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.jaminMahsul029.vasuli}</CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.jaminMahsul029.percentage}%</CTableDataCell>
+                        <CTableDataCell rowSpan={3} className="align-middle">
+                          <CButton
+                            className="remark-btn no-print"
+                            color="primary"
+                            size="sm"
+                            onClick={() => handleViewAbhipray('vasuli')}
+                          >
+                            अभिप्राय बघा
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+
+                      {/* Row 2: इतर जमीन महसूल वसुली (०४५) */}
+                      <CTableRow>
+                        <CTableDataCell className="text-start">
+                          इतर जमीन महसूल वसुली (०४५)
+                        </CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.itarMahsul045.mangni}</CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.itarMahsul045.vasuli}</CTableDataCell>
+                        <CTableDataCell>{vasuliDetails.itarMahsul045.percentage}%</CTableDataCell>
+                      </CTableRow>
+
+                      {/* Row 3: उद्दिष्टानुसार वसुली (from revenueTargetData) */}
+                      <CTableRow>
+                        <CTableDataCell className="text-start">उद्दिष्टानुसार वसुली</CTableDataCell>
+                        <CTableDataCell>
+                          {revenueTargetData?.annualVillageTarget ?? 0}
+                        </CTableDataCell>
+                        <CTableDataCell>{revenueTargetData?.grandTotal ?? 0}</CTableDataCell>
+                        <CTableDataCell>
+                          {getPercentage(
+                            revenueTargetData?.annualVillageTarget,
+                            revenueTargetData?.grandTotal,
+                          )}
+                        </CTableDataCell>
+                      </CTableRow>
+
+                      {/* Total Row - sum of all three rows */}
+                      <CTableRow className="bg-warning">
+                        <CTableHeaderCell className="text-start">एकूण</CTableHeaderCell>
+                        <CTableHeaderCell>{totalDemandAll}</CTableHeaderCell>
+                        <CTableHeaderCell>{totalCollectedAll}</CTableHeaderCell>
+                        <CTableHeaderCell colSpan={2}>{totalPercentageAll}%</CTableHeaderCell>
+                      </CTableRow>
+                    </CTableBody>
+                  </CTable>
+
+                  {/* <h4 className="mt-4 text-primary">ड. वसुली बाबत तपशील</h4>
                   <CTable bordered responsive className="text-center">
                     <CTableHead>
                       <CTableRow className="bg-light">
@@ -2027,13 +2169,14 @@ const getPercentage=(mangni, vasuli) => {
                       <CTableRow>
                         <CTableDataCell className="text-start">उद्दिष्टानुसार वसुली</CTableDataCell>
                         <CTableDataCell>
-                          {revenueTargetData.annualVillageTarget || 0 }
+                          {revenueTargetData.annualVillageTarget || 0}
                         </CTableDataCell>
+                        <CTableDataCell>{revenueTargetData.grandTotal || 0}</CTableDataCell>
                         <CTableDataCell>
-                          {revenueTargetData.grandTotal || 0}
-                        </CTableDataCell>
-                        <CTableDataCell>
-                          {getPercentage(revenueTargetData.annualVillageTarget, revenueTargetData.grandTotal)}
+                          {getPercentage(
+                            revenueTargetData.annualVillageTarget,
+                            revenueTargetData.grandTotal,
+                          )}
                         </CTableDataCell>
                       </CTableRow>
 
@@ -2046,7 +2189,7 @@ const getPercentage=(mangni, vasuli) => {
                         </CTableHeaderCell>
                       </CTableRow>
                     </CTableBody>
-                  </CTable>
+                  </CTable> */}
 
                   <hr />
 
@@ -2135,14 +2278,14 @@ const getPercentage=(mangni, vasuli) => {
               {activeRemarkType?.startsWith('ferfar')
                 ? 'फेरफार तपासणी अभिप्राय'
                 : activeRemarkType === 'ehakk-truti'
-                  ? 'ई-हक्क अभिप्राय (त्रुटीपूर्ततेसाठी केलेले अर्ज)'
-                  : activeRemarkType === 'ehakk'
-                    ? 'ई-हक्क अभिप्राय (तलाठी स्तरावरील प्रलंबित अर्ज)'
-                    : activeRemarkType === 'echawadi'
-                      ? 'ई-चावडी अभिप्राय'
-                      : activeRemarkType === 'vasuli'
-                        ? 'वसुली अभिप्राय'
-                        : 'अभिप्राय'}
+                ? 'ई-हक्क अभिप्राय (त्रुटीपूर्ततेसाठी केलेले अर्ज)'
+                : activeRemarkType === 'ehakk'
+                ? 'ई-हक्क अभिप्राय (तलाठी स्तरावरील प्रलंबित अर्ज)'
+                : activeRemarkType === 'echawadi'
+                ? 'ई-चावडी अभिप्राय'
+                : activeRemarkType === 'vasuli'
+                ? 'वसुली अभिप्राय'
+                : 'अभिप्राय'}
             </CModalTitle>
           </CModalHeader>
           <CModalBody className="px-4 py-4 ">
@@ -2210,25 +2353,25 @@ const getPercentage=(mangni, vasuli) => {
                   {/* 1. FERFAR DATA */}
                   {activeRemarkType?.startsWith('ferfar')
                     ? activeRemarkData.map((item, index) => (
-                      <CTableRow key={index}>
-                        <CTableDataCell className="px-3 py-2">
-                          {item.mutNo ? (
-                            <span className="badge bg-primary fs-6 px-3 py-1">{item.mutNo}</span>
-                          ) : (
-                            '-'
-                          )}
-                        </CTableDataCell>
-                        <CTableDataCell className="text-center px-3 py-2">
-                          {getRemarkTypeBadge(item.typeOfRemark)}
-                        </CTableDataCell>
-                        <CTableDataCell className="px-3 py-2">
-                          {item.remark || '-'}
-                        </CTableDataCell>
-                      </CTableRow>
-                    ))
+                        <CTableRow key={index}>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.mutNo ? (
+                              <span className="badge bg-primary fs-6 px-3 py-1">{item.mutNo}</span>
+                            ) : (
+                              '-'
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell className="text-center px-3 py-2">
+                            {getRemarkTypeBadge(item.typeOfRemark)}
+                          </CTableDataCell>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.remark || '-'}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
                     : /* 2. EHAKK TRUTI DATA */
                     activeRemarkType === 'ehakk-truti'
-                      ? activeRemarkData.map((item, index) => (
+                    ? activeRemarkData.map((item, index) => (
                         <CTableRow key={index}>
                           <CTableDataCell className="px-3 py-2">
                             {item.arjNo && (
@@ -2244,36 +2387,36 @@ const getPercentage=(mangni, vasuli) => {
                           </CTableDataCell>
                         </CTableRow>
                       ))
-                      : /* 3. EHAKK PENDING (PRALAMBIT) DATA - NEW */
-                      activeRemarkType === 'ehakk'
-                        ? activeRemarkData.map((item, index) => (
-                          <CTableRow key={index}>
-                            <CTableDataCell className="px-3 py-2">
-                              {item.applicationId ? (
-                                <span className="badge bg-primary px-3 py-1">
-                                  {item.applicationId}
-                                </span>
-                              ) : (
-                                '-'
-                              )}
-                            </CTableDataCell>
-                            <CTableDataCell className="px-3 py-2">
-                              {item.ehakkatype || '-'}
-                            </CTableDataCell>
-                            <CTableDataCell className="text-center px-3 py-2">
-                              {getRemarkTypeBadge(item.remarkType)}
-                            </CTableDataCell>
-                            <CTableDataCell className="px-3 py-2">
-                              {item.remark || '-'}
-                            </CTableDataCell>
-                          </CTableRow>
-                        ))
-                        : /* 4. GENERIC DATA */
-                        activeRemarkData.map((item, index) => (
-                          <CTableRow key={index}>
-                            <CTableDataCell className="px-3 py-2">{item.remark}</CTableDataCell>
-                          </CTableRow>
-                        ))}
+                    : /* 3. EHAKK PENDING (PRALAMBIT) DATA - NEW */
+                    activeRemarkType === 'ehakk'
+                    ? activeRemarkData.map((item, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.applicationId ? (
+                              <span className="badge bg-primary px-3 py-1">
+                                {item.applicationId}
+                              </span>
+                            ) : (
+                              '-'
+                            )}
+                          </CTableDataCell>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.ehakkatype || '-'}
+                          </CTableDataCell>
+                          <CTableDataCell className="text-center px-3 py-2">
+                            {getRemarkTypeBadge(item.remarkType)}
+                          </CTableDataCell>
+                          <CTableDataCell className="px-3 py-2">
+                            {item.remark || '-'}
+                          </CTableDataCell>
+                        </CTableRow>
+                      ))
+                    : /* 4. GENERIC DATA */
+                      activeRemarkData.map((item, index) => (
+                        <CTableRow key={index}>
+                          <CTableDataCell className="px-3 py-2">{item.remark}</CTableDataCell>
+                        </CTableRow>
+                      ))}
                 </CTableBody>
               </CTable>
             ) : (

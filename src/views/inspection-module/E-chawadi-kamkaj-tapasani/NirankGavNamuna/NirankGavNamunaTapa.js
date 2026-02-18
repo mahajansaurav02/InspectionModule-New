@@ -51,11 +51,8 @@ export const NirankGavNamunaTapa = () => {
     villageName,
   } = selectedVillageData[0]
   const getVillageForms = async () => {
-
     try {
-
       const response = await api.get(`/restservice/getAllVillageForm`)
-
 
       setVillageForms(
         response.data.villageFormMaster.map((vfm, i) => ({
@@ -80,8 +77,9 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-
-      const response = await api.get(`/restservice/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`)
+      const response = await api.get(
+        `/restservice/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`,
+      )
 
       if (response.data) {
         const dataa = response.data.nirank.map((row, index) => ({
@@ -148,7 +146,9 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-      const response = await api.get(`/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${'2025-26'}`)
+      const response = await api.get(
+        `/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${'2025-26'}`,
+      )
 
       if (response.data) {
         setAddLandRevenueData(
@@ -189,7 +189,6 @@ export const NirankGavNamunaTapa = () => {
       )
 
       if (response.data) {
-
         setOtherTableData([
           {
             id: 1,
@@ -215,8 +214,6 @@ export const NirankGavNamunaTapa = () => {
     }
   }
 
-
-
   useEffect(() => {
     // if (!reqHeaders || Object.keys(reqHeaders).length === 0) return
 
@@ -229,7 +226,6 @@ export const NirankGavNamunaTapa = () => {
       getOtherTableData()
     }
   }, [reqHeaders])
-
 
   useEffect(() => {
     if (villageForms.length > 0 && tableData.length > 0) {
@@ -283,7 +279,6 @@ export const NirankGavNamunaTapa = () => {
     console.log(`Submitting remark for form: ${selectedForm.formName}`)
     console.log(`Remark: ${remark}`)
 
-
     alert(`Remark submitted successfully for ${selectedForm.formName}`)
     setRemark('')
   }
@@ -309,10 +304,9 @@ export const NirankGavNamunaTapa = () => {
     }
   }
 
-
   const handleSubmit = async () => {
     // 1. Start Loading
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     const payload = {
       districtCode,
@@ -320,148 +314,142 @@ export const NirankGavNamunaTapa = () => {
       ccode: cCode,
       revenueYear,
       remark,
-      echawdiType: 2
-    };
+      echawdiType: 2,
+    }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
-        setIsSubmitting(false);
-        setSubmitSuccess(true);
+        setIsSubmitting(false)
+        setSubmitSuccess(true)
 
         // 3. Wait for 2 seconds so the user sees the success animation, then redirect
         setTimeout(() => {
-          setSubmitSuccess(false);
-          setShowConfirmModal(false);
-          setRemark('');
-          navigate(-1); // Redirect back
-        }, 2000);
-
+          setSubmitSuccess(false)
+          setShowConfirmModal(false)
+          setRemark('')
+          navigate(-1) // Redirect back
+        }, 2000)
       } else {
-        throw new Error('Unexpected response status');
+        throw new Error('Unexpected response status')
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      setIsSubmitting(false); // Stop loading on error
-      alert(err?.response?.data?.message || 'Failed to submit remark');
+      console.error('Submit error:', err)
+      setIsSubmitting(false) // Stop loading on error
+      alert(err?.response?.data?.message || 'Failed to submit remark')
     }
   }
 
+  return (
+    <>
+      <FerfarNavbar
+        tooltipData={
+          'तपासणी अधिकारी यांना सदर गावातील निरंक/काम पूर्ण  घोषणा केलेल्या गाव नमुन्यांची माहिती उपलब्ध होणार आहे.'
+        }
+      />
 
+      <div className="container">
+        <VillageDetailsList />
 
-
-
-
-
-
-
-
-
-  return (<>
-    <FerfarNavbar />
-
-    <div className='container'>
-
-      <VillageDetailsList />
-
-      <div className="main-container">
-        <div className="content-panel">
-          <h2 className="main-title">निरंक गाव व कामकाज पुर्ण असलेले नमुने</h2>
-          <div className="info-alert">
-            <strong>टीप:</strong> सदर गावातील गाव नमुने भरण्याचे काम पूर्ण झाल्याची घोषणा करण्यात
-            आलेली आहे. घोषणेशी संबंधित नमुन्यांची माहिती तपासणीसाठी सादर करण्यात आलेली आहे. यामध्ये
-            निरंक नमुने व काम पूर्ण झाल्याच्या घोषणांची नोंद समाविष्ट आहे.
-          </div>
-
-          {loading ? (
-            <div className="loading-state">
-              <LoadingSpinner message="Loading...." />
+        <div className="main-container">
+          <div className="content-panel">
+            <h2 className="main-title">निरंक गाव व कामकाज पुर्ण असलेले नमुने</h2>
+            <div className="info-alert">
+              <strong>टीप:</strong> सदर गावातील गाव नमुने भरण्याचे काम पूर्ण झाल्याची घोषणा करण्यात
+              आलेली आहे. घोषणेशी संबंधित नमुन्यांची माहिती तपासणीसाठी सादर करण्यात आलेली आहे.
+              यामध्ये निरंक नमुने व काम पूर्ण झाल्याच्या घोषणांची नोंद समाविष्ट आहे.
             </div>
-          ) : (
-            <div className="form-grid">
-              {villageForms.length > 0 ? (
-                villageForms.slice(1).map((record) => (
-                  <div
-                    key={record.id || record.index}
-                    className={`form-card ${selectedForm?.formId === record.formId ? 'selected' : ''
+
+            {loading ? (
+              <div className="loading-state">
+                <LoadingSpinner message="Loading...." />
+              </div>
+            ) : (
+              <div className="form-grid">
+                {villageForms.length > 0 ? (
+                  villageForms.slice(1).map((record) => (
+                    <div
+                      key={record.id || record.index}
+                      className={`form-card ${
+                        selectedForm?.formId === record.formId ? 'selected' : ''
                       }`}
-                    onClick={() => setSelectedForm(record)}
-                  >
-                    <div className="form-card-inner">
-                      <h4 className="form-title">{record.formName}</h4>
-                      <div className="status-section">
-                        <div className="status-item">
-                          <span className="status-label">निरंक</span>
-                          <div className="status-icon-container">
-                            {renderStatusIcon(record.isNirank)}
+                      onClick={() => setSelectedForm(record)}
+                    >
+                      <div className="form-card-inner">
+                        <h4 className="form-title">{record.formName}</h4>
+                        <div className="status-section">
+                          <div className="status-item">
+                            <span className="status-label">निरंक</span>
+                            <div className="status-icon-container">
+                              {renderStatusIcon(record.isNirank)}
+                            </div>
                           </div>
-                        </div>
-                        <div className="status-item">
-                          <span className="status-label">कामकाज पूर्ण</span>
-                          <div className="status-icon-container">
-                            {renderStatusIcon(record.isCompleted)}
+                          <div className="status-item">
+                            <span className="status-label">कामकाज पूर्ण</span>
+                            <div className="status-icon-container">
+                              {renderStatusIcon(record.isCompleted)}
+                            </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))
-              ) : (
-                <div className="no-data-found">No data found.</div>
-              )}
-            </div>
-          )}
-        </div>
-
-        <div className="report-panel">
-          {selectedForm ? (
-            <>
-              {renderReportTable()}
-
-              {/* Remark and Control Section */}
-              <div className="remark-section mt-4">
-                <h4 className="remark-title">निरंक/तपासणी शेरा </h4>
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  value={remark}
-                  onChange={(e) => setRemark(e.target.value)}
-                  placeholder="येथे आपला शेरा/तपासणी नोंदवा..."
-                ></textarea>
+                  ))
+                ) : (
+                  <div className="no-data-found">No data found.</div>
+                )}
               </div>
+            )}
+          </div>
 
-              <div className="button-container">
-                <button className="cancel-button" onClick={handleCancel}>
-                  रद्द करा
-                </button>
-                <button
-                  className="submit-button"
-onClick={() => setShowConfirmModal(true)}         
-         disabled={!remark.trim()}
-                >
-                  अभिप्राय जतन करा
-                </button>
+          <div className="report-panel">
+            {selectedForm ? (
+              <>
+                {renderReportTable()}
+
+                {/* Remark and Control Section */}
+                <div className="remark-section mt-4">
+                  <h4 className="remark-title">निरंक/तपासणी शेरा </h4>
+                  <textarea
+                    className="form-control"
+                    rows="3"
+                    value={remark}
+                    onChange={(e) => setRemark(e.target.value)}
+                    placeholder="येथे आपला शेरा/तपासणी नोंदवा..."
+                  ></textarea>
+                </div>
+
+                <div className="button-container">
+                  <button className="cancel-button" onClick={handleCancel}>
+                    रद्द करा
+                  </button>
+                  <button
+                    className="submit-button"
+                    onClick={() => setShowConfirmModal(true)}
+                    disabled={!remark.trim()}
+                  >
+                    अभिप्राय जतन करा
+                  </button>
+                </div>
+                {/* End Remark and Control Section */}
+              </>
+            ) : (
+              <div className="report-placeholder">
+                <p>कृपया अहवाल पाहण्यासाठी डाव्या बाजूच्या पॅनलमधील संबंधित कार्ड निवडा.</p>
               </div>
-              {/* End Remark and Control Section */}
-            </>
-          ) : (
-            <div className="report-placeholder">
-              <p>कृपया अहवाल पाहण्यासाठी डाव्या बाजूच्या पॅनलमधील संबंधित कार्ड निवडा.</p>
-            </div>
-          )}
+            )}
+          </div>
         </div>
+        <ConfirmSubmitModal
+          visible={showConfirmModal}
+          loading={isSubmitting} // This must match your useState name
+          success={submitSuccess} // This must match your useState name
+          onCancel={() => setShowConfirmModal(false)}
+          onConfirm={handleSubmit}
+        />
       </div>
-       <ConfirmSubmitModal
-        visible={showConfirmModal}
-        loading={isSubmitting} // This must match your useState name
-        success={submitSuccess}   // This must match your useState name
-        onCancel={() => setShowConfirmModal(false)}
-        onConfirm={handleSubmit}
-      />
-    </div>
-  </>
+    </>
   )
 }
 
@@ -654,7 +642,6 @@ const AddLandRevenueReport = ({
           </table>
         </Card>
       </div>
-      
     </div>
   )
 }
@@ -745,7 +732,6 @@ const NirankReportTable = ({
           </tbody>
         </table>
       </div>
-      
     </div>
   )
 }
@@ -825,7 +811,6 @@ const DefaultReportTable = ({
           </tbody>
         </table>
       </div>
-     
     </div>
   )
 }

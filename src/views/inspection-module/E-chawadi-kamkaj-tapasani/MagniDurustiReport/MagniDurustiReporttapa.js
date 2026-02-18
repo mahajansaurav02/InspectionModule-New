@@ -252,7 +252,11 @@ export const MagniDurustiReporttapa = () => {
 
   return (
     <>
-      <FerfarNavbar />
+      <FerfarNavbar
+        tooltipData={
+          'तपासणी अधिकारी यांना मागणीची दुरुस्ती (मागणी रक्कम कमी/जास्त )केलेल्या खात्यांचा अहवाल उपलब्ध होणार आहे.'
+        }
+      />
 
       <div className="report-container">
         <ToastContainer position="top-right" autoClose={2000} theme="colored" />

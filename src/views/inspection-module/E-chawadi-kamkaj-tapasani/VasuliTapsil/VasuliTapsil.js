@@ -36,8 +36,6 @@ const VasuliTapsil = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-
-
   const navigate = useNavigate()
   const { user, roles, token } = useSelector((state) => state.auth || {})
   const revenueYear = user?.revenueYear[0]?.revenueYear
@@ -65,7 +63,9 @@ const VasuliTapsil = () => {
         return
       }
 
-      const res = await api.get(`${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`)
+      const res = await api.get(
+        `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`,
+      )
       //  const res = await axios.get(
       //       `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`,
       //       {
@@ -88,7 +88,9 @@ const VasuliTapsil = () => {
       }
       setLoading0029(true)
 
-      const res = await api.get(`/inpsection/getVasuliForCollectedFor0029?ccode=${cCode}&revenueYear=2025-26`)
+      const res = await api.get(
+        `/inpsection/getVasuliForCollectedFor0029?ccode=${cCode}&revenueYear=2025-26`,
+      )
 
       setCollectedData(res.data[0])
       setLoading0029(false)
@@ -108,7 +110,9 @@ const VasuliTapsil = () => {
         return
       }
 
-      const res = await api.get(`/inpsection/getVasuliForEgsAndEduCess?revenueYear=2025-26&ccode=${cCode}`)
+      const res = await api.get(
+        `/inpsection/getVasuliForEgsAndEduCess?revenueYear=2025-26&ccode=${cCode}`,
+      )
 
       setEducessData(res.data)
       setLoading0045(false)
@@ -119,7 +123,7 @@ const VasuliTapsil = () => {
   }
   const handleSubmit = async () => {
     // 1. Start Loading
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     const payload = {
       districtCode,
@@ -127,32 +131,31 @@ const VasuliTapsil = () => {
       ccode: cCode,
       revenueYear,
       remark,
-      echawdiType: 4
-    };
+      echawdiType: 4,
+    }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload);
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
-        setIsSubmitting(false);
-        setSubmitSuccess(true);
+        setIsSubmitting(false)
+        setSubmitSuccess(true)
 
         // 3. Wait for 2 seconds so the user sees the success animation, then redirect
         setTimeout(() => {
-          setSubmitSuccess(false);
-          setShowConfirmModal(false);
-          setRemark('');
-          navigate(-1); // Redirect back
-        }, 2000);
-
+          setSubmitSuccess(false)
+          setShowConfirmModal(false)
+          setRemark('')
+          navigate(-1) // Redirect back
+        }, 2000)
       } else {
-        throw new Error('Unexpected response status');
+        throw new Error('Unexpected response status')
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      setIsSubmitting(false); // Stop loading on error
-      alert(err?.response?.data?.message || 'Failed to submit remark');
+      console.error('Submit error:', err)
+      setIsSubmitting(false) // Stop loading on error
+      alert(err?.response?.data?.message || 'Failed to submit remark')
     }
   }
   const handleCancel = () => {
@@ -169,7 +172,9 @@ const VasuliTapsil = () => {
         return
       }
 
-      const res = await api.get(`/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=2025-26&ccode=${cCode}`)
+      const res = await api.get(
+        `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=2025-26&ccode=${cCode}`,
+      )
 
       console.log(res.data, 'target data response')
       setTargetData(res.data)
@@ -289,9 +294,12 @@ const VasuliTapsil = () => {
   }
 
   return (
-
     <>
-      <FerfarNavbar />
+      <FerfarNavbar
+        tooltipData={
+          'गावात जमीन महसूल व संकीर्ण प्रकारातील मागणी किती आहे व आजपर्यंत त्यामध्ये किती वसुली झालेली आहे, त्याचा अहवाल तपासणीसाठी उपलब्ध होणार आहे.'
+        }
+      />
 
       <div className={styles['vasuli-container']}>
         <h2 className={styles['main-title']}>जमीन महसूलाची वसुली तपशील</h2>
@@ -302,8 +310,8 @@ const VasuliTapsil = () => {
           <strong>टीप:</strong>
           <ul className="mt-2 mb-0 text-start">
             <li>
-              सदर गावात जमीन महसूल व संकीर्ण प्रकारातील मागणी किती आहे व आजपर्यंत त्यामध्ये किती वसुली
-              झालेली आहे, याबाबतचा अहवाल तपासणीसाठी सादर करण्यात आलेला आहे.
+              सदर गावात जमीन महसूल व संकीर्ण प्रकारातील मागणी किती आहे व आजपर्यंत त्यामध्ये किती
+              वसुली झालेली आहे, याबाबतचा अहवाल तपासणीसाठी सादर करण्यात आलेला आहे.
             </li>
             <li>सदर माहिती मागणी निश्चितीपासून आजच्या तारखेपर्यंतच्या कालावधीतील वसुलीची आहे.</li>
           </ul>
@@ -413,12 +421,16 @@ const VasuliTapsil = () => {
                   <CTableHeaderCell className={styles['sub-header-cell']}>
                     मागील वर्ष
                   </CTableHeaderCell>
-                  <CTableHeaderCell className={styles['sub-header-cell']}>चालू वर्ष</CTableHeaderCell>
+                  <CTableHeaderCell className={styles['sub-header-cell']}>
+                    चालू वर्ष
+                  </CTableHeaderCell>
                   <CTableHeaderCell className={styles['sub-header-cell']}>एकूण</CTableHeaderCell>
                   <CTableHeaderCell className={styles['sub-header-cell']}>
                     मागील वर्ष
                   </CTableHeaderCell>
-                  <CTableHeaderCell className={styles['sub-header-cell']}>चालू वर्ष</CTableHeaderCell>
+                  <CTableHeaderCell className={styles['sub-header-cell']}>
+                    चालू वर्ष
+                  </CTableHeaderCell>
                   <CTableHeaderCell className={styles['sub-header-cell']}>एकूण</CTableHeaderCell>
                 </CTableRow>
               </CTableHead>
@@ -500,7 +512,6 @@ const VasuliTapsil = () => {
 
         {/* <div className="remark-controls-section p-4 mt-4 border rounded bg-light"> */}
         <div className={styles['table-card']}>
-
           <h5 className="remark-title mb-3">शेरा</h5>
 
           <CFormTextarea
@@ -528,7 +539,7 @@ const VasuliTapsil = () => {
         <ConfirmSubmitModal
           visible={showConfirmModal}
           loading={isSubmitting} // This must match your useState name
-          success={submitSuccess}   // This must match your useState name
+          success={submitSuccess} // This must match your useState name
           onCancel={() => setShowConfirmModal(false)}
           onConfirm={handleSubmit}
         />
