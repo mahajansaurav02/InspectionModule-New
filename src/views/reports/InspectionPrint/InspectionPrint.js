@@ -171,7 +171,57 @@ const InspectionPrint = React.forwardRef(({ reportData, sequentialFerfarList }, 
                             {/* <CTableHeaderCell width="20%">शेरा</CTableHeaderCell> */}
                           </CTableRow>
                         </CTableHead>
+
                         <CTableBody>
+                          <CTableRow>
+                            {/* १८० पेक्षा जास्त */}
+                            <CTableDataCell className="fw-bold">
+                              {reportData.eHakkArjData?.pralambitArjList?.filter(
+                                (item) =>
+                                  item.ehakkatype &&
+                                  (item.ehakkatype.includes('180') ||
+                                    item.ehakkatype.includes('१८०')) &&
+                                  item.ehakkatype.includes('जास्त'),
+                              ).length || 0}
+                            </CTableDataCell>
+
+                            {/* ९० ते १८० */}
+                            <CTableDataCell className="fw-bold">
+                              {reportData.eHakkArjData?.pralambitArjList?.filter(
+                                (item) =>
+                                  item.ehakkatype &&
+                                  (item.ehakkatype.includes('90') ||
+                                    item.ehakkatype.includes('९०')) &&
+                                  (item.ehakkatype.includes('180') ||
+                                    item.ehakkatype.includes('१८०')),
+                              ).length || 0}
+                            </CTableDataCell>
+
+                            {/* ३० ते ९० */}
+                            <CTableDataCell className="fw-bold">
+                              {reportData.eHakkArjData?.pralambitArjList?.filter(
+                                (item) =>
+                                  item.ehakkatype &&
+                                  (item.ehakkatype.includes('30') ||
+                                    item.ehakkatype.includes('३०')) &&
+                                  (item.ehakkatype.includes('90') ||
+                                    item.ehakkatype.includes('९०')),
+                              ).length || 0}
+                            </CTableDataCell>
+
+                            {/* ३० पेक्षा कमी */}
+                            <CTableDataCell className="fw-bold">
+                              {reportData.eHakkArjData?.pralambitArjList?.filter(
+                                (item) =>
+                                  item.ehakkatype &&
+                                  (item.ehakkatype.includes('30') ||
+                                    item.ehakkatype.includes('३०')) &&
+                                  item.ehakkatype.includes('कमी'),
+                              ).length || 0}
+                            </CTableDataCell>
+                          </CTableRow>
+                        </CTableBody>
+                        {/* <CTableBody>
                           <CTableRow>
                             <CTableDataCell className="fw-bold">
                               {reportData.eHakkArjData?.pralambitArjList?.filter(
@@ -205,7 +255,7 @@ const InspectionPrint = React.forwardRef(({ reportData, sequentialFerfarList }, 
                               ).length || 0}
                             </CTableDataCell>
                           </CTableRow>
-                        </CTableBody>
+                        </CTableBody> */}
                       </CTable>
                     </div>
                   </CCol>

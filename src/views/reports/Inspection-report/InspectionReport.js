@@ -30,6 +30,7 @@ import '@coreui/coreui/dist/css/coreui.min.css'
 import './InspectionReport.css'
 
 // Import new components
+import MasterInspectionPrint from '../InspectionPrint/MasterInspectionPrint'
 import InspectionPrint from '../InspectionPrint/InspectionPrint'
 import PrintUtility from '../InspectionPrint/PrintUtility'
 import InspectionRemarksPrint from '../InspectionPrint/InspectionRemarksPrint'
@@ -474,36 +475,91 @@ const InspectionReport = () => {
     }
   }
 
+  // const getEhakkData = async () => {
+  //   setIsLoading(true)
+  //   try {
+  //     if (!cCode) {
+  //       alert('Village code not found....Please Select Village First')
+  //       return
+  //     }
+
+  //     // check push
+  //     // 1. Fetch the real-time data from Type Five API
+  //     const response = await api.get(
+  //       `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
+  //     )
+
+  //     // console.log(response.data, 'EhakkData data response')
+
+  //     toast.success('Data fetched successfully!', { autoClose: 2000 })
+  //     console.log(response.data, 'EhakkData API Response')
+
+  //     if (response.data && Array.isArray(response.data)) {
+  //       // 2. Filter records where applicationId is NOT null
+  //       console.log(response.data, 'response.data=========================')
+
+  //       const realTimeTrutiList = response.data
+  //         .filter((item) => item.applicationId !== null)
+  //         .map((item) => ({
+  //           arjNo: item.applicationId,
+  //           shera: item.remark,
+  //           // typeOfRemark: item.remarkType,
+  //           // typeOfRemark: item.remarkType == 'गंभीर' ? 1 : item.remarkType == 'अतीगंभीर' ? 3 : 2,
+  //           typeOfRemark:
+  //             item.remarkType === 'साधारण'
+  //               ? 1
+  //               : item.remarkType === 'गंभीर'
+  //               ? 2
+  //               : item.remarkType === 'अतीगंभीर'
+  //               ? 3
+  //               : 1,
+  //           ehakkatype: item.ehakkatype,
+  //         }))
+  //       // 3. Update the reportData state with this real data, replacing the dummy list
+  //       setReportData((prev) => ({
+  //         ...prev,
+  //         eHakkArjData: {
+  //           ...prev.eHakkArjData,
+  //           trutiArjList: realTimeTrutiList,
+  //         },
+  //       }))
+  //     }
+
+  //     // Keep existing calls if you need them for other counts
+  //     await api.get(
+  //       `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=1`,
+  //     )
+
+  //     toast.success('ई-हक्क डेटा यशस्वीरित्या अपडेट झाला!', { autoClose: 2000 })
+  //   } catch (err) {
+  //     toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
+  //     console.error(err)
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
+
   const getEhakkData = async () => {
     setIsLoading(true)
     try {
       if (!cCode) {
         alert('Village code not found....Please Select Village First')
-        return
+        return []
       }
 
-      // check push
-      // 1. Fetch the real-time data from Type Five API
       const response = await api.get(
         `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
       )
 
-      // console.log(response.data, 'EhakkData data response')
-
-      toast.success('Data fetched successfully!', { autoClose: 2000 })
-      console.log(response.data, 'EhakkData API Response')
+      console.log(response.data, 'Truti Arj API Response (Type 5)')
 
       if (response.data && Array.isArray(response.data)) {
-        // 2. Filter records where applicationId is NOT null
-        console.log(response.data, 'response.data=========================')
-
         const realTimeTrutiList = response.data
           .filter((item) => item.applicationId !== null)
           .map((item) => ({
             arjNo: item.applicationId,
+            remark: item.remark, // remark आणि shera दोन्ही मॅप करा
             shera: item.remark,
-            // typeOfRemark: item.remarkType,
-            // typeOfRemark: item.remarkType == 'गंभीर' ? 1 : item.remarkType == 'अतीगंभीर' ? 3 : 2,
             typeOfRemark:
               item.remarkType === 'साधारण'
                 ? 1
@@ -514,29 +570,19 @@ const InspectionReport = () => {
                 : 1,
             ehakkatype: item.ehakkatype,
           }))
-        // 3. Update the reportData state with this real data, replacing the dummy list
-        setReportData((prev) => ({
-          ...prev,
-          eHakkArjData: {
-            ...prev.eHakkArjData,
-            trutiArjList: realTimeTrutiList,
-          },
-        }))
+
+        toast.success('ई-हक्क (त्रुटी) डेटा यशस्वीरित्या अपडेट झाला!', { autoClose: 2000 })
+        return realTimeTrutiList // Return करा जेणेकरून आपण ते reportData मध्ये सेट करू शकू
       }
-
-      // Keep existing calls if you need them for other counts
-      await api.get(
-        `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=1`,
-      )
-
-      toast.success('ई-हक्क डेटा यशस्वीरित्या अपडेट झाला!', { autoClose: 2000 })
+      return []
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
       console.error(err)
+      return []
     } finally {
       setIsLoading(false)
     }
   }
+
   const getRevenueTargetData = async () => {
     setIsLoading(true)
     try {
@@ -578,12 +624,10 @@ const InspectionReport = () => {
 
       const data = response.data || {}
 
-      // ---- Row 1: जमीन महसूल वसुली (०२९) ----
       const jaminDemand = Number(data.totalDemand) || 0
       const jaminCollected = Number(data.totalCollected) || 0
       const jaminPercentage = jaminDemand ? ((jaminCollected / jaminDemand) * 100).toFixed(2) : 0
 
-      // ---- Row 2: इतर जमीन महसूल वसुली (०४५) = EGS + Education Cess ----
       const itarDemand = (Number(data.totalEgsDemand) || 0) + (Number(data.totalEduCessDemand) || 0)
       const itarCollected =
         (Number(data.totalEgsCollected) || 0) + (Number(data.totalEduCessCollected) || 0)
@@ -609,77 +653,206 @@ const InspectionReport = () => {
 
   const getEhakkDataRemarkCount = async () => {
     setIsLoading(true)
-
     try {
       if (!cCode) {
-        alert('Village code not found....Please Select Village First')
-        return
+        return []
       }
 
-      // eHakka types you want to call
+      // 1=180+, 2=90-180, 3=30-90, 4=<30
       const ehakkaTypes = [1, 2, 3, 4]
+      const labels = {
+        1: '१८० दिवसापेक्षा जास्त दिवस प्रलंबित',
+        2: '९० ते १८० दिवसातील प्रलंबित',
+        3: '३० ते ९० दिवसातील प्रलंबित',
+        4: '३० दिवसा पेक्षा कमी दिवस प्रलंबित',
+      }
 
-      // create API promises
       const requests = ehakkaTypes.map((type) =>
         api.get(
           `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=${type}`,
         ),
       )
 
-      // call all APIs together
       const responses = await Promise.all(requests)
 
-      // store complete data by type
-      let allData = [] // ✅ single array
+      let allPralambitData = []
       const ehakkaCounts = {}
 
       responses.forEach((res, index) => {
         const type = ehakkaTypes[index]
-
         const data = res.data || []
 
-        // count
         ehakkaCounts[type] = data.length
 
-        // push data into single array
-        allData.push(...data)
+        const mappedData = data.map((item) => ({
+          applicationId: item.applicationId,
+          remark: item.remark,
+          remarkType: item.remarkType,
+          ehakkatype: labels[type],
+        }))
+
+        allPralambitData.push(...mappedData)
       })
 
-      console.log('All EHakka Data:', allData)
-      console.log('Counts:', ehakkaCounts)
+      console.log('Real Pralambit Applications Data:', allPralambitData)
 
-      setEhakkaData(allData)
       setEhakkaCounts(ehakkaCounts)
+      setEhakkaData(allPralambitData)
 
-      toast.success('Data fetched successfully!', { autoClose: 2000 })
+      return allPralambitData
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
       console.error(err)
+      return []
     } finally {
       setIsLoading(false)
     }
   }
 
+  // const getEhakkDataRemarkCount = async () => {
+  //   setIsLoading(true)
+
+  //   try {
+  //     if (!cCode) {
+  //       alert('Village code not found....Please Select Village First')
+  //       return
+  //     }
+
+  //     // eHakka types you want to call
+  //     const ehakkaTypes = [1, 2, 3, 4]
+
+  //     // create API promises
+  //     const requests = ehakkaTypes.map((type) =>
+  //       api.get(
+  //         `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=${type}`,
+  //       ),
+  //     )
+
+  //     // call all APIs together
+  //     const responses = await Promise.all(requests)
+
+  //     // store complete data by type
+  //     let allData = [] // ✅ single array
+  //     const ehakkaCounts = {}
+
+  //     responses.forEach((res, index) => {
+  //       const type = ehakkaTypes[index]
+
+  //       const data = res.data || []
+
+  //       // count
+  //       ehakkaCounts[type] = data.length
+
+  //       // push data into single array
+  //       allData.push(...data)
+  //     })
+
+  //     console.log('All EHakka Data:', allData)
+  //     console.log('Counts:', ehakkaCounts)
+
+  //     setEhakkaData(allData)
+  //     setEhakkaCounts(ehakkaCounts)
+
+  //     toast.success('Data fetched successfully!', { autoClose: 2000 })
+  //   } catch (err) {
+  //     toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
+  //     console.error(err)
+  //   } finally {
+  //     setIsLoading(false)
+  //   }
+  // }
+
   // --- NEW: Mock API Call for Pending Applications ---
-  const getPendingApplications = async () => {
-    try {
-      //Mock API URL
-      const mockUrl = 'https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above'
-      const response = await api.get(mockUrl)
+  // const getPendingApplications = async () => {
+  //   try {
+  //     //Mock API URL
+  //     const mockUrl = 'https://69662043f6de16bde44c4cdf.mockapi.io/getEhakkaData/180above'
+  //     const response = await api.get(mockUrl)
 
-      console.log('Pending Applications Mock Data:', response.data)
+  //     console.log('Pending Applications Mock Data:', response.data)
 
-      if (Array.isArray(response.data)) {
-        return response.data
-      } else {
-        return response.data.data || []
-      }
-    } catch (error) {
-      console.error('Error fetching pending applications:', error)
-      toast.error('प्रलंबित अर्जांची माहिती आणण्यात त्रुटी आली.')
-      return []
-    }
-  }
+  //     if (Array.isArray(response.data)) {
+  //       return response.data
+  //     } else {
+  //       return response.data.data || []
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching pending applications:', error)
+  //     toast.error('प्रलंबित अर्जांची माहिती आणण्यात त्रुटी आली.')
+  //     return []
+  //   }
+  // }
+
+  // const handleGetData = async () => {
+  //   setLoading(true)
+  //   setError(null)
+  //   setReportData({})
+  //   getFerfarData()
+  //   getAkrushakDarCheck()
+  //   getEhakkDataRemarkCount()
+  //   getRevenueTargetData()
+  //   await fetchVasuliDetails()
+
+  //   try {
+  //     const data = await fetchInspectionData()
+  //     const remarkData = await fetchFerfarInspectionData()
+
+  //     // --- NEW CHANGE START: Mock API Integration ---
+  //     const pendingArjList = await getPendingApplications()
+  //     if (pendingArjList && pendingArjList.length > 0) {
+  //       if (!data.eHakkArjData) data.eHakkArjData = {}
+  //       data.eHakkArjData.pralambitArjList = pendingArjList
+  //       toast.success('प्रलंबित अर्जांची यादी अपडेट झाली (Mock API)', { autoClose: 2000 })
+  //     }
+  //     // --- NEW CHANGE END ---
+
+  //     setReportData(data)
+  //     await getEhakkData()
+
+  //     // Organize ferfar remarks by kramank
+  //     const organizedFerfarRemarks = {}
+  //     const remarkKeys = [
+  //       'adeshFerfarRemark',
+  //       'kalam155FerfarRemark',
+  //       'itarFerfarRemark',
+  //       'rejectedFerfarRemark',
+  //       'reEntryFerfarRemark',
+  //       'niyantritFerfarRemark',
+  //       'sthagitiFerfarRemark',
+  //       'templateFerfarRemark',
+  //     ]
+
+  //     remarkKeys.forEach((key, index) => {
+  //       if (remarkData[key]) {
+  //         organizedFerfarRemarks[index + 1] = remarkData[key]
+  //       }
+  //     })
+
+  //     setFerfarRemarkList(organizedFerfarRemarks)
+
+  //     setEChawadiRemarks({
+  //       gawNamunaPurna: {
+  //         nirank: 'निरंक केलेले नमुने योग्यरित्या प्रक्रिया झाले आहेत.',
+  //         kamkajPurna: 'कामकाज पूर्ण नमुन्यांवर योग्य कारवाई करण्यात आली आहे.',
+  //         aghoshanaKeliNaslele: 'काही नमुन्यांवर घोषणा करण्यात विलंब आहे.',
+  //       },
+  //       mangniRakkamKamiKhatedar: 'मागणी निश्चितीनंतरच्या दुरुस्ती योग्य आहेत.',
+  //       akrushakDarBharlaKay: 'अकृषक दर योग्यरित्या भरला आहे.',
+  //       akarbandTapshil: 'आकारबंद तपशीलात काही विसंगती आढळल्या.',
+  //     })
+
+  //     setVasuliRemarks('वसुली प्रक्रिया यशस्वीरित्या पार पाडली गेली आहे. टक्केवारी योग्य आहे.')
+
+  //     setEHakkRemarks({
+  //       trutiPurtta: 'त्रुटीपूर्ततेसाठी परत पाठवलेले अर्ज योग्यरित्या हाताळले गेले.',
+  //       pralambitArj: 'प्रलंबित अर्जांवर लक्ष केंद्रित करून लवकर निकाल काढावेत.',
+  //     })
+  //   } catch (apiError) {
+  //     console.error('Error fetching inspection data:', apiError)
+  //     setError('डेटा मिळवण्यात त्रुटी आली. कृपया नंतर प्रयत्न करा.')
+  //   } finally {
+  //     setLoading(false)
+  //   }
+  // }
 
   const handleGetData = async () => {
     setLoading(true)
@@ -687,7 +860,6 @@ const InspectionReport = () => {
     setReportData({})
     getFerfarData()
     getAkrushakDarCheck()
-    getEhakkDataRemarkCount()
     getRevenueTargetData()
     await fetchVasuliDetails()
 
@@ -695,19 +867,17 @@ const InspectionReport = () => {
       const data = await fetchInspectionData()
       const remarkData = await fetchFerfarInspectionData()
 
-      // --- NEW CHANGE START: Mock API Integration ---
-      const pendingArjList = await getPendingApplications()
-      if (pendingArjList && pendingArjList.length > 0) {
-        if (!data.eHakkArjData) data.eHakkArjData = {}
-        data.eHakkArjData.pralambitArjList = pendingArjList
-        toast.success('प्रलंबित अर्जांची यादी अपडेट झाली (Mock API)', { autoClose: 2000 })
-      }
-      // --- NEW CHANGE END ---
+      const realTrutiList = await getEhakkData()
+      const realPralambitList = await getEhakkDataRemarkCount()
+
+      if (!data.eHakkArjData) data.eHakkArjData = {}
+
+      data.eHakkArjData.trutiArjList = realTrutiList
+      data.eHakkArjData.pralambitArjList = realPralambitList
 
       setReportData(data)
-      await getEhakkData()
 
-      // Organize ferfar remarks by kramank
+      // Organize ferfar remarks
       const organizedFerfarRemarks = {}
       const remarkKeys = [
         'adeshFerfarRemark',
@@ -727,20 +897,8 @@ const InspectionReport = () => {
       })
 
       setFerfarRemarkList(organizedFerfarRemarks)
-
-      setEChawadiRemarks({
-        gawNamunaPurna: {
-          nirank: 'निरंक केलेले नमुने योग्यरित्या प्रक्रिया झाले आहेत.',
-          kamkajPurna: 'कामकाज पूर्ण नमुन्यांवर योग्य कारवाई करण्यात आली आहे.',
-          aghoshanaKeliNaslele: 'काही नमुन्यांवर घोषणा करण्यात विलंब आहे.',
-        },
-        mangniRakkamKamiKhatedar: 'मागणी निश्चितीनंतरच्या दुरुस्ती योग्य आहेत.',
-        akrushakDarBharlaKay: 'अकृषक दर योग्यरित्या भरला आहे.',
-        akarbandTapshil: 'आकारबंद तपशीलात काही विसंगती आढळल्या.',
-      })
-
+      setEChawadiRemarks({})
       setVasuliRemarks('वसुली प्रक्रिया यशस्वीरित्या पार पाडली गेली आहे. टक्केवारी योग्य आहे.')
-
       setEHakkRemarks({
         trutiPurtta: 'त्रुटीपूर्ततेसाठी परत पाठवलेले अर्ज योग्यरित्या हाताळले गेले.',
         pralambitArj: 'प्रलंबित अर्जांवर लक्ष केंद्रित करून लवकर निकाल काढावेत.',
@@ -842,22 +1000,10 @@ const InspectionReport = () => {
         setActiveRemarkType('ehakk-truti')
         setActiveRemarkData(reportData.eHakkArjData?.trutiArjList || [])
         break
-      // case 'echawadi':
-      //   setActiveRemarkType('echawadi')
-      //   setActiveRemarkData([
-      //     { remark: eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही' },
-      //   ])
       case 'echawadi':
         setActiveRemarkType('echawadi')
-        // Combine remarks for I, II, and III into a single array to show in the modal
         setActiveRemarkData([
-          { remark: `I) ${eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही'}` },
-          { remark: `II) ${eChawadiRemarks?.gawNamunaPurna?.kamkajPurna || 'शेरा उपलब्ध नाही'}` },
-          {
-            remark: `III) ${
-              eChawadiRemarks?.gawNamunaPurna?.aghoshanaKeliNaslele || 'शेरा उपलब्ध नाही'
-            }`,
-          },
+          { remark: eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही' },
         ])
         break
       case 'vasuli':
@@ -872,6 +1018,50 @@ const InspectionReport = () => {
     }
     setShowAbhiprayModal(true)
   }
+
+  // const handleViewAbhipray = (section) => {
+  //   console.log(ehakkaData, 'ehakkaData in abhipray=============')
+  //   console.log('i am button ')
+  //   switch (section) {
+  //     case 'ehakk':
+  //       setActiveRemarkType('ehakk')
+  //       setActiveRemarkData(ehakkaData || [])
+  //       break
+  //     case 'ehakk-truti':
+  //       setActiveRemarkType('ehakk-truti')
+  //       setActiveRemarkData(reportData.eHakkArjData?.trutiArjList || [])
+  //       break
+  //     // case 'echawadi':
+  //     //   setActiveRemarkType('echawadi')
+  //     //   setActiveRemarkData([
+  //     //     { remark: eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही' },
+  //     //   ])
+  //     case 'echawadi':
+  //       setActiveRemarkType('echawadi')
+  //       // Combine remarks for I, II, and III into a single array to show in the modal
+  //       setActiveRemarkData([
+  //         { remark: `I) ${eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही'}` },
+  //         { remark: `II) ${eChawadiRemarks?.gawNamunaPurna?.kamkajPurna || 'शेरा उपलब्ध नाही'}` },
+  //         {
+  //           remark: `III) ${
+  //             eChawadiRemarks?.gawNamunaPurna?.aghoshanaKeliNaslele || 'शेरा उपलब्ध नाही'
+  //           }`,
+  //         },
+  //       ])
+  //       break
+  //     case 'vasuli':
+  //       setActiveRemarkType('vasuli')
+  //       setActiveRemarkData([{ remark: vasuliRemarks }])
+  //       break
+  //     default:
+  //       if (section?.vasuliData) {
+  //         setActiveRemarkType('vasuli')
+  //         setActiveRemarkData([{ remark: vasuliRemarks }])
+  //       }
+  //   }
+  //   setShowAbhiprayModal(true)
+  // }
+
   const handleDownloadPdf = () => {
     if (!reportData.tapasaniAdhikariName) {
       setError('कृपया प्रथम "अहवाल तयार करा" बटण दाबा.')
@@ -881,17 +1071,15 @@ const InspectionReport = () => {
     setLoading(true)
     setError(null)
 
-    const mainReportContainer = document.getElementById('main-report-container')
-    const remarksReportContainer = document.getElementById('remarks-report-container')
+    const masterPrintContainer = document.getElementById('master-print-container')
 
-    if (!mainReportContainer || !remarksReportContainer) {
+    if (!masterPrintContainer) {
       setError('रिपोर्ट सापडली नाही.')
       setLoading(false)
       return
     }
 
-    const mainReportHTML = mainReportContainer.innerHTML
-    const remarksReportHTML = remarksReportContainer.innerHTML
+    const printContentHTML = masterPrintContainer.innerHTML
 
     const htmlContent = `
         <!DOCTYPE html>
@@ -900,329 +1088,49 @@ const InspectionReport = () => {
             <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
             <meta charset="UTF-8">
             <style>
-                /* A4 Page Settings */
-                @page {
-                    size: A4 portrait;
-                    margin: 15mm 10mm;
-                }
-                
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
-                
-                body {
-                    width: 210mm;
-                    min-height: 297mm;
-                    margin: 0 auto;
-                    padding: 0;
-                    background: white;
-                    font-family: Arial, sans-serif;
-                    font-size: 10pt;
-                    line-height: 1.3;
-                }
-                
-                /* Main container */
-                .main-container {
-                    padding: 15mm 10mm;
-                    width: 100%;
-                }
-                
-                /* Card styling */
-                .card {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    border: 1px solid #000 !important;
-                    margin-bottom: 15px !important;
-                    box-shadow: none !important;
-                    page-break-inside: avoid;
-                }
-                
-                .card-header {
-                    background-color: #f8f9fa !important;
-                    border-bottom: 2px solid #000 !important;
-                    padding: 12px !important;
-                    text-align: center;
-                }
-                
-                .card-header h2 {
-                    margin: 0 !important;
-                    font-size: 18pt !important;
-                    font-weight: bold;
-                }
-                
-                .card-body {
-                    padding: 15px !important;
-                    width: 100% !important;
-                }
-                
-                /* Table styling - CRITICAL for page breaks */
-                table {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    border-collapse: collapse !important;
-                    border: 1px solid #000 !important;
-                    margin: 10px 0 15px 0 !important;
-                    font-size: 9pt !important;
-                    page-break-inside: auto !important;
-                }
-                
-                /* Force table rows to stay together on same page */
-                tr {
-                    page-break-inside: avoid !important;
-                    page-break-after: auto !important;
-                }
-                
-                th, td {
-                    border: 1px solid #000 !important;
-                    padding: 6px 8px !important;
-                    word-wrap: break-word;
-                }
-                
-                th {
-                    background-color: #f2f2f2 !important;
-                    font-weight: bold !important;
-                }
-                
-                /* Section headers */
-                h4 {
-                    margin: 15px 0 8px 0 !important;
-                    font-size: 12pt !important;
-                    color: #000 !important;
-                    page-break-after: avoid;
-                }
-                
-                /* Horizontal rules */
-                hr {
-                    border-top: 2px solid #000 !important;
-                    margin: 12px 0 !important;
-                }
-                
-                /* Row and column styling */
-                .row {
-                    width: 100% !important;
-                    margin-bottom: 8px !important;
-                }
-                
-                .col {
-                    padding: 0 5px !important;
-                }
-                
-                /* Hide non-print elements */
-                .no-print, .remark-btn, button, .btn {
-                    display: none !important;
-                }
-                
-                /* Print view specific */
-                .print-view {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                }
-                
-                /* Page break control classes */
-                .always-break {
-                    page-break-before: always !important;
-                }
-                
-                .avoid-break {
-                    page-break-inside: avoid !important;
-                }
-                
-                /* Force tables to move to next page if they don't fit */
-                .table-container {
-                    page-break-inside: avoid !important;
-                }
-                
-                /* Compact styling for better fit */
-                .compact-table {
-                    font-size: 8.5pt !important;
-                }
-                
-                .compact-table th,
-                .compact-table td {
-                    padding: 4px 6px !important;
-                }
-                
-                /* Ensure no element overflows */
-                * {
-                    overflow-wrap: break-word;
-                    word-wrap: break-word;
-                }
-                
-                /* Page break for remarks report */
-                .remarks-section {
-                    page-break-before: always !important;
-                    margin-top: 20mm !important;
-                }
-                
-                /* Media print specific rules */
-                @media print {
-                    body {
-                        padding: 0 !important;
-                        margin: 0 !important;
-                        width: 210mm !important;
-                    }
-                    
-                    .main-container {
-                        padding: 15mm 10mm !important;
-                    }
-                    
-                    /* Force entire tables to stay together */
-                    table {
-                        page-break-inside: avoid !important;
-                    }
-                    
-                    /* Prevent orphans and widows */
-                    p, h1, h2, h3, h4 {
-                        page-break-after: avoid;
-                        page-break-inside: avoid;
-                    }
-                    
-                    /* Section breaks */
-                    .section-break {
-                        page-break-before: always;
-                    }
-                }
+                @page { size: A4 portrait; margin: 15mm 10mm; }
+                body { margin: 5; padding: 5; background: white; font-family: Arial, sans-serif; }
+                table { page-break-inside: avoid; }
+                tr { page-break-inside: avoid; page-break-after: auto; }
             </style>
         </head>
         <body>
             <div class="main-container">
-                <div class="print-view">
-                    ${mainReportHTML}
-                </div>
-                
-                <div style="page-break-before: always; height: 0;"></div>
-                
-                <div class="print-view remarks-section">
-                    ${remarksReportHTML}
-                </div>
+                ${printContentHTML}
             </div>
             
             <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
             <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
             <script>
                 window.onload = function() {
-                    // Add table protection after DOM loads
                     setTimeout(function() {
-                        // Function to protect tables from page breaks
-                        function protectTablesFromPageBreaks() {
-                            const tables = document.querySelectorAll('table');
+                        const element = document.body;
+                        html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                            const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                            const pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+                            const imgWidth = pdf.internal.pageSize.getWidth();
+                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
                             
-                            tables.forEach(table => {
-                                // Check table height
-                                const tableHeight = table.offsetHeight;
-                                const pageHeight = 1122; // A4 height in pixels at 96 DPI
-                                
-                                // If table is tall, try to make it more compact
-                                if (tableHeight > pageHeight * 0.6) {
-                                    table.classList.add('compact-table');
-                                }
-                                
-                                // Check individual rows for page break issues
-                                const rows = table.querySelectorAll('tr');
-                                let currentPageBottom = 0;
-                                
-                                rows.forEach((row, index) => {
-                                    const rowRect = row.getBoundingClientRect();
-                                    const rowBottom = rowRect.bottom;
-                                    
-                                    // If row is near page bottom, add page break before table
-                                    if (rowBottom > pageHeight * 0.85 && index === 0) {
-                                        table.style.pageBreakBefore = 'always';
-                                    }
-                                });
-                            });
-                        }
-                        
-                        // Apply table protection
-                        protectTablesFromPageBreaks();
-                        
-                        // Wait a bit more for styles to apply
-                        setTimeout(function() {
-                            // Generate PDF
-                            const element = document.body;
+                            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
                             
-                            html2canvas(element, {
-                                scale: 2,
-                                useCORS: true,
-                                backgroundColor: '#ffffff',
-                                logging: false,
-                                width: element.scrollWidth,
-                                height: element.scrollHeight,
-                                windowWidth: element.scrollWidth,
-                                windowHeight: element.scrollHeight,
-                                onclone: function(clonedDoc) {
-                                    // Apply print styles to cloned document
-                                    const style = clonedDoc.createElement('style');
-                                    style.innerHTML = \`
-                                        /* Force table rows to stay together */
-                                        tr {
-                                            page-break-inside: avoid !important;
-                                            break-inside: avoid !important;
-                                        }
-                                        
-                                        /* Prevent table splitting */
-                                        table {
-                                            page-break-inside: avoid !important;
-                                            break-inside: avoid !important;
-                                        }
-                                        
-                                        /* Compact tables for better fit */
-                                        .compact-table {
-                                            font-size: 8.5pt !important;
-                                        }
-                                        
-                                        .compact-table th,
-                                        .compact-table td {
-                                            padding: 4px 6px !important;
-                                        }
-                                    \`;
-                                    clonedDoc.head.appendChild(style);
+                            let heightLeft = imgHeight;
+                            let position = 0;
+                            let pageCount = 1;
+                            const pageHeight = pdf.internal.pageSize.getHeight();
+                            
+                            if (heightLeft > pageHeight) {
+                                while (heightLeft > 0) {
+                                    position = -pageHeight * pageCount;
+                                    pdf.addPage();
+                                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+                                    heightLeft -= pageHeight;
+                                    pageCount++;
                                 }
-                            }).then(canvas => {
-                                const imgData = canvas.toDataURL('image/jpeg', 0.95);
-                                const pdf = new jspdf.jsPDF({
-                                    orientation: 'portrait',
-                                    unit: 'mm',
-                                    format: 'a4'
-                                });
-                                
-                                const pageWidth = pdf.internal.pageSize.getWidth();
-                                const pageHeight = pdf.internal.pageSize.getHeight();
-                                
-                                // Calculate image dimensions to fit page width
-                                const imgWidth = pageWidth;
-                                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                                
-                                // Add first page
-                                pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
-                                
-                                // Handle multiple pages
-                                let heightLeft = imgHeight;
-                                let position = 0;
-                                let pageCount = 1;
-                                
-                                if (heightLeft > pageHeight) {
-                                    while (heightLeft > 0) {
-                                        position = -pageHeight * pageCount;
-                                        pdf.addPage();
-                                        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                                        heightLeft -= pageHeight;
-                                        pageCount++;
-                                    }
-                                }
-                                
-                                pdf.save('निरीक्षण_रिपोर्ट_शेरा_यादी.pdf');
-                                
-                                // Close the window after saving
-                                setTimeout(() => window.close(), 1000);
-                            }).catch(error => {
-                                console.error('PDF generation error:', error);
-                                alert('PDF तयार करताना त्रुटी आली.');
-                                window.close();
-                            });
-                        }, 500);
+                            }
+                            
+                            pdf.save('निरीक्षण_रिपोर्ट.pdf');
+                            setTimeout(() => window.close(), 1000);
+                        });
                     }, 500);
                 }
             </script>
@@ -1239,13 +1147,10 @@ const InspectionReport = () => {
         setLoading(false)
       }, 4000)
     }
-
-    setLoading(false)
   }
 
   const handlePrintDirectly = () => {
-    const mainReportHTML = document.getElementById('main-report-container')?.innerHTML || ''
-    const remarksReportHTML = document.getElementById('remarks-report-container')?.innerHTML || ''
+    const printContentHTML = document.getElementById('master-print-container')?.innerHTML || ''
 
     const printWindow = window.open('', '_blank')
 
@@ -1255,303 +1160,20 @@ const InspectionReport = () => {
         <head>
             <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
             <meta charset="UTF-8">
-            <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@coreui/coreui/dist/css/coreui.min.css">
             <style>
-                /* A4 Page Settings */
-                @page {
-                    size: A4 portrait;
-                    margin: 20mm 15mm;
-                }
-                
-                * {
-                    margin: 0;
-                    padding: 0;
-                    box-sizing: border-box;
-                }
-                
-                body {
-                    width: 210mm;
-                    min-height: 297mm;
-                    margin: 0 auto;
-                    padding: 0;
-                    background: white;
-                    font-family: Arial, sans-serif;
-                    font-size: 11pt;
-                    line-height: 1.4;
-                }
-                
-                /* Print container */
-                .print-container {
-                    padding: 20mm 15mm;
-                    width: 100%;
-                }
-                
-                /* Card styling */
-                .card {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    border: 1px solid #000 !important;
-                    margin-bottom: 20px !important;
-                    box-shadow: none !important;
-                    page-break-inside: avoid;
-                }
-                
-                .card-header {
-                    background-color: #f8f9fa !important;
-                    border-bottom: 2px solid #000 !important;
-                    padding: 15px !important;
-                    text-align: center;
-                }
-                
-                .card-header h2 {
-                    margin: 0 !important;
-                    font-size: 20pt !important;
-                    font-weight: bold;
-                }
-                
-                .card-body {
-                    padding: 20px !important;
-                    width: 100% !important;
-                }
-                
-                /* Table styling */
-                table {
-                    width: 100% !important;
-                    max-width: 100% !important;
-                    border-collapse: collapse !important;
-                    border: 1px solid #000 !important;
-                    margin: 12px 0 18px 0 !important;
-                    font-size: 10pt !important;
-                    page-break-inside: auto !important;
-                }
-                
-                /* Prevent table row breaks */
-                tr {
-                    page-break-inside: avoid !important;
-                    page-break-after: auto !important;
-                }
-                
-                th, td {
-                    border: 1px solid #000 !important;
-                    padding: 8px 10px !important;
-                    word-wrap: break-word;
-                }
-                
-                th {
-                    background-color: #f2f2f2 !important;
-                    font-weight: bold !important;
-                }
-                
-                /* Section headers */
-                h4 {
-                    margin: 18px 0 12px 0 !important;
-                    font-size: 14pt !important;
-                    color: #000 !important;
-                    page-break-after: avoid;
-                }
-                
-                /* Horizontal rules */
-                hr {
-                    border-top: 2px solid #000 !important;
-                    margin: 15px 0 !important;
-                }
-                
-                /* Hide non-print elements */
-                .no-print, .remark-btn, button, .btn {
-                    display: none !important;
-                }
-                
-                /* Signature section - FIXED */
-                .signature-section {
-                    margin-top: 50px !important;
-                    padding-top: 20px !important;
-                    border-top: 1px solid #000 !important;
-                    width: 100% !important;
-                }
-                
-                .signature-container {
-                    display: flex !important;
-                    justify-content: flex-end !important;
-                    align-items: flex-start !important;
-                    width: 100% !important;
-                    margin-top: 40px !important;
-                    page-break-inside: avoid;
-                }
-                
-                .signature-space {
-                    width: 300px !important;
-                    text-align: right !important;
-                    padding-right: 20px !important;
-                }
-                
-                .signature-title {
-                    font-weight: bold !important;
-                    margin-bottom: 10px !important;
-                    font-size: 12pt !important;
-                }
-                
-                .signature-name {
-                    margin-top: 60px !important; /* Space for signature */
-                    font-weight: normal !important;
-                    font-size: 11pt !important;
-                    line-height: 1.5 !important;
-                }
-                
-                .signature-line {
-                    border-top: 1px solid #000 !important;
-                    margin-top: 80px !important;
-                    width: 250px !important;
-                    margin-left: auto !important;
-                }
-                
-                /* Stamp area */
-                .stamp-area {
-                    position: relative;
-                    margin-top: 100px;
-                    height: 100px;
-                }
-                
-                /* Page break control */
-                .page-break {
-                    page-break-before: always;
-                    height: 0;
-                    margin: 0;
-                    padding: 0;
-                }
-                
-                .remarks-section {
-                    page-break-before: always !important;
-                    margin-top: 30mm !important;
-                }
-                
-                /* Responsive text */
-                p {
-                    margin-bottom: 8px !important;
-                }
-                
-                /* Report header info */
-                .report-header .row {
-                    margin-bottom: 10px !important;
-                }
-                
-                .report-header p {
-                    margin-bottom: 6px !important;
-                }
-                
-                /* Media print specific rules */
-                @media print {
-                    body {
-                        padding: 0 !important;
-                        margin: 0 !important;
-                        width: 210mm !important;
-                        -webkit-print-color-adjust: exact;
-                        print-color-adjust: exact;
-                    }
-                    
-                    .print-container {
-                        padding: 20mm 15mm !important;
-                    }
-                    
-                    /* Force tables to stay together */
-                    table {
-                        page-break-inside: avoid !important;
-                    }
-                    
-                    /* Ensure signature stays on same page as last content */
-                    .signature-container {
-                        page-break-inside: avoid !important;
-                    }
-                    
-                    /* Page margins */
-                    @page :first {
-                        margin-top: 20mm;
-                    }
-                    
-                    @page {
-                        margin: 20mm 15mm;
-                    }
-                    
-                    /* Hide URL and page info */
-                    @page {
-                        @bottom-right {
-                            content: "";
-                        }
-                        @top-right {
-                            content: "";
-                        }
-                    }
-                }
-                
-                /* Compact view for better fit */
-                .compact-table {
-                    font-size: 9.5pt !important;
-                }
-                
-                .compact-table th,
-                .compact-table td {
-                    padding: 6px 8px !important;
-                }
+                @page { size: A4 portrait; margin: 15mm 15mm; }
+                body { margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                table { page-break-inside: avoid !important; }
+                tr { page-break-inside: avoid !important; }
             </style>
         </head>
         <body>
-            <div class="print-container">
-                <div class="main-report">
-                    ${mainReportHTML}
-                </div>
-                
-                <div class="page-break"></div>
-                
-                <div class="remarks-report remarks-section">
-                    ${remarksReportHTML}
-                </div>
-            </div>
-            
+            ${printContentHTML}
             <script>
                 window.onload = function() {
-                    // Add page break protection for tables
                     setTimeout(function() {
-                        // Add compact class to all tables
-                        const tables = document.querySelectorAll('table');
-                        tables.forEach(table => {
-                            table.classList.add('compact-table');
-                        });
-                        
-                        // Ensure signature is properly aligned
-                        const signatureContainers = document.querySelectorAll('.signature');
-                        signatureContainers.forEach(container => {
-                            // Wrap signature in proper container
-                            const signatureHTML = container.innerHTML;
-                            container.innerHTML = \`
-                                <div class="signature-container">
-                                    <div class="signature-space">
-                                        <div class="signature-title">तपासणी अधिकाऱ्याचे नाव व पदनाम:</div>
-                                        <div class="signature-name">\${signatureHTML.replace('तपासणी अधिकाऱ्याचे नाव व पदनाम:', '').trim()}</div>
-                                        <div class="signature-line"></div>
-                                    </div>
-                                </div>
-                            \`;
-                        });
-                        
-                        // Add stamp area space
-                        const cardBodies = document.querySelectorAll('.card-body');
-                        cardBodies.forEach(body => {
-                            const lastChild = body.lastElementChild;
-                            if (lastChild && lastChild.classList.contains('signature-container')) {
-                                const stampArea = document.createElement('div');
-                                stampArea.className = 'stamp-area';
-                                stampArea.innerHTML = '<div style="text-align: right; font-size: 10pt; color: #666; margin-top: 30px;">शुभेच्छा / मुद्रा स्थान</div>';
-                                body.appendChild(stampArea);
-                            }
-                        });
-                        
-                        // Print after everything is ready
-                        setTimeout(function() {
-                            window.print();
-                            setTimeout(function() {
-                                window.close();
-                            }, 1000);
-                        }, 1000);
+                        window.print();
+                        setTimeout(function() { window.close(); }, 500);
                     }, 500);
                 }
             </script>
@@ -1802,7 +1424,6 @@ const InspectionReport = () => {
                   <hr />
 
                   <h4 className="mt-4 text-primary">ब. ई-हक्क प्रणाली मधील अर्ज तपासणी</h4>
-                  {/* ... Inside return (...) ... */}
 
                   <CRow className="mb-3">
                     <CCol xs={12}>
@@ -1828,7 +1449,6 @@ const InspectionReport = () => {
                           </CTableRow>
                         </CTableHead>
                         <CTableBody>
-                          {/* LOGIC: Check if list exists */}
                           {reportData.eHakkArjData?.trutiArjList?.length > 0 ? (
                             <CTableRow className="bg-light-subtle">
                               {/* Column 1: Static Title */}
@@ -1900,7 +1520,6 @@ const InspectionReport = () => {
                         </CTableHead>
                         <CTableBody>
                           <CTableRow>
-                            {/* ================= नवीन Dynamic Counts वापरा ================= */}
                             <CTableDataCell className="fw-bold">
                               {ehakkaCounts[1] || 0}
                             </CTableDataCell>
@@ -2231,30 +1850,19 @@ const InspectionReport = () => {
             loading={loading}
           />
         )}
-
         <div>
-          {/* Hidden Main Report for printing */}
-          <div id="main-report-container" style={{ display: 'none' }}>
-            <InspectionPrint
+          {/* Hidden Master Report for printing */}
+          <div id="master-print-container" style={{ display: 'none' }}>
+            <MasterInspectionPrint
               reportData={reportData}
               sequentialFerfarList={sequentialFerfarList}
               ferfarRemarkList={ferfarRemarkList}
               eChawadiRemarks={eChawadiRemarks}
               vasuliRemarks={vasuliRemarks}
               eHakkRemarks={eHakkRemarks}
-              printMode={true}
-            />
-          </div>
-
-          {/* Hidden Remarks Report for printing */}
-          <div id="remarks-report-container" style={{ display: 'none' }}>
-            <InspectionRemarksPrint
-              reportData={reportData}
-              sequentialFerfarList={sequentialFerfarList}
-              ferfarRemarkList={ferfarRemarkList}
-              eChawadiRemarks={eChawadiRemarks}
-              vasuliRemarks={vasuliRemarks}
-              eHakkRemarks={eHakkRemarks}
+              vasuliDetails={vasuliDetails}
+              revenueTargetData={revenueTargetData}
+              akrushakData={akrushakData}
             />
           </div>
         </div>
