@@ -1085,17 +1085,18 @@ const InspectionReport = () => {
         <!DOCTYPE html>
         <html>
         <head>
-            <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
+            <title>निरीक्षण रिपोर्ट</title>
             <meta charset="UTF-8">
             <style>
-                @page { size: A4 portrait; margin: 15mm 10mm; }
-                body { margin: 5; padding: 5; background: white; font-family: Arial, sans-serif; }
-                table { page-break-inside: avoid; }
+                body { margin: 0; background: white; font-family: Arial, sans-serif; }
+                /* कॅनव्हास अचूक A4 साईझ मध्ये रेंडर होण्यासाठी */
+                .capture-container { width: 200mm; margin: 0 auto; box-sizing: border-box; }
+                table { page-break-inside: auto; width: 100%; }
                 tr { page-break-inside: avoid; page-break-after: auto; }
             </style>
         </head>
         <body>
-            <div class="main-container">
+            <div class="capture-container" id="capture-area">
                 ${printContentHTML}
             </div>
             
@@ -1104,28 +1105,48 @@ const InspectionReport = () => {
             <script>
                 window.onload = function() {
                     setTimeout(function() {
-                        const element = document.body;
-                        html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                        const element = document.getElementById('capture-area');
+                        html2canvas(element, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
                             const imgData = canvas.toDataURL('image/jpeg', 0.95);
                             const pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-                            const imgWidth = pdf.internal.pageSize.getWidth();
-                            const imgHeight = (canvas.height * imgWidth) / canvas.width;
                             
-                            pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
-                            
-                            let heightLeft = imgHeight;
-                            let position = 0;
-                            let pageCount = 1;
+                            const margin = 12; // 12mm ची परफेक्ट मार्जिन
+                            const pageWidth = pdf.internal.pageSize.getWidth();
                             const pageHeight = pdf.internal.pageSize.getHeight();
                             
-                            if (heightLeft > pageHeight) {
-                                while (heightLeft > 0) {
-                                    position = -pageHeight * pageCount;
-                                    pdf.addPage();
-                                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-                                    heightLeft -= pageHeight;
-                                    pageCount++;
-                                }
+                            // मार्जिन सोडून उरलेली जागा
+                            const printWidth = pageWidth - (margin * 2);
+                            const printHeight = (canvas.height * printWidth) / canvas.width;
+                            const maxImgHeightPerPage = pageHeight - (margin * 2);
+                            
+                            let heightLeft = printHeight;
+                            let position = margin;
+                            let pageCount = 0;
+                            
+                            // पहिले पान
+                            pdf.addImage(imgData, 'JPEG', margin, position, printWidth, printHeight);
+                            heightLeft -= maxImgHeightPerPage;
+                            
+                            // पांढरी पट्टी (White Rectangle Hack - पेजेसच्या कटिंगवर मार्जिन तयार करण्यासाठी)
+                            pdf.setFillColor(255, 255, 255);
+                            pdf.rect(0, 0, pageWidth, margin, 'F'); // वरची मार्जिन
+                            pdf.rect(0, pageHeight - margin, pageWidth, margin, 'F'); // खालची मार्जिन
+                            
+                            pageCount++;
+                            
+                            // उरलेली पाने
+                            while (heightLeft > 0) {
+                                pdf.addPage();
+                                position = margin - (maxImgHeightPerPage * pageCount);
+                                pdf.addImage(imgData, 'JPEG', margin, position, printWidth, printHeight);
+                                
+                                // प्रत्येक पानावर पांढरी मार्जिन पट्टी
+                                pdf.setFillColor(255, 255, 255);
+                                pdf.rect(0, 0, pageWidth, margin, 'F'); 
+                                pdf.rect(0, pageHeight - margin, pageWidth, margin, 'F'); 
+                                
+                                heightLeft -= maxImgHeightPerPage;
+                                pageCount++;
                             }
                             
                             pdf.save('निरीक्षण_रिपोर्ट.pdf');
@@ -1139,32 +1160,123 @@ const InspectionReport = () => {
     `
 
     const printWindow = window.open('', '_blank')
-    printWindow.document.write(htmlContent)
-    printWindow.document.close()
-
-    printWindow.onload = function () {
-      setTimeout(() => {
-        setLoading(false)
-      }, 4000)
+    if (printWindow) {
+      printWindow.document.write(htmlContent)
+      printWindow.document.close()
+    } else {
+      alert('Please allow popups for this site to download the PDF.')
     }
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 1500)
   }
+
+  // const handleDownloadPdf = () => {
+  //   if (!reportData.tapasaniAdhikariName) {
+  //     setError('कृपया प्रथम "अहवाल तयार करा" बटण दाबा.')
+  //     return
+  //   }
+
+  //   setLoading(true)
+  //   setError(null)
+
+  //   const masterPrintContainer = document.getElementById('master-print-container')
+
+  //   if (!masterPrintContainer) {
+  //     setError('रिपोर्ट सापडली नाही.')
+  //     setLoading(false)
+  //     return
+  //   }
+
+  //   const printContentHTML = masterPrintContainer.innerHTML
+
+  //   const htmlContent = `
+  //       <!DOCTYPE html>
+  //       <html>
+  //       <head>
+  //           <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
+  //           <meta charset="UTF-8">
+  //           <style>
+  //               @page { size: A4 portrait; margin: 15mm 10mm; }
+  //               body { margin: 5; padding: 5; background: white; font-family: Arial, sans-serif; }
+  //               table { page-break-inside: avoid; }
+  //               tr { page-break-inside: avoid; page-break-after: auto; }
+  //           </style>
+  //       </head>
+  //       <body>
+  //           <div class="main-container">
+  //               ${printContentHTML}
+  //           </div>
+
+  //           <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+  //           <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  //           <script>
+  //               window.onload = function() {
+  //                   setTimeout(function() {
+  //                       const element = document.body;
+  //                       html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+  //                           const imgData = canvas.toDataURL('image/jpeg', 0.95);
+  //                           const pdf = new jspdf.jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
+  //                           const imgWidth = pdf.internal.pageSize.getWidth();
+  //                           const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+  //                           pdf.addImage(imgData, 'JPEG', 0, 0, imgWidth, imgHeight);
+
+  //                           let heightLeft = imgHeight;
+  //                           let position = 0;
+  //                           let pageCount = 1;
+  //                           const pageHeight = pdf.internal.pageSize.getHeight();
+
+  //                           if (heightLeft > pageHeight) {
+  //                               while (heightLeft > 0) {
+  //                                   position = -pageHeight * pageCount;
+  //                                   pdf.addPage();
+  //                                   pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
+  //                                   heightLeft -= pageHeight;
+  //                                   pageCount++;
+  //                               }
+  //                           }
+
+  //                           pdf.save('निरीक्षण_रिपोर्ट.pdf');
+  //                           setTimeout(() => window.close(), 1000);
+  //                       });
+  //                   }, 500);
+  //               }
+  //           </script>
+  //       </body>
+  //       </html>
+  //   `
+
+  //   const printWindow = window.open('', '_blank')
+  //   if (printWindow) {
+  //     printWindow.document.write(htmlContent)
+  //     printWindow.document.close()
+  //   } else {
+  //     alert('Please allow popups for this site to download the PDF.')
+  //   }
+
+  //   setTimeout(() => {
+  //     setLoading(false)
+  //   }, 1500)
+  // }
 
   const handlePrintDirectly = () => {
     const printContentHTML = document.getElementById('master-print-container')?.innerHTML || ''
-
     const printWindow = window.open('', '_blank')
 
     const printContent = `
         <!DOCTYPE html>
         <html>
         <head>
-            <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
+            <title>निरीक्षण रिपोर्ट - ${reportData?.gawacheNaw || ''}</title>
             <meta charset="UTF-8">
             <style>
-                @page { size: A4 portrait; margin: 15mm 15mm; }
-                body { margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-                table { page-break-inside: avoid !important; }
-                tr { page-break-inside: avoid !important; }
+                /* प्रिंटसाठी परफेक्ट १२mm मार्जिन */
+                @page { size: A4 portrait; margin: 12mm; } 
+                body { margin: 0; padding: 0; background: white; font-family: Arial, sans-serif; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                table { page-break-inside: auto; }
+                tr { page-break-inside: avoid; page-break-after: auto; }
             </style>
         </head>
         <body>
@@ -1181,9 +1293,53 @@ const InspectionReport = () => {
         </html>
     `
 
-    printWindow.document.write(printContent)
-    printWindow.document.close()
+    if (printWindow) {
+      printWindow.document.write(printContent)
+      printWindow.document.close()
+    } else {
+      alert('Please allow popups for this site to print.')
+    }
+
+    setTimeout(() => {
+      setLoading(false)
+    }, 1500)
   }
+
+  // const handlePrintDirectly = () => {
+  //   const printContentHTML = document.getElementById('master-print-container')?.innerHTML || ''
+
+  //   const printWindow = window.open('', '_blank')
+
+  //   const printContent = `
+  //       <!DOCTYPE html>
+  //       <html>
+  //       <head>
+  //           <title>निरीक्षण रिपोर्ट - ${reportData.gawacheNaw}</title>
+  //           <meta charset="UTF-8">
+  //           <style>
+  //               @page { size: A4 portrait; margin: 15mm 15mm; }
+  //               body { margin: 0; padding: 0; background: white; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  //               table { page-break-inside: avoid !important; }
+  //               tr { page-break-inside: avoid !important; }
+  //           </style>
+  //       </head>
+  //       <body>
+  //           ${printContentHTML}
+  //           <script>
+  //               window.onload = function() {
+  //                   setTimeout(function() {
+  //                       window.print();
+  //                       setTimeout(function() { window.close(); }, 500);
+  //                   }, 500);
+  //               }
+  //           </script>
+  //       </body>
+  //       </html>
+  //   `
+
+  //   printWindow.document.write(printContent)
+  //   printWindow.document.close()
+  // }
 
   const AbhiprayButtonCell = (abhipray, section) => (
     <CTableDataCell className="text-center">
