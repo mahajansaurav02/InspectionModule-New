@@ -78,7 +78,7 @@ export const NirankGavNamunaTapa = () => {
       }
 
       const response = await api.get(
-        `/restservice/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`,
+        `/inpsection/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`,
       )
 
       if (response.data) {
