@@ -120,7 +120,7 @@ const InspectionRemarksPrint = React.forwardRef(
 
                   {/* 2. ई-हक्क शेरा */}
                   {/* ==================== UPDATE START ==================== */}
-                  <h4 className="mt-4 text-primary mb-3">ब. ई-हक्क प्रणाली शेरा</h4>
+                  {/* <h4 className="mt-4 text-primary mb-3">ब. ई-हक्क प्रणाली शेरा</h4>
                   <div className="table-responsive">
                     <CTable bordered responsive className="text-center mb-4">
                       <CTableHead>
@@ -169,8 +169,135 @@ const InspectionRemarksPrint = React.forwardRef(
                         </CTableRow>
                       </CTableBody>
                     </CTable>
-                  </div>
+                  </div> */}
                   {/* ==================== END ==================== */}
+
+                  {/* 2. ई-हक्क शेरा */}
+                  <h4 className="mt-4 text-primary mb-3">ब. ई-हक्क प्रणाली शेरा</h4>
+
+                  {/* 1. त्रुटीपूर्ततेसाठी अर्ज */}
+                  <h6 className="fw-bold mb-2">
+                    १. त्रुटीपूर्ततेसाठी भूधारकास परत पाठविण्यात आलेल्या अर्जांची तपासणी
+                  </h6>
+                  <div className="table-responsive mb-4">
+                    <CTable bordered responsive className="text-center">
+                      <CTableHead>
+                        <CTableRow className="bg-light">
+                          <CTableHeaderCell width="20%">अर्ज क्र.</CTableHeaderCell>
+                          <CTableHeaderCell width="20%">प्रकार</CTableHeaderCell>
+                          <CTableHeaderCell width="60%">शेरा</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>
+                        {(() => {
+                          const trutiList = reportData.eHakkArjData?.trutiArjList || []
+                          // Jyanna shera ahe tech gheu
+                          const withRemarks = trutiList.filter(
+                            (item) => item.remark && item.remark.trim() !== '',
+                          )
+
+                          if (withRemarks.length > 0) {
+                            return withRemarks.map((item, idx) => (
+                              <CTableRow key={idx}>
+                                <CTableDataCell className="fw-bold">{item.arjNo}</CTableDataCell>
+                                <CTableDataCell>
+                                  {item.typeOfRemark === 1 ||
+                                  item.typeOfRemark === '1' ||
+                                  item.typeOfRemark === 'साधारण'
+                                    ? 'साधारण'
+                                    : item.typeOfRemark === 2 ||
+                                      item.typeOfRemark === '2' ||
+                                      item.typeOfRemark === 'गंभीर'
+                                    ? 'गंभीर'
+                                    : item.typeOfRemark === 3 ||
+                                      item.typeOfRemark === '3' ||
+                                      item.typeOfRemark === 'अतीगंभीर'
+                                    ? 'अतीगंभीर'
+                                    : '-'}
+                                </CTableDataCell>
+                                <CTableDataCell className="text-start">
+                                  {item.remark}
+                                </CTableDataCell>
+                              </CTableRow>
+                            ))
+                          } else {
+                            return (
+                              <CTableRow>
+                                <CTableDataCell colSpan={3} className="text-muted text-center">
+                                  {eHakkRemarks?.trutiPurtta || 'शेरा उपलब्ध नाही'}
+                                </CTableDataCell>
+                              </CTableRow>
+                            )
+                          }
+                        })()}
+                      </CTableBody>
+                    </CTable>
+                  </div>
+
+                  {/* 2. प्रलंबित अर्ज */}
+                  <h6 className="fw-bold mb-2">
+                    २. तलाठी स्तरावर फेरफाराकरीता प्रलंबित अर्जांची तपासणी
+                  </h6>
+                  <div className="table-responsive mb-4">
+                    <CTable bordered responsive className="text-center">
+                      <CTableHead>
+                        <CTableRow className="bg-light">
+                          <CTableHeaderCell width="15%">अर्ज क्र.</CTableHeaderCell>
+                          <CTableHeaderCell width="35%">प्रलंबित प्रकार</CTableHeaderCell>
+                          <CTableHeaderCell width="15%">प्रकार</CTableHeaderCell>
+                          <CTableHeaderCell width="35%">शेरा</CTableHeaderCell>
+                        </CTableRow>
+                      </CTableHead>
+                      <CTableBody>
+                        {(() => {
+                          const pralambitList = reportData.eHakkArjData?.pralambitArjList || []
+                          // Jyanna shera ahe tech gheu
+                          const withRemarks = pralambitList.filter(
+                            (item) => item.remark && item.remark.trim() !== '',
+                          )
+
+                          if (withRemarks.length > 0) {
+                            return withRemarks.map((item, idx) => (
+                              <CTableRow key={idx}>
+                                <CTableDataCell className="fw-bold">
+                                  {item.applicationId}
+                                </CTableDataCell>
+                                <CTableDataCell className="text-start">
+                                  {item.ehakkatype}
+                                </CTableDataCell>
+                                <CTableDataCell>
+                                  {item.remarkType === 1 ||
+                                  item.remarkType === '1' ||
+                                  item.remarkType === 'साधारण'
+                                    ? 'साधारण'
+                                    : item.remarkType === 2 ||
+                                      item.remarkType === '2' ||
+                                      item.remarkType === 'गंभीर'
+                                    ? 'गंभीर'
+                                    : item.remarkType === 3 ||
+                                      item.remarkType === '3' ||
+                                      item.remarkType === 'अतीगंभीर'
+                                    ? 'अतीगंभीर'
+                                    : '-'}
+                                </CTableDataCell>
+                                <CTableDataCell className="text-start">
+                                  {item.remark}
+                                </CTableDataCell>
+                              </CTableRow>
+                            ))
+                          } else {
+                            return (
+                              <CTableRow>
+                                <CTableDataCell colSpan={4} className="text-muted text-center">
+                                  प्रलंबित अर्जांचे शेरा उपलब्ध नाहीत
+                                </CTableDataCell>
+                              </CTableRow>
+                            )
+                          }
+                        })()}
+                      </CTableBody>
+                    </CTable>
+                  </div>
 
                   {/* 3. ई-चावडी शेरा */}
                   <h4 className="mt-4 text-primary mb-3">क. ई-चावडी प्रणाली शेरा</h4>
