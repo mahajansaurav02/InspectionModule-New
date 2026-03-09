@@ -314,7 +314,7 @@ export const NirankGavNamunaTapa = () => {
       ccode: cCode,
       revenueYear,
       remark,
-      echawdiType: 2,
+      echawdiType: 1,
     }
 
     try {

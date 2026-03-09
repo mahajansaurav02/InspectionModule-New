@@ -342,6 +342,7 @@ const InspectionReport = () => {
   const [ehakkaCounts, setEhakkaCounts] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [revenueTargetData, setRevenueTargetData] = useState(null)
+  const [echawadiRemarks, setEchawadiRemarks] = useState(null)
   const [vasuliDetails, setVasuliDetails] = useState({
     jaminMahsul029: { mangni: 0, vasuli: 0, percentage: 0 },
     itarMahsul045: { mangni: 0, vasuli: 0, percentage: 0 },
@@ -608,6 +609,33 @@ const InspectionReport = () => {
       setIsLoading(false)
     }
   }
+  const getEchawadiRemarkData = async () => {
+    setIsLoading(true)
+    try {
+      if (!cCode) {
+        alert('Village code not found....Please Select Village First')
+        return
+      }
+
+      const response = await api.get(
+        // `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=${revenueYear}&ccode=${cCode}`
+        `/inpsection/getEchawadiRemark?districtCode=${districtCode}&talukaCode=${talukaCode}&ccode=${cCode}`
+        ,
+      )
+
+      console.log(response.data, 'EhakkData data response')
+      if (response.data) {
+        console.log(response.data, 'Revenue Target data response')
+        setEchawadiRemarks(response.data)
+      }
+      toast.success('Data fetched successfully!', { autoClose: 2000 })
+    } catch (err) {
+      toast.error(err?.response?.data?.message || 'Failed to fetch data', { autoClose: 2000 })
+      console.error(err)
+    } finally {
+      setIsLoading(false)
+    }
+  }
 
   const fetchVasuliDetails = async () => {
     try {
@@ -861,6 +889,7 @@ const InspectionReport = () => {
     getFerfarData()
     getAkrushakDarCheck()
     getRevenueTargetData()
+    getEchawadiRemarkData()
     await fetchVasuliDetails()
 
     try {
