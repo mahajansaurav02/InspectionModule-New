@@ -124,16 +124,29 @@ const DyslrAkarbandTapasani = () => {
     } catch (err) {
       console.error('Submit error:', err)
       setIsSubmitting(false) // Stop loading on error
-      toast.error(err?.response?.data?.message || 'Failed to submit remark', {
+
+      let errorMessage = err?.response?.data?.message || 'Failed to submit remark'
+
+      if (err?.response?.status === 409) {
+        errorMessage =
+          'निवडलेल्या गावाचा व संबंधित महसूल वर्षाचा गाव नमुना एक चा शेरा पूर्वीच प्रदान करण्यात आलेला आहे.'
+      }
+
+      toast.error(errorMessage, {
         position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: false,
         pauseOnHover: true,
         draggable: true,
-        progress: undefined,
         theme: 'colored',
         transition: Bounce,
+        style: {
+          backgroundColor: '#FF9800',
+          color: '#FFFFFF',
+          fontWeight: 'bold',
+          fontSize: '15px',
+        },
       })
     }
   }
@@ -175,9 +188,17 @@ const DyslrAkarbandTapasani = () => {
     } catch (err) {
       console.error('Submit error:', err)
       setIsSubmitting(false) // Stop loading on error
-      // alert(err?.response?.data?.message || 'Failed to submit remark');
 
-      toast.error(err?.response?.data?.message || 'Failed to submit remark', {
+      // 1. Set custom text based on the 409 Conflict status
+      let errorMessage = err?.response?.data?.message || 'Failed to submit remark'
+
+      if (err?.response?.status === 409) {
+        errorMessage =
+          'निवडलेल्या गावाचा व संबंधित महसूल वर्षाचा गाव नमुना एक dyslr चा शेरा पूर्वीच प्रदान करण्यात आलेला आहे'
+      }
+
+      // 2. Trigger the toast with custom colors
+      toast.error(errorMessage, {
         position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
@@ -187,6 +208,11 @@ const DyslrAkarbandTapasani = () => {
         progress: undefined,
         theme: 'colored',
         transition: Bounce,
+        style: {
+          backgroundColor: '#FF9800',
+          color: '#FFFFFF',
+          fontWeight: 'bold',
+        },
       })
     }
   }
@@ -660,12 +686,8 @@ const DyslrAkarbandTapasani = () => {
                       {firstRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
                     </Button>
 
-                    <Button
-                      variant="outline-secondary"
-                      size="sm"
-                      onClick={handleFirstRemarkClear}
-                    >
-                      रिसेट करा 
+                    <Button variant="outline-secondary" size="sm" onClick={handleFirstRemarkClear}>
+                      रिसेट करा
                     </Button>
                   </div>
                 </Card>
@@ -822,12 +844,8 @@ const DyslrAkarbandTapasani = () => {
                       {secondRemarkSubmitting ? 'जतन होत आहे...' : 'अभिप्राय जतन करा'}
                     </Button>
 
-                    <Button
-                      variant="outline-secondary"
-                      size="sm"
-                      onClick={handleSecondRemarkClear}
-                    >
-                      रिसेट करा 
+                    <Button variant="outline-secondary" size="sm" onClick={handleSecondRemarkClear}>
+                      रिसेट करा
                     </Button>
                   </div>
                 </Card>

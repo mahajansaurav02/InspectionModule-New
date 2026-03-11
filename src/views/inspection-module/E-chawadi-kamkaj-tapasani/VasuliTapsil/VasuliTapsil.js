@@ -21,6 +21,8 @@ import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
+import { toast, ToastContainer, Bounce } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 
 const VasuliTapsil = () => {
   const [demandData, setDemandData] = useState(null)
@@ -154,10 +156,34 @@ const VasuliTapsil = () => {
       }
     } catch (err) {
       console.error('Submit error:', err)
-      setIsSubmitting(false) // Stop loading on error
-      alert(err?.response?.data?.message || 'Failed to submit remark')
+      setIsSubmitting(false)
+
+      let errorMessage = err?.response?.data?.message || 'Failed to submit remark'
+
+      if (err?.response?.status === 409) {
+        errorMessage =
+          'निवडलेल्या गावाचा व संबंधित महसूल वर्षाचा वसूली बाबत चा शेरा पूर्वीच प्रदान करण्यात आलेला आहे.'
+      }
+
+      toast.error(errorMessage, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: 'colored',
+        transition: Bounce,
+        style: {
+          backgroundColor: '#FF9800',
+          color: '#FFFFFF',
+          fontWeight: 'bold',
+          fontSize: '15px',
+        },
+      })
     }
   }
+
   const handleCancel = () => {
     setRemark('')
     console.log('Action cancelled. Remark cleared.')
@@ -300,6 +326,8 @@ const VasuliTapsil = () => {
           'गावात जमीन महसूल व संकीर्ण प्रकारातील मागणी किती आहे व आजपर्यंत त्यामध्ये किती वसुली झालेली आहे, त्याचा अहवाल तपासणीसाठी उपलब्ध होणार आहे.'
         }
       />
+
+      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
       <div className={styles['vasuli-container']}>
         <h2 className={styles['main-title']}>जमीन महसूलाची वसुली तपशील</h2>

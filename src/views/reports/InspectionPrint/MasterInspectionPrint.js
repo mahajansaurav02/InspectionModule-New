@@ -4,7 +4,7 @@ const MasterInspectionPrint = ({
   reportData,
   sequentialFerfarList,
   ferfarRemarkList,
-  eChawadiRemarks,
+  echawadiRemarks,
   vasuliRemarks,
   eHakkRemarks,
   vasuliDetails,
@@ -24,6 +24,16 @@ const MasterInspectionPrint = ({
     return `${((vasuli / mangni) * 100).toFixed(2)}%`
   }
 
+  const getEchawadiRemark = (typeId) => {
+    if (Array.isArray(echawadiRemarks)) {
+      const found = echawadiRemarks.find((item) => item.echawdiType === typeId)
+      if (found && found.remark && found.remark.trim() !== '') {
+        return found.remark
+      }
+    }
+    return '-'
+  }
+
   const totalDemandAll =
     (Number(vasuliDetails?.jaminMahsul029?.mangni) || 0) +
     (Number(vasuliDetails?.itarMahsul045?.mangni) || 0) +
@@ -40,7 +50,7 @@ const MasterInspectionPrint = ({
 
   // Print Styles
   const printStyles = `
-    .print-wrapper { font-family: 'Arial', sans-serif; font-size: 14px; color: #000; line-height: 1.5; }
+    .print-wrapper { padding: 6mm; font-family: 'Arial', sans-serif; font-size: 14px; color: #000; line-height: 1.5; }
     .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; page-break-inside: auto; }
     .print-table th, .print-table td { border: 1px solid #000; padding: 6px 10px; text-align: left; vertical-align: top; }
     .print-table th { background-color: #f2f2f2; font-weight: bold; text-align: center; }
@@ -462,33 +472,44 @@ const MasterInspectionPrint = ({
       </table>
 
       {/* C & D. e-Chawadi & Vasuli Remarks */}
-      <div className="section-title">क. ई-चावडी व ड. वसुली बाबत शेरा</div>
-      <table className="print-table">
-        <tbody>
-          <tr>
-            <td width="30%" className="fw-bold">
-              ई-चावडी (गाव नमुना पूर्ण)
-            </td>
-            <td>
-              I) निरंक: {eChawadiRemarks?.gawNamunaPurna?.nirank || '-'} <br />
-              II) कामकाज पूर्ण: {eChawadiRemarks?.gawNamunaPurna?.kamkajPurna || '-'} <br />
-              III) अघोषणा: {eChawadiRemarks?.gawNamunaPurna?.aghoshanaKeliNaslele || '-'}
-            </td>
-          </tr>
-          <tr>
-            <td className="fw-bold">मागणी निश्चितीनंतर दुरुस्ती</td>
-            <td>{eChawadiRemarks?.mangniRakkamKamiKhatedar || '-'}</td>
-          </tr>
-          <tr>
-            <td className="fw-bold">अकृषक दर तपासणी</td>
-            <td>{eChawadiRemarks?.akrushakDarBharlaKay || '-'}</td>
-          </tr>
-          <tr>
-            <td className="fw-bold">वसुली बाबत शेरा</td>
-            <td>{vasuliRemarks || '-'}</td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="keep-together">
+        <div className="section-title">क. ई-चावडी व ड. वसुली बाबत शेरा</div>
+        <table className="print-table">
+          <tbody>
+            <tr>
+              <td width="35%" className="fw-bold">
+                गावातील गाव नमुना पूर्ण भरण्याची घोषणा केलेले गाव नमुना
+              </td>
+              <td>{getEchawadiRemark(1)}</td>
+            </tr>
+            <tr>
+              <td className="fw-bold">
+                गावातील मागणी निश्चिती केल्यानंतर दुरुस्ती करण्यात आलेल्या खातेदारांची
+              </td>
+              <td>{getEchawadiRemark(2)}</td>
+            </tr>
+            <tr>
+              <td className="fw-bold"> गावाचा अकृषक दर भरला आहे काय ?</td>
+              <td>{getEchawadiRemark(3)}</td>
+            </tr>
+            <tr>
+              <td className="fw-bold">i) गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता )</td>
+              <td>{getEchawadiRemark(5)}</td>
+            </tr>
+            <tr>
+              <td className="fw-bold">
+                ii) गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक
+              </td>
+              <td>{getEchawadiRemark(6)}</td>
+            </tr>
+            <tr>
+              <td className="fw-bold">वसुली बाबत शेरा</td>
+              {/* जर वसुलीचा शेरा API मध्ये नसेल तर जुना vasuliRemarks दाखवेल */}
+              <td>{getEchawadiRemark(4) !== '-' ? getEchawadiRemark(4) : vasuliRemarks || '-'}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       {/* FINAL REMARKS & SIGNATURE */}
       <div style={{ marginTop: '30px' }}>

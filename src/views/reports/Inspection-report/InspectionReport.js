@@ -619,8 +619,7 @@ const InspectionReport = () => {
 
       const response = await api.get(
         // `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=${revenueYear}&ccode=${cCode}`
-        `/inpsection/getEchawadiRemark?districtCode=${districtCode}&talukaCode=${talukaCode}&ccode=${cCode}`
-        ,
+        `/inpsection/getEchawadiRemark?districtCode=${districtCode}&talukaCode=${talukaCode}&ccode=${cCode}`,
       )
 
       console.log(response.data, 'EhakkData data response')
@@ -1020,6 +1019,17 @@ const InspectionReport = () => {
   const handleViewAbhipray = (section) => {
     console.log(ehakkaData, 'ehakkaData in abhipray=============')
     console.log('i am button ')
+
+    const getEchawadiRemark = (typeId) => {
+      if (Array.isArray(echawadiRemarks)) {
+        const found = echawadiRemarks.find((item) => item.echawdiType === typeId)
+        if (found && found.remark) {
+          return found.remark
+        }
+      }
+      return 'शेरा उपलब्ध नाही'
+    }
+
     switch (section) {
       case 'ehakk':
         setActiveRemarkType('ehakk')
@@ -1029,11 +1039,29 @@ const InspectionReport = () => {
         setActiveRemarkType('ehakk-truti')
         setActiveRemarkData(reportData.eHakkArjData?.trutiArjList || [])
         break
-      case 'echawadi':
+      case 'echawadi-1':
         setActiveRemarkType('echawadi')
-        setActiveRemarkData([
-          { remark: eChawadiRemarks?.gawNamunaPurna?.nirank || 'शेरा उपलब्ध नाही' },
-        ])
+        setActiveRemarkData([{ remark: getEchawadiRemark(1) }])
+        break
+      case 'echawadi-2':
+        setActiveRemarkType('echawadi')
+        setActiveRemarkData([{ remark: getEchawadiRemark(2) }])
+        break
+      case 'echawadi-3':
+        setActiveRemarkType('echawadi')
+        setActiveRemarkData([{ remark: getEchawadiRemark(3) }])
+        break
+      case 'echawadi-4':
+        setActiveRemarkType('vasuli')
+        setActiveRemarkData([{ remark: getEchawadiRemark(4) }])
+        break
+      case 'gaw-namuna-1':
+        setActiveRemarkType('gaw-namuna-1')
+        setActiveRemarkData([{ remark: getEchawadiRemark(5) }])
+        break
+      case 'gaw-namuna-1-dyslr':
+        setActiveRemarkType('gaw-namuna-1-dyslr')
+        setActiveRemarkData([{ remark: getEchawadiRemark(6) }])
         break
       case 'vasuli':
         setActiveRemarkType('vasuli')
@@ -1768,7 +1796,7 @@ const InspectionReport = () => {
                             className="remark-btn no-print"
                             color="primary"
                             size="sm"
-                            onClick={() => handleViewAbhipray('echawadi')}
+                            onClick={() => handleViewAbhipray('echawadi-1')}
                           >
                             अभिप्राय बघा
                           </CButton>
@@ -1806,7 +1834,7 @@ const InspectionReport = () => {
                         </CTableDataCell>
                         {AbhiprayButtonCell(
                           reportData.eChawadiData?.mangniRakkamKamiKhatedar,
-                          'echawadi',
+                          'echawadi-2',
                         )}
                       </CTableRow>
 
@@ -1830,22 +1858,53 @@ const InspectionReport = () => {
                         </CTableDataCell>
                         {AbhiprayButtonCell(
                           reportData.eChawadiData?.akrushakDarBharlaKay,
-                          'echawadi',
+                          'echawadi-3',
                         )}
                       </CTableRow>
 
-                      <CTableRow>
+                      <CTableRow className="bg-light-subtle">
                         <CTableHeaderCell scope="row">४.</CTableHeaderCell>
-                        <CTableDataCell className="text-start">
+                        <CTableDataCell className="text-start fw-bold" colSpan={3}>
                           उप-अधीक्षक, भूमिअभिलेख आकारबंद तपशील:
-                          <br />
-                          **(तलाठी दप्तरात उपलब्ध असलेले भूमापन क्रमांक परंतु उप-अधीक्षक यांच्या
-                          आकारबंद मध्ये उपलब्ध नसलेले भूमापन संख्या)**
+                        </CTableDataCell>
+                      </CTableRow>
+
+                      <CTableRow>
+                        <CTableDataCell></CTableDataCell>
+                        <CTableDataCell className="text-start ps-5">
+                          i) गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता )
+                        </CTableDataCell>
+                        <CTableDataCell>-</CTableDataCell>
+                        <CTableDataCell className="text-center align-middle">
+                          <CButton
+                            className="remark-btn no-print"
+                            color="primary"
+                            size="sm"
+                            onClick={() => handleViewAbhipray('gaw-namuna-1')}
+                          >
+                            अभिप्राय बघा
+                          </CButton>
+                        </CTableDataCell>
+                      </CTableRow>
+
+                      <CTableRow>
+                        <CTableDataCell></CTableDataCell>
+                        <CTableDataCell className="text-start ps-5">
+                          ii) गाव नमुना एक Dyslr(आकारबंद) वगळण्यात आलेले भूमापन क्रमांक
                         </CTableDataCell>
                         <CTableDataCell>
-                          {reportData.eChawadiData?.akarbandTapshil.upAdhikshakNotAvail}
+                          {reportData.eChawadiData?.akarbandTapshil.upAdhikshakNotAvail || '-'}
                         </CTableDataCell>
-                        {AbhiprayButtonCell(reportData.eChawadiData?.akarbandTapshil, 'echawadi')}
+                        <CTableDataCell className="text-center align-middle">
+                          <CButton
+                            className="remark-btn no-print"
+                            color="primary"
+                            size="sm"
+                            onClick={() => handleViewAbhipray('gaw-namuna-1-dyslr')}
+                          >
+                            अभिप्राय बघा
+                          </CButton>
+                        </CTableDataCell>
                       </CTableRow>
                     </CTableBody>
                   </CTable>
@@ -1877,7 +1936,7 @@ const InspectionReport = () => {
                             className="remark-btn no-print"
                             color="primary"
                             size="sm"
-                            onClick={() => handleViewAbhipray('vasuli')}
+                            onClick={() => handleViewAbhipray('echawadi-4')}
                           >
                             अभिप्राय बघा
                           </CButton>
@@ -2042,7 +2101,8 @@ const InspectionReport = () => {
               reportData={reportData}
               sequentialFerfarList={sequentialFerfarList}
               ferfarRemarkList={ferfarRemarkList}
-              eChawadiRemarks={eChawadiRemarks}
+              echawadiRemarks={echawadiRemarks}
+              // eChawadiRemarks={eChawadiRemarks}
               vasuliRemarks={vasuliRemarks}
               eHakkRemarks={eHakkRemarks}
               vasuliDetails={vasuliDetails}

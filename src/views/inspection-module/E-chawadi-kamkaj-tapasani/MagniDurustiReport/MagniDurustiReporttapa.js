@@ -4,7 +4,7 @@ import axios from 'axios'
 import URLS from 'src/URLS'
 import { useSelector } from 'react-redux'
 
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer, toast, Bounce } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
 import { CAlert } from '@coreui/react'
@@ -126,11 +126,33 @@ export const MagniDurustiReporttapa = () => {
       }
     } catch (err) {
       console.error('Submit error:', err)
-      setIsSubmitting(false) // Stop loading on error
-      alert(err?.response?.data?.message || 'Failed to submit remark')
+      setIsSubmitting(false)
+
+      let errorMessage = err?.response?.data?.message || 'Failed to submit remark'
+
+      if (err?.response?.status === 409) {
+        errorMessage =
+          'निवडलेल्या गावाचा व संबंधित महसूल वर्षाचा मागणी दुरुस्ती चा शेरा पूर्वीच प्रदान करण्यात आलेला आहे.'
+      }
+
+      toast.error(errorMessage, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: 'colored',
+        transition: Bounce,
+        style: {
+          backgroundColor: '#FF9800',
+          color: '#FFFFFF',
+          fontWeight: 'bold',
+          fontSize: '15px',
+        },
+      })
     }
   }
-
   const handleCancel = () => {
     navigate('/inspection-module/E-chawadi-kamkaj-tapasani/EChawadiKamkajTap')
   }

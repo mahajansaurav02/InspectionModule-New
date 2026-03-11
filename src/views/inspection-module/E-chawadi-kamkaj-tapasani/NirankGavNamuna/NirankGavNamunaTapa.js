@@ -16,6 +16,7 @@ import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/api/api'
 import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
+import { Bounce, toast, ToastContainer } from 'react-toastify'
 
 const villageData = JSON.parse(localStorage.getItem('villageData'))
 
@@ -337,8 +338,31 @@ export const NirankGavNamunaTapa = () => {
       }
     } catch (err) {
       console.error('Submit error:', err)
-      setIsSubmitting(false) // Stop loading on error
-      alert(err?.response?.data?.message || 'Failed to submit remark')
+      setIsSubmitting(false)
+
+      let errorMessage = err?.response?.data?.message || 'Failed to submit remark'
+
+      if (err?.response?.status === 409) {
+        errorMessage =
+          'निवडलेल्या गावाचा व संबंधित महसूल वर्षाचा निरंक नमुना शेरा पूर्वीच प्रदान करण्यात आलेला आहे. '
+      }
+
+      toast.error(errorMessage, {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        theme: 'colored',
+        transition: Bounce,
+        style: {
+          backgroundColor: '#FF9800',
+          color: '#FFFFFF',
+          fontWeight: 'bold',
+          fontSize: '15px',
+        },
+      })
     }
   }
 
@@ -349,6 +373,8 @@ export const NirankGavNamunaTapa = () => {
           'तपासणी अधिकारी यांना सदर गावातील निरंक/काम पूर्ण  घोषणा केलेल्या गाव नमुन्यांची माहिती उपलब्ध होणार आहे.'
         }
       />
+
+      <ToastContainer position="top-right" autoClose={2000} theme="colored" />
 
       <div className="container">
         <VillageDetailsList />
