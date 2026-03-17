@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback, useMemo } from 'react'
 import { CContainer } from '@coreui/react'
 import { FormControl, TextField, Grid, Box, Paper, Divider, Typography } from '@mui/material'
 import { useSelector } from 'react-redux'
@@ -78,27 +78,38 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
   const { t } = useTranslation('dashboard')
   const state = useSelector(selectState)
 
-  const inspectionVillages = getInspectionVillages()
-  const revenueYearList = getRevenueYearsList(state?.revenueYear1)
+  // Memoize these values to prevent unnecessary recalculations
+  const inspectionVillages = useMemo(() => getInspectionVillages(), [])
+  const revenueYearList = useMemo(() => getRevenueYearsList(state?.revenueYear1), [state?.revenueYear1])
 
-  const firstVillage = inspectionVillages[0]
-  const firstRevenueYear = revenueYearList[0]
-  const selectedVillage = localStorage.getItem('selectedVillageData')
-  const villageName = JSON.parse(selectedVillage)
-  const selectedMainVillage = villageName ? villageName[0]?.villageName || '' : ''
-  const initialVillageName = dropdownVal.village ?? (firstVillage?.villageName || '')
-  const initialRevenueYear = dropdownVal.revenueYear ?? (firstRevenueYear?.revenueYear || '')
+  const firstVillage = useMemo(() => inspectionVillages[0], [inspectionVillages])
+  const firstRevenueYear = useMemo(() => revenueYearList[0], [revenueYearList])
 
-  const [localDisplayData, setLocalDisplayData] = useState({
-    districtName: localStorage.getItem('districtName') || firstVillage?.distMarathiName || '',
-    talukaName: localStorage.getItem('talukaName') || firstVillage?.talukaMarathiName || '',
-    village: initialVillageName,
-    revenueYear: initialRevenueYear,
+  // Get selected village data from localStorage only once
+  const [selectedMainVillage, setSelectedMainVillage] = useState(() => {
+    try {
+      const selectedVillage = localStorage.getItem('selectedVillageData')
+      const villageName = selectedVillage ? JSON.parse(selectedVillage) : null
+      return villageName && villageName[0]?.villageName ? villageName[0].villageName : ''
+    } catch (error) {
+      console.error('Error parsing selectedVillageData:', error)
+      return ''
+    }
   })
 
+  const [localDisplayData, setLocalDisplayData] = useState(() => ({
+    districtName: localStorage.getItem('districtName') || firstVillage?.distMarathiName || '',
+    talukaName: localStorage.getItem('talukaName') || firstVillage?.talukaMarathiName || '',
+    village: dropdownVal.village ?? (firstVillage?.villageName || ''),
+    revenueYear: dropdownVal.revenueYear ?? (firstRevenueYear?.revenueYear || ''),
+  }))
+
+  // Initialize dropdown values only once on mount
   useEffect(() => {
-    if (inspectionVillages.length > 0 && !dropdownVal.village) {
-      setDropdownVal((prev) => ({
+    let shouldUpdate = false
+    
+    if (inspectionVillages.length > 0 && !dropdownVal.village && firstVillage) {
+      setDropdownVal(prev => ({
         ...prev,
         village: firstVillage.villageName,
         villageCode: firstVillage.lgdCode,
@@ -106,58 +117,75 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
         districtCode: firstVillage.districtCode,
         talukaCode: firstVillage.talukaCode,
       }))
-
-      setLocalDisplayData((prev) => ({
+      
+      setLocalDisplayData(prev => ({
         ...prev,
         village: firstVillage.villageName,
         districtName: firstVillage.distMarathiName,
         talukaName: firstVillage.talukaMarathiName,
       }))
+      
+      setSelectedMainVillage(firstVillage.villageName)
+      shouldUpdate = true
     }
 
-    if (revenueYearList.length > 0 && !dropdownVal.revenueYear) {
-      setDropdownVal((prev) => ({
+    if (revenueYearList.length > 0 && !dropdownVal.revenueYear && firstRevenueYear) {
+      setDropdownVal(prev => ({
         ...prev,
         revenueYear: firstRevenueYear.revenueYear,
       }))
+      shouldUpdate = true
     }
-  }, [
-    inspectionVillages.length,
-    revenueYearList.length,
-    dropdownVal.village,
-    dropdownVal.revenueYear,
-    setDropdownVal,
-  ])
 
-  const handleChange = (e) => {
+    // Only run this effect once
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty dependency array - runs only once on mount
+
+  // Use useCallback to memoize the handleChange function
+  const handleChange = useCallback((e) => {
     const { name, value } = e?.target
 
     if (name === 'revenueYear') {
-      setLocalDisplayData((prev) => ({ ...prev, revenueYear: value }))
-      setDropdownVal((prev) => ({ ...prev, revenueYear: value }))
+      setLocalDisplayData(prev => ({ ...prev, revenueYear: value }))
+      setDropdownVal(prev => ({ ...prev, revenueYear: value }))
     } else if (name === 'village') {
-      const selctedVillageData = inspectionVillages.find((u) => u.villageName === value)
-      console.log(selctedVillageData, 'checkkkk All data')
-      localStorage.setItem('selectedVillageData', JSON.stringify([{ ...selctedVillageData }]))
-      if (selctedVillageData) {
-        setDropdownVal((prev) => ({
+      const selectedVillageData = inspectionVillages.find(u => u.villageName === value)
+      
+      if (selectedVillageData) {
+        // Batch state updates
+        setDropdownVal(prev => ({
           ...prev,
           village: value,
-          villageCode: selctedVillageData.lgdCode,
-          cCode: selctedVillageData.cCode,
-          districtCode: selctedVillageData.districtCode,
-          talukaCode: selctedVillageData.talukaCode,
+          villageCode: selectedVillageData.lgdCode,
+          cCode: selectedVillageData.cCode,
+          districtCode: selectedVillageData.districtCode,
+          talukaCode: selectedVillageData.talukaCode,
         }))
 
-        setLocalDisplayData((prev) => ({
+        setLocalDisplayData(prev => ({
           ...prev,
           village: value,
-          districtName: selctedVillageData.distMarathiName,
-          talukaName: selctedVillageData.talukaMarathiName,
+          districtName: selectedVillageData.distMarathiName,
+          talukaName: selectedVillageData.talukaMarathiName,
         }))
+
+        setSelectedMainVillage(value)
+        
+        // Update localStorage
+        try {
+          localStorage.setItem('selectedVillageData', JSON.stringify([{ ...selectedVillageData }]))
+        } catch (error) {
+          console.error('Error saving to localStorage:', error)
+        }
       }
     }
-  }
+  }, [inspectionVillages, setDropdownVal])
+
+  // Get current revenue year value
+  const currentRevenueYear = useMemo(() => 
+    dropdownVal.revenueYear || localDisplayData.revenueYear || '2024-25',
+    [dropdownVal.revenueYear, localDisplayData.revenueYear]
+  )
 
   return (
     <CContainer fluid>
@@ -223,11 +251,11 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
                 <CustomSelect
                   labelId="village-label"
                   name="village"
-                  value={selectedMainVillage}
+                  value={selectedMainVillage || localDisplayData.village}
                   onChange={handleChange}
                 >
                   {inspectionVillages.map((val) => (
-                    <MenuItem key={val?.cCode} value={val?.villageName}>
+                    <MenuItem key={val?.cCode || val?.villageName} value={val?.villageName}>
                       {val?.villageName}
                     </MenuItem>
                   ))}
@@ -248,13 +276,15 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
                 <CustomSelect
                   labelId="revenue-year-label"
                   name="revenueYear"
-                  value={'2024-25'}
+                  value={currentRevenueYear}
                   onChange={handleChange}
-                  defaultValue={'2024-25'}
                 >
                   {revenueYearList.map((year) => (
-                    <MenuItem defaultValue={'2024-25'} key={year?.revenueYear} value={'2024-25'}>
-                      {'2024-25'}
+                    <MenuItem 
+                      key={year?.revenueYear} 
+                      value={year?.revenueYear}
+                    >
+                      {year?.revenueYear}
                     </MenuItem>
                   ))}
                 </CustomSelect>
@@ -267,4 +297,4 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
   )
 }
 
-export default Section1
+export default React.memo(Section1) // Wrap with React.memo to prevent unnecessary re-renders
