@@ -636,6 +636,54 @@ const InspectionReport = () => {
     }
   }
 
+  const getMaganiDurustiKhatedarCount = async () => {
+    try {
+      if (!cCode) return 0
+
+      const currentRevenueYear = revenueYear || '2025-26'
+
+      const response = await api.get(
+        `/inpsection/getMaganiDurustiKhatedarCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
+      )
+
+      console.log(response.data, 'Magani Durusti API Response')
+
+      const count = response.data?.maganiDurustiKhatedarCount || 0
+
+      return count
+    } catch (err) {
+      console.error('Error fetching Magani Durusti Count:', err)
+      return 0
+    }
+  }
+
+  const getDyslrAkarbandDeletedCount = async () => {
+    try {
+      if (!cCode) return 0
+
+      const currentRevenueYear = revenueYear || '2025-26'
+
+      const response = await api.get(
+        `/inpsection/getDyslrAkarbandDeletedCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
+      )
+
+      console.log(response.data, 'Dyslr Akarband API Response')
+
+      const count =
+        typeof response.data === 'object'
+          ? response.data.dyslrAkarbandDeletedCount ||
+            response.data.count ||
+            response.data.data ||
+            0
+          : response.data
+
+      return count
+    } catch (err) {
+      console.error('Error fetching Dyslr Akarband Count:', err)
+      return 0
+    }
+  }
+
   const fetchVasuliDetails = async () => {
     try {
       if (!cCode) {
@@ -685,7 +733,6 @@ const InspectionReport = () => {
         return []
       }
 
-      // 1=180+, 2=90-180, 3=30-90, 4=<30
       const ehakkaTypes = [1, 2, 3, 4]
       const labels = {
         1: '१८० दिवसापेक्षा जास्त दिवस प्रलंबित',
@@ -898,10 +945,19 @@ const InspectionReport = () => {
       const realTrutiList = await getEhakkData()
       const realPralambitList = await getEhakkDataRemarkCount()
 
+      const maganiDurustiCount = await getMaganiDurustiKhatedarCount()
+      const dyslrAkarbandCount = await getDyslrAkarbandDeletedCount()
+
       if (!data.eHakkArjData) data.eHakkArjData = {}
 
       data.eHakkArjData.trutiArjList = realTrutiList
       data.eHakkArjData.pralambitArjList = realPralambitList
+
+      if (!data.eChawadiData) data.eChawadiData = {}
+      data.eChawadiData.mangniRakkamKamiKhatedar = maganiDurustiCount
+
+      if (!data.eChawadiData.akarbandTapshil) data.eChawadiData.akarbandTapshil = {}
+      data.eChawadiData.akarbandTapshil.upAdhikshakNotAvail = dyslrAkarbandCount
 
       setReportData(data)
 
