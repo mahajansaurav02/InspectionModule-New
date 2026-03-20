@@ -684,6 +684,29 @@ const InspectionReport = () => {
     }
   }
 
+  const getNirankCountsApi = async () => {
+    try {
+      if (!cCode) return { nirank: 0, kamkajPurna: 0, aghoshanaKeliNaslele: 0 }
+
+      const currentRevenueYear = revenueYear || '2025-26'
+
+      const response = await api.get(
+        `/inpsection/getNirankCounts?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
+      )
+
+      console.log(response.data, 'Nirank Counts API Response')
+
+      return {
+        nirank: response.data?.nirankYesCount || 0,
+        kamkajPurna: response.data?.completedYesCount || 0,
+        aghoshanaKeliNaslele: response.data?.completedNoNirankNoCount || 0,
+      }
+    } catch (err) {
+      console.error('Error fetching Nirank Counts:', err)
+      return { nirank: 0, kamkajPurna: 0, aghoshanaKeliNaslele: 0 }
+    }
+  }
+
   const fetchVasuliDetails = async () => {
     try {
       if (!cCode) {
@@ -947,9 +970,9 @@ const InspectionReport = () => {
 
       const maganiDurustiCount = await getMaganiDurustiKhatedarCount()
       const dyslrAkarbandCount = await getDyslrAkarbandDeletedCount()
+      const nirankCount = await getNirankCountsApi()
 
       if (!data.eHakkArjData) data.eHakkArjData = {}
-
       data.eHakkArjData.trutiArjList = realTrutiList
       data.eHakkArjData.pralambitArjList = realPralambitList
 
@@ -958,6 +981,11 @@ const InspectionReport = () => {
 
       if (!data.eChawadiData.akarbandTapshil) data.eChawadiData.akarbandTapshil = {}
       data.eChawadiData.akarbandTapshil.upAdhikshakNotAvail = dyslrAkarbandCount
+
+      if (!data.eChawadiData.gawNamunaPurna) data.eChawadiData.gawNamunaPurna = {}
+      data.eChawadiData.gawNamunaPurna.nirank = nirankCount.nirank
+      data.eChawadiData.gawNamunaPurna.kamkajPurna = nirankCount.kamkajPurna
+      data.eChawadiData.gawNamunaPurna.aghoshanaKeliNaslele = nirankCount.aghoshanaKeliNaslele
 
       setReportData(data)
 
