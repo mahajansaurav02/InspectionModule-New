@@ -66,6 +66,9 @@ const ViewOrderFerfarLIst = React.lazy(() =>
 const EHakkTooltips = React.lazy(() =>
   import('./views/inspection-module/e-hakka-kamkaj-tapasani/eHakkTooltips'),
 )
+const MisInspection = React.lazy(() =>
+  import('./views/inspection-module/Mis-Inspection/MisInspection'),
+)
 class App extends Component {
 
  componentDidMount() {
@@ -263,6 +266,12 @@ console.log(savedAuth,"================")
               path="/e-chawadi-kamkaj-tapasani/dyslr-akarband"
               name="dyslr-akarband-tapsil"
               element={<DyslrAkarbandTapasani />}
+            />
+            <Route
+              exact
+              path="/mis-inspection"
+              name="mis-inspection"
+              element={<MisInspection />}
             />
           </Routes>{' '}
         </Suspense>{' '}

@@ -57,7 +57,7 @@ const AkrushakDarTapa = () => {
   }, [])
 
   const getAkurhsakDar = async () => {
-    setIsLoading(true)
+    setIsLoading(true)  
     try {
       if (!cCode) {
         alert('Village code not found....Please Select Village First')
