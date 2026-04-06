@@ -636,6 +636,30 @@ const InspectionReport = () => {
     }
   }
 
+  const getDyslrDurustiCountApi = async () => {
+    try {
+      if (!cCode) return 0
+
+      const currentRevenueYear = revenueYear || '2025-26'
+
+      const response = await api.get(
+        `/inpsection/getDyslrDurustiCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
+      )
+
+      console.log(response.data, 'Dyslr Durusti API Response')
+
+      const count =
+        typeof response.data === 'object'
+          ? response.data.dyslrDurustiCount || response.data.count || response.data.data || 0
+          : response.data
+
+      return count
+    } catch (err) {
+      console.error('Error fetching Dyslr Durusti Count:', err)
+      return 0
+    }
+  }
+
   const getMaganiDurustiKhatedarCount = async () => {
     try {
       if (!cCode) return 0
@@ -971,6 +995,7 @@ const InspectionReport = () => {
       const maganiDurustiCount = await getMaganiDurustiKhatedarCount()
       const dyslrAkarbandCount = await getDyslrAkarbandDeletedCount()
       const nirankCount = await getNirankCountsApi()
+      const dyslrDurustiCount = await getDyslrDurustiCountApi()
 
       if (!data.eHakkArjData) data.eHakkArjData = {}
       data.eHakkArjData.trutiArjList = realTrutiList
@@ -981,6 +1006,7 @@ const InspectionReport = () => {
 
       if (!data.eChawadiData.akarbandTapshil) data.eChawadiData.akarbandTapshil = {}
       data.eChawadiData.akarbandTapshil.upAdhikshakNotAvail = dyslrAkarbandCount
+      data.eChawadiData.akarbandTapshil.dyslrDurustiCount = dyslrDurustiCount
 
       if (!data.eChawadiData.gawNamunaPurna) data.eChawadiData.gawNamunaPurna = {}
       data.eChawadiData.gawNamunaPurna.nirank = nirankCount.nirank
@@ -1958,7 +1984,11 @@ const InspectionReport = () => {
                         <CTableDataCell className="text-start ps-5">
                           i) गाव नमुना एक ( दुरुस्तीसाठी पडताळणी तक्ता )
                         </CTableDataCell>
-                        <CTableDataCell>-</CTableDataCell>
+
+                        <CTableDataCell>
+                          {reportData.eChawadiData?.akarbandTapshil?.dyslrDurustiCount ?? '-'}
+                        </CTableDataCell>
+
                         <CTableDataCell className="text-center align-middle">
                           <CButton
                             className="remark-btn no-print"
