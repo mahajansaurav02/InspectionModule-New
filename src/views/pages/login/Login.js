@@ -351,9 +351,9 @@ const Login = () => {
         }
         setShowToast(true)
         // Reload captcha on failed API call
-         setLoginValue({ ...loginValue, captcha: '' })
-         loadCaptchaEnginge(6, 'skyblue')
-        
+        setLoginValue({ ...loginValue, captcha: '' })
+        loadCaptchaEnginge(6, 'skyblue')
+
       })
   }
   const togglePassword = () => {
@@ -407,6 +407,29 @@ const Login = () => {
         {/* <CRow className="justify-content-center"> */}
         <CCol md={4} xs={12}>
           <LanguageSelector />
+    <div className="d-flex justify-content-end mb-3">
+  <CButton
+    className="px-4 py-2 fw-semibold rounded-pill shadow-sm"
+    style={{
+      background: 'linear-gradient(135deg, #4f46e5, #3b82f6)',
+      color: '#fff',
+      border: 'none',
+      transition: 'all 0.3s ease',
+    }}
+    onMouseOver={(e) => {
+      e.currentTarget.style.transform = 'translateY(-2px)';
+      e.currentTarget.style.boxShadow = '0 6px 18px rgba(0,0,0,0.15)';
+    }}
+    onMouseOut={(e) => {
+      e.currentTarget.style.transform = 'translateY(0)';
+      e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
+    }}
+    onClick={() => navigate('/mis-inspection')}
+  >
+    Go to MIS →
+  </CButton>
+</div>
+
           <CCardGroup>
             <CCard className="p-4">
               <CCardBody>
@@ -414,7 +437,7 @@ const Login = () => {
                   className="row g-3 needs-validation"
                   noValidate
                   validated={validated}
-                  //onSubmit={handleLogin}
+                //onSubmit={handleLogin}
                 >
                   {/* <h2> Inspection Module e-Chawadi </h2> */}
                   <h2> Inspection Module e-Chawadi </h2>
@@ -481,7 +504,7 @@ const Login = () => {
                       //     : 'Please provide a captcha.'
                       // }
                       required
-                      // tooltipFeedback
+                    // tooltipFeedback
                     />
                   </CInputGroup>
                   <div className="d-grid gap-2 col-12 mx-auto">
