@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { CContainer } from '@coreui/react';
-import { FormControl, TextField, Grid, Box, Paper, Divider, Typography } from '@mui/material';
-import { useSelector } from 'react-redux';
-import { selectState } from '../../../slices/HomepageSlice';
-import { useTranslation } from 'react-i18next';
-import { styled } from '@mui/material/styles';
-import '../Dashboard.css';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import Select from '@mui/material/Select';
+import React, { useEffect, useState } from 'react'
+import { CContainer } from '@coreui/react'
+import { FormControl, TextField, Grid, Box, Paper, Divider, Typography } from '@mui/material'
+import { useSelector } from 'react-redux'
+import { selectState } from '../../../slices/HomepageSlice'
+import { useTranslation } from 'react-i18next'
+import { styled } from '@mui/material/styles'
+import '../Dashboard.css'
+import InputLabel from '@mui/material/InputLabel'
+import MenuItem from '@mui/material/MenuItem'
+import Select from '@mui/material/Select'
 
 // --- Custom Styles for Compact & Attractive Look ---
 
@@ -18,7 +18,7 @@ const StyledPaper = styled(Paper)(({ theme }) => ({
   boxShadow: '0 2px 8px rgba(0,0,0,0.08)', // Subtle, lower shadow
   backgroundColor: '#f9f9f9', // Slightly off-white background
   marginBlock: theme.spacing(1), // Reduced outer margin
-}));
+}))
 
 // Apply the size="small" variant to all controls for compactness
 const CustomSelect = styled(Select)(({ theme }) => ({
@@ -36,7 +36,7 @@ const CustomSelect = styled(Select)(({ theme }) => ({
       borderWidth: '2px',
     },
   },
-}));
+}))
 
 const StyledTextField = styled(TextField)(({ theme }) => ({
   '& .MuiOutlinedInput-root': {
@@ -44,116 +44,114 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     backgroundColor: '#fcfcfc',
   },
   '& .MuiOutlinedInput-root.Mui-disabled': {
-    backgroundColor: '#fcfcfc',  
+    backgroundColor: '#fcfcfc',
     color: theme.palette.text.primary,
-    WebkitTextFillColor: theme.palette.text.primary, 
-    opacity: 1, 
+    WebkitTextFillColor: theme.palette.text.primary,
+    opacity: 1,
   },
-}));
-
+}))
 
 // --- Helper Functions (Unchanged) ---
 
 const getInspectionVillages = () => {
   try {
-    const data = localStorage.getItem('villageForInspection');
-    return data ? JSON.parse(data) : [];
+    const data = localStorage.getItem('villageForInspection')
+    return data ? JSON.parse(data) : []
   } catch (error) {
-    console.error("Error parsing villageForInspection from localStorage:", error);
-    return [];
+    console.error('Error parsing villageForInspection from localStorage:', error)
+    return []
   }
-};
-
-const getRevenueYearsList = (stateRevenueYear1) => {
-    if (Array.isArray(stateRevenueYear1) && stateRevenueYear1.length > 0) {
-        return stateRevenueYear1;
-    }
-    
-    try {
-        const data = localStorage.getItem('revenueYear');
-        if (data && data.startsWith('[')) {
-             const parsedData = JSON.parse(data);
-             return Array.isArray(parsedData) ? parsedData : [];
-        }
-    } catch (error) {
-        console.error("Error parsing revenueYear array from localStorage:", error);
-    }
-    return [];
 }
 
+const getRevenueYearsList = (stateRevenueYear1) => {
+  if (Array.isArray(stateRevenueYear1) && stateRevenueYear1.length > 0) {
+    return stateRevenueYear1
+  }
+
+  try {
+    const data = localStorage.getItem('revenueYear')
+    if (data && data.startsWith('[')) {
+      const parsedData = JSON.parse(data)
+      return Array.isArray(parsedData) ? parsedData : []
+    }
+  } catch (error) {
+    console.error('Error parsing revenueYear array from localStorage:', error)
+  }
+  return []
+}
 
 // --- Section1 Component ---
 
-const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => { 
-  const { t } = useTranslation('dashboard');
-  const state = useSelector(selectState);
-  
-  const inspectionVillages = getInspectionVillages();
-  const revenueYearList = getRevenueYearsList(state?.revenueYear1);
+const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
+  const { t } = useTranslation('dashboard')
+  const state = useSelector(selectState)
 
-  const firstVillage = inspectionVillages[0];
-  const firstRevenueYear = revenueYearList[0];
-  const selectedVillage=localStorage.getItem('selectedVillageData')
-  const villageName=JSON.parse(selectedVillage)
-  const selectedMainVillage = villageName[0]?.villageName || '';
-  const initialVillageName = dropdownVal.village ?? (firstVillage?.villageName || '');
-  const initialRevenueYear = dropdownVal.revenueYear ?? (firstRevenueYear?.revenueYear || '');
+  const inspectionVillages = getInspectionVillages()
+  const revenueYearList = getRevenueYearsList(state?.revenueYear1)
+
+  const firstVillage = inspectionVillages[0]
+  const firstRevenueYear = revenueYearList[0]
+
+  const selectedVillage = localStorage.getItem('selectedVillageData')
+  const villageName = selectedVillage ? JSON.parse(selectedVillage) : []
+  const selectedMainVillage = villageName?.[0]?.villageName || ''
+
+  const initialVillageName = dropdownVal.village ?? (firstVillage?.villageName || '')
+  const initialRevenueYear = dropdownVal.revenueYear ?? (firstRevenueYear?.revenueYear || '')
 
   const [localDisplayData, setLocalDisplayData] = useState({
-    districtName: localStorage.getItem('districtName') || (firstVillage?.distMarathiName || ''),
-    talukaName: localStorage.getItem('talukaName') || (firstVillage?.talukaMarathiName || ''),
-    village: initialVillageName, 
-    revenueYear: initialRevenueYear, 
-  });
+    districtName: localStorage.getItem('districtName') || firstVillage?.distMarathiName || '',
+    talukaName: localStorage.getItem('talukaName') || firstVillage?.talukaMarathiName || '',
+    village: initialVillageName,
+    revenueYear: initialRevenueYear,
+  })
 
   useEffect(() => {
     // ... (Initial setup logic remains the same)
     if (inspectionVillages.length > 0 && !dropdownVal.village) {
-      setDropdownVal(prev => ({
+      setDropdownVal((prev) => ({
         ...prev,
         village: firstVillage.villageName,
         villageCode: firstVillage.lgdCode,
         cCode: firstVillage.cCode,
         districtCode: firstVillage.districtCode,
         talukaCode: firstVillage.talukaCode,
-      }));
+      }))
 
-      setLocalDisplayData(prev => ({
+      setLocalDisplayData((prev) => ({
         ...prev,
         village: firstVillage.villageName,
         districtName: firstVillage.distMarathiName,
         talukaName: firstVillage.talukaMarathiName,
-      }));
+      }))
     }
 
     if (revenueYearList.length > 0 && !dropdownVal.revenueYear) {
-        setDropdownVal(prev => ({
-            ...prev,
-            revenueYear: firstRevenueYear.revenueYear
-        }));
+      setDropdownVal((prev) => ({
+        ...prev,
+        revenueYear: firstRevenueYear.revenueYear,
+      }))
     }
   }, [
-    inspectionVillages.length, 
+    inspectionVillages.length,
     revenueYearList.length,
-    dropdownVal.village, 
-    dropdownVal.revenueYear, 
-    setDropdownVal
-  ]);
-
+    dropdownVal.village,
+    dropdownVal.revenueYear,
+    setDropdownVal,
+  ])
 
   const handleChange = (e) => {
-    const { name, value } = e?.target;
+    const { name, value } = e?.target
 
     if (name === 'revenueYear') {
-        setLocalDisplayData(prev => ({ ...prev, revenueYear: value }));
-        setDropdownVal(prev => ({ ...prev, revenueYear: value }));
-        window.location.reload()
-
+      setLocalDisplayData((prev) => ({ ...prev, revenueYear: value }))
+      setDropdownVal((prev) => ({ ...prev, revenueYear: value }))
+      window.location.reload()
     } else if (name === 'village') {
-      const selctedVillageData = inspectionVillages.find((u) => u.villageName === value);
-      console.log(selctedVillageData,"checkkkk All data")
+      const selctedVillageData = inspectionVillages.find((u) => u.villageName === value)
+      console.log(selctedVillageData, 'checkkkk All data')
       // let selected
-      localStorage.setItem("selectedVillageData", JSON.stringify([{...selctedVillageData}]))
+      localStorage.setItem('selectedVillageData', JSON.stringify([{ ...selctedVillageData }]))
       if (selctedVillageData) {
         setDropdownVal((prev) => ({
           ...prev,
@@ -162,24 +160,23 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
           cCode: selctedVillageData.cCode,
           districtCode: selctedVillageData.districtCode,
           talukaCode: selctedVillageData.talukaCode,
-        }));
+        }))
 
         setLocalDisplayData((prev) => ({
-            ...prev,
-            village: value,
-            districtName: selctedVillageData.distMarathiName,
-            talukaName: selctedVillageData.talukaMarathiName,
-        }));
-              window.location.reload();
-
+          ...prev,
+          village: value,
+          districtName: selctedVillageData.distMarathiName,
+          talukaName: selctedVillageData.talukaMarathiName,
+        }))
+        window.location.reload()
       }
     }
-  };
+  }
 
-   return (
+  return (
     <CContainer fluid>
-      <StyledPaper 
-        elevation={compact ? 0 : 2} 
+      <StyledPaper
+        elevation={compact ? 0 : 2}
         sx={{
           boxShadow: compact ? 'none' : undefined,
           backgroundColor: compact ? 'transparent' : '#f9f9f9',
@@ -188,83 +185,104 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
         }}
       >
         <Box sx={{ p: compact ? 0 : 1 }}>
-        <Grid 
-  container 
-  spacing={compact ? 1 : 2} 
-  alignItems="center"
-  justifyContent="flex-start"
-  wrap="wrap"
->
-  {/* District */}
-  <Grid item xs={compact ? 'auto' : 12} sm={compact ? 'auto' : 6} md={compact ? 'auto' : 3}>
-    <FormControl size="small" sx={{ minWidth: 100 }}>
-      <StyledTextField
-        label="जिल्हा"
-        value={localDisplayData.districtName}
-        size="small"
-        disabled
-      />
-    </FormControl>
-  </Grid>
+          <Grid
+            container
+            spacing={compact ? 1 : 2}
+            alignItems="center"
+            justifyContent="flex-start"
+            wrap="wrap"
+          >
+            {/* District */}
+            <Grid
+              item
+              xs={compact ? 'auto' : 12}
+              sm={compact ? 'auto' : 6}
+              md={compact ? 'auto' : 3}
+            >
+              <FormControl size="small" sx={{ minWidth: 100 }}>
+                <StyledTextField
+                  label="जिल्हा"
+                  value={localDisplayData.districtName}
+                  size="small"
+                  disabled
+                />
+              </FormControl>
+            </Grid>
 
-  {/* Taluka */}
-  <Grid item xs={compact ? 'auto' : 12} sm={compact ? 'auto' : 6} md={compact ? 'auto' : 3}>
-    <FormControl size="small" sx={{ minWidth: 100 }}>
-      <StyledTextField
-        label="तालुका"
-        value={localDisplayData.talukaName}
-        size="small"
-        disabled
-      />
-    </FormControl>
-  </Grid>
+            {/* Taluka */}
+            <Grid
+              item
+              xs={compact ? 'auto' : 12}
+              sm={compact ? 'auto' : 6}
+              md={compact ? 'auto' : 3}
+            >
+              <FormControl size="small" sx={{ minWidth: 100 }}>
+                <StyledTextField
+                  label="तालुका"
+                  value={localDisplayData.talukaName}
+                  size="small"
+                  disabled
+                />
+              </FormControl>
+            </Grid>
 
-  {/* Village */}
-  <Grid item xs={compact ? 'auto' : 12} sm={compact ? 'auto' : 6} md={compact ? 'auto' : 3}>
-    <FormControl size="small" sx={{ minWidth: 100 }}>
-      <InputLabel id="village-label" size="small">गाव</InputLabel>
-     <CustomSelect
-  labelId="village-label"
-        name="village"
-        value={selectedMainVillage}
-        onChange={handleChange}
+            {/* Village */}
+            <Grid
+              item
+              xs={compact ? 'auto' : 12}
+              sm={compact ? 'auto' : 6}
+              md={compact ? 'auto' : 3}
+            >
+              <FormControl size="small" sx={{ minWidth: 100 }}>
+                <InputLabel id="village-label" size="small">
+                  गाव
+                </InputLabel>
+                <CustomSelect
+                  labelId="village-label"
+                  name="village"
+                  value={selectedMainVillage}
+                  onChange={handleChange}
+                >
+                  {inspectionVillages.map((val) => (
+                    <MenuItem key={val?.cCode} value={val?.villageName}>
+                      {val?.villageName}
+                    </MenuItem>
+                  ))}
+                </CustomSelect>
+              </FormControl>
+            </Grid>
 
->
-    {inspectionVillages.map((val) => (
-        // 🟢 FIX 2: Display the name of the village being iterated over (val)
-        <MenuItem key={val?.cCode} value={val?.villageName}>
-            {val?.villageName} 
-        </MenuItem>
-    ))}
-</CustomSelect>
-    </FormControl>
-  </Grid>
-
-  {/* Revenue Year */}
-  <Grid item xs={compact ? 'auto' : 12} sm={compact ? 'auto' : 6} md={compact ? 'auto' : 3}>
-    <FormControl size="small" sx={{ minWidth: 100 }}>
-      <InputLabel id="revenue-year-label" size="small">महसूल वर्ष</InputLabel>
-      <CustomSelect
-        labelId="revenue-year-label"
-        name="revenueYear"
-        value={"2024-25"}
-        onChange={handleChange}
-        defaultValue={'2024-25'}
-      >
-        {revenueYearList.map((year) => (
-          <MenuItem defaultValue={'2024-25'} key={year?.revenueYear} value={"2024-25"}>
-            {"2024-25"}
-          </MenuItem>
-        ))}
-      </CustomSelect>
-    </FormControl>
-  </Grid>
-</Grid>
-
+            {/* Revenue Year */}
+            <Grid
+              item
+              xs={compact ? 'auto' : 12}
+              sm={compact ? 'auto' : 6}
+              md={compact ? 'auto' : 3}
+            >
+              <FormControl size="small" sx={{ minWidth: 100 }}>
+                <InputLabel id="revenue-year-label" size="small">
+                  महसूल वर्ष
+                </InputLabel>
+                <CustomSelect
+                  labelId="revenue-year-label"
+                  name="revenueYear"
+                  value={'2024-25'}
+                  onChange={handleChange}
+                  defaultValue={'2024-25'}
+                >
+                  {revenueYearList.map((year) => (
+                    <MenuItem defaultValue={'2024-25'} key={year?.revenueYear} value={'2024-25'}>
+                      {'2024-25'}
+                    </MenuItem>
+                  ))}
+                </CustomSelect>
+              </FormControl>
+            </Grid>
+          </Grid>
         </Box>
       </StyledPaper>
     </CContainer>
-  );
-};
+  )
+}
 
-export default Section1;
+export default Section1
