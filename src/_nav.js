@@ -85,6 +85,12 @@ const _nav = [
         to: '/reports/Inspection-report/InspectionReport',
         icon: <CIcon icon={cilNewspaper} customClassName="nav-icon" />,
       },
+      {
+        component: CNavItem,
+        name: 'remark list',
+        to: '/reports/Inspection-report/remark-history',
+        icon: <CIcon icon={cilNewspaper} customClassName="nav-icon" />,
+      },
     ],
   },
   // You can add the rest of your commented-out modules (OCR, Mandal Office, Taluka Office)
