@@ -36,10 +36,7 @@ import { useSelector } from 'react-redux'
 import e from 'cors'
 import { Bounce, ToastContainer, toast } from 'react-toastify'
 
-
-
-
-const FerfarDetailsTabs = ({ ferfar,selectedSurvey }) => {
+const FerfarDetailsTabs = ({ ferfar, selectedSurvey }) => {
   const [activeKey, setActiveKey] = useState(1)
   const [documentHistory, setDocumentHistory] = useState([1])
   const [remark, setRemark] = useState('')
@@ -133,86 +130,71 @@ const FerfarDetailsTabs = ({ ferfar,selectedSurvey }) => {
       fileInputRef.current.click()
     }
   }
- const get712View = async (surveyNumber) => {
-  try {
-    setIsLoading(true);
+  const get712View = async (surveyNumber) => {
+    try {
+      setIsLoading(true)
 
-    // 🔹 Split survey number
-    const parts = surveyNumber ? surveyNumber.split("/") : [];
+      // 🔹 Split survey number
+      const parts = surveyNumber ? surveyNumber.split('/') : []
 
-    // Ensure max 9 fields (pinCode + pin1–pin8)
-    const payload = {
-      lgd_code: lgdCode,
-      pinCode: parts[0] || "",
-      pin1: parts[1] || "",
-      pin2: parts[2] || "",
-      pin3: parts[3] || "",
-      pin4: parts[4] || "",
-      pin5: parts[5] || "",
-      pin6: parts[6] || "",
-      pin7: parts[7] || "",
-      pin8: parts[8] || "",
-    };
+      // Ensure max 9 fields (pinCode + pin1–pin8)
+      const payload = {
+        lgd_code: lgdCode,
+        pinCode: parts[0] || '',
+        pin1: parts[1] || '',
+        pin2: parts[2] || '',
+        pin3: parts[3] || '',
+        pin4: parts[4] || '',
+        pin5: parts[5] || '',
+        pin6: parts[6] || '',
+        pin7: parts[7] || '',
+        pin8: parts[8] || '',
+      }
 
-    const res = await api.post("/callExternalSatBaraApi", payload);
+      const res = await api.post('/callExternalSatBaraApi', payload)
 
-    const { base64, mimeType } = res.data.data;
-console.log(res)
-    // if()
+      const { base64, mimeType } = res.data.data
+      console.log(res)
+      // if()
 
-
-    setBase64Mime(mimeType);
-    setBase64Image(`data:${mimeType};base64,${base64}`);
-
-  } catch (err) {
-    console.error("Failed to load 7/12 document:", err);
-    errorToast(`Failed to load 7/12 document ${surveyNumber || ''}`);
-  } finally {
-    setIsLoading(false);
+      setBase64Mime(mimeType)
+      setBase64Image(`data:${mimeType};base64,${base64}`)
+    } catch (err) {
+      console.error('Failed to load 7/12 document:', err)
+      errorToast(`Failed to load 7/12 document ${surveyNumber || ''}`)
+    } finally {
+      setIsLoading(false)
+    }
   }
-};
 
+  const getFerfarView = async (ferfar) => {
+    try {
+      setIsLoading(true)
+      console.log(ferfar, '======ferfar=========')
+      // 🔹 Split survey number
+      // const parts = surveyNumber ? surveyNumber.split("/") : [];
 
+      // Ensure max 9 fields (pinCode + pin1–pin8)
+      const payload = {
+        lgd_code: lgdCode,
+        mut_no: ferfar.mutNo,
+      }
 
- const getFerfarView = async (ferfar) => {
-  try {
-    setIsLoading(true);
-console.log(ferfar,'======ferfar=========')
-    // 🔹 Split survey number
-    // const parts = surveyNumber ? surveyNumber.split("/") : [];
+      const res = await api.post('/callExternalFerfarApi', payload)
 
-    // Ensure max 9 fields (pinCode + pin1–pin8)
-    const payload = {
-      lgd_code: lgdCode,
-   mut_no: ferfar.mutNo,
-    };
+      const { base64, mimeType } = res.data.data
+      console.log(res)
+      // if()
 
-    const res = await api.post("/callExternalFerfarApi", payload);
-
-    const { base64, mimeType } = res.data.data;
-console.log(res)
-    // if()
-
-
-    setBase64FerfarMime(mimeType);
-    setBase64FerfarImage(`data:${mimeType};base64,${base64}`);
-
-  } catch (err) {
-    console.error("Failed to load Ferfar document:", err);
-    errorToast(`Failed to load Ferfar document ${ferfar.mutNo || ''}`);
-  } finally {
-    setIsLoading(false);
+      setBase64FerfarMime(mimeType)
+      setBase64FerfarImage(`data:${mimeType};base64,${base64}`)
+    } catch (err) {
+      console.error('Failed to load Ferfar document:', err)
+      errorToast(`Failed to load Ferfar document ${ferfar.mutNo || ''}`)
+    } finally {
+      setIsLoading(false)
+    }
   }
-};
-
-
-
-
-
-
-
-
-
 
   // const getFerfarView = async () => {
   //   console.log(ferfar, "======ferfar=========")
@@ -249,34 +231,31 @@ console.log(res)
   //   }
   // }
 
-
   const handleSubmit = async () => {
     setIsRemarkSubmitLoading(true)
 
     if (!priority) {
       // toast.warn('')
       toast.warn('कृपया अभिप्रायाचे प्राधान्य प्रकार निवडा', {
-        position: "top-right",
+        position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
         closeOnClick: false,
         pauseOnHover: true,
         draggable: true,
         progress: undefined,
-        theme: "colored",
+        theme: 'colored',
         transition: Bounce,
-      });
+      })
       setIsRemarkSubmitLoading(false)
 
       return
-
     }
 
     let remarkType = ''
     if (priority === 'High') remarkType = 'अतीगंभीर'
     if (priority === 'Medium') remarkType = 'गंभीर'
     if (priority === 'Low') remarkType = 'साधारण'
-
 
     try {
       const formData = new FormData()
@@ -320,10 +299,7 @@ console.log(res)
         console.log(key, value)
       }
 
-      const res = await api.post(
-        '/inpsection/saveFerfarForInspection',
-        formData
-      )
+      const res = await api.post('/inpsection/saveFerfarForInspection', formData)
 
       if (res.status === 201) {
         setSubmitStatus('success')
@@ -340,22 +316,21 @@ console.log(res)
       console.error('Submit error:', err)
       setSubmitStatus('error')
       // alert()
-      toast.warn(err?.response?.data?.message || 'Failed to submit remark'  , {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: false,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: "colored",
-          transition: Bounce,
-        });
+      toast.warn(err?.response?.data?.message || 'Failed to submit remark', {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: 'colored',
+        transition: Bounce,
+      })
     } finally {
       setIsRemarkSubmitLoading(false)
     }
   }
-
 
   const handleDownload = (type) => {
     let fileName, base64Data, mimeType
@@ -374,18 +349,17 @@ console.log(res)
           mimeType === 'image/jpg' || mimeType === 'image/jpeg'
             ? 'jpg'
             : mimeType === 'image/png'
-              ? 'png'
-              : mimeType === 'application/pdf'
-                ? 'pdf'
-                : 'bin'
+            ? 'png'
+            : mimeType === 'application/pdf'
+            ? 'pdf'
+            : 'bin'
 
         fileName = `7-12-utara.${extension}`
         base64Data = base64Image
         break
 
       case 'ferfar':
-
-if (!base64FerfarImage || !base64FerfarMime) {
+        if (!base64FerfarImage || !base64FerfarMime) {
           toast.error('फेरफार दस्तऐवज उपलब्ध नाही')
           return
         }
@@ -397,10 +371,10 @@ if (!base64FerfarImage || !base64FerfarMime) {
           mimeType === 'image/jpg' || mimeType === 'image/jpeg'
             ? 'jpg'
             : mimeType === 'image/png'
-              ? 'png'
-              : mimeType === 'application/pdf'
-                ? 'pdf'
-                : 'bin'
+            ? 'png'
+            : mimeType === 'application/pdf'
+            ? 'pdf'
+            : 'bin'
 
         fileName = `ferfar-${cCode}.${ex}`
         base64Data = base64FerfarImage
@@ -463,7 +437,6 @@ if (!base64FerfarImage || !base64FerfarMime) {
       toast.error('डाउनलोड अयशस्वी')
     }
   }
-
 
   const handleZoom = (direction) => {
     setZoomLevel((prev) => {
@@ -528,7 +501,7 @@ if (!base64FerfarImage || !base64FerfarMime) {
       if (!doc.content) {
         return <div className="text-muted">फेरफार दस्तऐवज उपलब्ध नाही</div>
       }
- return (
+      return (
         <div className="image-container">
           <img
             src={doc.content}
@@ -546,7 +519,6 @@ if (!base64FerfarImage || !base64FerfarMime) {
           />
         </div>
       )
-   
     }
 
     // PDFs / others
@@ -626,12 +598,9 @@ if (!base64FerfarImage || !base64FerfarMime) {
                 दस्ताऐवज जोडा
               </CButton>
               {attachedFile && <span className="text-success small">{attachedFile.name}</span>}
-            </div>
-            {' '}
+            </div>{' '}
             <div className="priority-selection-sm mb-3">
-              <span className="priority-label-sm">
-                अभिप्रायाचे प्राधान्य प्रकार :
-              </span>
+              <span className="priority-label-sm">अभिप्रायाचे प्राधान्य प्रकार :</span>
 
               <div className="d-flex gap-2 mt-2 flex-wrap">
                 <label className={`priority-pill low ${priority === 'High' ? 'active' : ''}`}>
@@ -670,15 +639,18 @@ if (!base64FerfarImage || !base64FerfarMime) {
             </div>
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
-                रिसेट करा 
+                रिसेट करा
               </CButton>
 
-              <CButton disabled={!remark.trim()}
-                color="primary" onClick={handleSubmit} className="submit-button">
+              <CButton
+                disabled={!remark.trim()}
+                color="primary"
+                onClick={handleSubmit}
+                className="submit-button"
+              >
                 {isRemarkSubmitLoading ? 'जतन होत आहे ...' : 'जतन करा'}
               </CButton>
             </div>
-
             {submitStatus === 'success' && (
               <CAlert color="success" className="mt-3">
                 <FaCheckCircle className="me-2" />
@@ -762,7 +734,8 @@ if (!base64FerfarImage || !base64FerfarMime) {
         pauseOnHover
         theme="colored"
         transition={Bounce}
-      />      <CCardBody className="tabscard">
+      />{' '}
+      <CCardBody className="tabscard">
         <CNav variant="tabs" role="tablist" className="ferfar-tab-nav">
           <CNavItem className="ferfar-tab-item">
             <CNavLink

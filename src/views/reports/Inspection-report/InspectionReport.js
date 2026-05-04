@@ -29,7 +29,6 @@ import '@coreui/coreui/dist/css/coreui.min.css'
 
 import './InspectionReport.css'
 
-// Import new components
 import MasterInspectionPrint from '../InspectionPrint/MasterInspectionPrint'
 import InspectionPrint from '../InspectionPrint/InspectionPrint'
 import PrintUtility from '../InspectionPrint/PrintUtility'
@@ -342,26 +341,26 @@ const InspectionReport = () => {
   const [ehakkaCounts, setEhakkaCounts] = useState({})
   const [isLoading, setIsLoading] = useState(false)
   const [revenueTargetData, setRevenueTargetData] = useState(null)
-  const [echawadiRemarks, setEchawadiRemarks] = useState(null)
+  const [echawadiRemarks, setEchawadiRemarks] = useState([])
   const [vasuliDetails, setVasuliDetails] = useState({
     jaminMahsul029: { mangni: 0, vasuli: 0, percentage: 0 },
     itarMahsul045: { mangni: 0, vasuli: 0, percentage: 0 },
   })
   const { user, roles, token } = useSelector((state) => state.auth || {})
-  const revenueYear = user?.revenueYear[0]?.revenueYear
+  const revenueYear = user?.revenueYear?.[0]?.revenueYear || '2025-26'
   let VillageData = localStorage.getItem('selectedVillageData')
-  let selectedVillageData = JSON.parse(VillageData)
+  let selectedVillageData = VillageData ? JSON.parse(VillageData) : []
   const fullName = localStorage.getItem('fullName')
 
   let {
-    cCode,
-    distMarathiName,
-    districtCode,
-    lgdCode,
-    talukaCode,
-    talukaMarathiName,
-    villageName,
-  } = selectedVillageData[0]
+    cCode = '',
+    distMarathiName = '',
+    districtCode = '',
+    lgdCode = '',
+    talukaCode = '',
+    talukaMarathiName = '',
+    villageName = '',
+  } = selectedVillageData?.[0] || {}
 
   const ferfarTypeLabel = {
     1: 'आदेश फेरफार',
@@ -375,7 +374,7 @@ const InspectionReport = () => {
   }
 
   const sequentialFerfarList = React.useMemo(() => {
-    if (!allFerfarList || allFerfarList.length === 0) {
+    if (!Array.isArray(allFerfarList) || allFerfarList.length === 0) {
       return Object.keys(ferfarTypeLabel).map((type) => ({
         ferfarType: Number(type),
         mutNos: [],
@@ -464,6 +463,7 @@ const InspectionReport = () => {
       )
 
       console.log(res.data, 'ferfar data response')
+      const ferfarArray = Array.isArray(res.data) ? res.data : res.data?.data || []
 
       setAllFerfarList(res.data)
 
@@ -559,7 +559,7 @@ const InspectionReport = () => {
           .filter((item) => item.applicationId !== null)
           .map((item) => ({
             arjNo: item.applicationId,
-            remark: item.remark, // remark आणि shera दोन्ही मॅप करा
+            remark: item.remark,
             shera: item.remark,
             typeOfRemark:
               item.remarkType === 'साधारण'
@@ -573,7 +573,7 @@ const InspectionReport = () => {
           }))
 
         toast.success('ई-हक्क (त्रुटी) डेटा यशस्वीरित्या अपडेट झाला!', { autoClose: 2000 })
-        return realTimeTrutiList // Return करा जेणेकरून आपण ते reportData मध्ये सेट करू शकू
+        return realTimeTrutiList
       }
       return []
     } catch (err) {
@@ -1557,7 +1557,6 @@ const InspectionReport = () => {
         fluid
         className="inspection-container d-flex justify-content-center align-items-center"
       >
-        {/* This wrapper controls the "Medium" size */}
         <div className="report-card-wrapper">
           <CCard className="inspection-card">
             <CCardHeader className="header-gradient text-end p-4">
