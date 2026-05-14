@@ -1,135 +1,466 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import './RemarkHistory.css'
+import { useSelector } from 'react-redux'
+import api from 'src/api/api'
 
-const remarks = [
+// ─── Set this to false when your API is ready ─────────────────────────────────
+const USE_MOCK_DATA = false
+
+const MOCK_REMARKS = [
   {
     id: 1,
     role: 'io',
     name: 'Rajesh Patil',
     roleLabel: 'Inspection Officer',
-    message:
-      'गट क्रमांक १४२ ची सर्वेक्षण नोंद अपूर्ण आहे. पिकाच्या प्रकाराचे रकाने रिकामे ठेवण्यात आले आहेत आणि जमिनीच्या क्षेत्रफळाची मोजणी ७/१२ उताऱ्याशी जुळत नाही. कृपया नोंदीची पडताळणी करा आणि अचूक तपशीलांसह ती पुन्हा सादर करा.',
-    time: '28 Apr · 10:15 AM',
-    // attachment: '7-12_extract_gat142.pdf',
-  },
-  {
-    id: 2,
-    role: 'tl',
-    name: 'Suresh Deshmukh',
-    roleLabel: 'Talathi',
-    message:
-      'नोंद घेतली, साहेब. शेतकऱ्याच्या पुष्टीकरणाअभावी पिकाचा प्रकार निश्चित होणे प्रलंबित होते. मी आता तो सोयाबीन असा अद्ययावत केला आहे. क्षेत्राच्या मोजमापाबाबतची तफावत ही सीमावादाशी संबंधित आहे; हा वाद सध्या ग्रामपंचायत स्तरावर निवारणासाठी प्रक्रियेत आहे.',
-    time: '28 Apr · 2:40 PM',
-    // attachment: 'boundary_dispute_gp_letter.pdf',
-  },
-  {
-    id: 3,
-    role: 'io',
-    name: 'Rajesh Patil',
-    roleLabel: 'Inspection Officer',
-    message:
-      'पिकाचा प्रकार स्वीकारण्यात आला आहे. तथापि, अंतिम सादर करण्यापूर्वी सीमावाद (हद्दीचा वाद) निकाली काढणे आवश्यक आहे. कृपया ५ कामकाजाच्या दिवसांच्या आत ग्रामपंचायतीकडून यासंदर्भातील अधिकृत ठराव पत्र प्राप्त करून घ्यावे.',
-    time: '30 Apr · 9:30 AM',
-    attachment: null,
-  },
-  {
-    id: 4,
-    role: 'tl',
-    name: 'Suresh Deshmukh',
-    roleLabel: 'Talathi',
-    message:
-      'समजले, साहेब. मी सरपंचांकडे लेखी विनंती सादर केली आहे. यावरील सुनावणी २ मे २०२५ रोजी नियोजित आहे. ठराव पत्र जारी होताच, मी ते त्वरित अपलोड करेन.',
-    time: '30 Apr · 11:42 AM',
+    message: 'Sample remark',
+    time: '10:15 AM',
+    date: '28/04/2025',
     attachment: null,
   },
 ]
 
+// ─── Avatar ───────────────────────────────────────────────────────────────────
 const Avatar = ({ role }) => (
   <div className={`rh-avatar ${role}`}>
     {role === 'io' ? 'IO' : 'TL'}
   </div>
 )
 
+// ─── Remark Bubble ────────────────────────────────────────────────────────────
 const RemarkBubble = ({ remark }) => {
   const { role, name, roleLabel, message, time, attachment } = remark
+  const isOwn = role === 'io'
+
   return (
-    <div className={`rh-msg ${role}`}>
-      <Avatar role={role} />
-      <div className={`rh-content ${role}`}>
-        <span className="rh-name">{roleLabel} — {name}</span>
-        <div className={`rh-bubble ${role}`}>{message}</div>
+    <div className={`rh-msg ${isOwn ? 'own' : 'other'}`}>
+      {!isOwn && <Avatar role={role} />}
+
+      <div className={`rh-content ${isOwn ? 'own' : 'other'}`}>
+        <span className="rh-name">
+          {roleLabel} — {name}
+        </span>
+
+        <div className={`rh-bubble ${isOwn ? 'own' : 'other'}`}>
+          {message}
+        </div>
+
         {attachment && (
-          <div className={`rh-attach ${role}`}>
+          <div className={`rh-attach ${isOwn ? 'own' : 'other'}`}>
             📎 {attachment}
           </div>
         )}
+
         <span className="rh-time">{time}</span>
       </div>
+
+      {isOwn && <Avatar role={role} />}
     </div>
   )
 }
 
+// ─── Date Divider ─────────────────────────────────────────────────────────────
 const Divider = ({ label }) => (
   <div className="rh-divider">
     <span>{label}</span>
   </div>
 )
 
-const RemarkHistory = ({ currentUserRole = 'tl' }) => {
-  const [replyText, setReplyText] = useState('')
+// ─── Group remarks by date ────────────────────────────────────────────────────
+const groupByDate = (list) => {
+  const groups = {}
 
-  const handleSubmit = () => {
-    if (!replyText.trim()) return
-    // TODO: connect to your API here
-    console.log('Submitting remark:', replyText)
-    setReplyText('')
+  list.forEach((r) => {
+    const dateKey = r.date || 'Unknown Date'
+
+    if (!groups[dateKey]) {
+      groups[dateKey] = []
+    }
+
+    groups[dateKey].push(r)
+  })
+
+  return groups
+}
+
+// ─── Main Component ───────────────────────────────────────────────────────────
+const RemarkHistory = ({ currentUserRole = 'io' }) => {
+  const [remarks, setRemarks] = useState([])
+  const [replyText, setReplyText] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
+  const [submitting, setSubmitting] = useState(false)
+
+  const threadRef = useRef(null)
+  const hasFetched = useRef(false)
+
+  const { user } = useSelector((state) => state.auth || {})
+
+  const revenueYear = user?.revenueYear?.[0]?.revenueYear
+
+  let selectedVillageData = []
+
+  try {
+    const raw = localStorage.getItem('selectedVillageData')
+
+    if (raw) {
+      selectedVillageData = JSON.parse(raw)
+    }
+  } catch (_) { }
+
+  const { cCode } = selectedVillageData[0] || {}
+
+  // ─── Fetch Remarks ────────────────────────────────────────────────────────
+  const fetchRemarks = async () => {
+    if (loading) return
+
+    setLoading(true)
+    setError(null)
+
+    // MOCK DATA
+    if (USE_MOCK_DATA) {
+      setTimeout(() => {
+        setRemarks(MOCK_REMARKS)
+        setLoading(false)
+      }, 500)
+
+      return
+    }
+
+    try {
+      const res = await api.get(
+        `/inpsection/getTalathiRemarkInspection`,
+        {
+          params: {
+            revenueYear: revenueYear || '2025-26',
+            ccode: cCode,
+          },
+        }
+      )
+
+      const raw = res.data?.data || res.data || []
+
+      const normalised = raw.map((item, idx) => {
+        const dateTime = item.createDtTm
+          ? new Date(item.createDtTm)
+          : null
+
+        return {
+          id: item.id ?? idx,
+
+          role:
+            item.designation === 'INOFICER'
+              ? 'io'
+              : 'tl',
+
+          name:
+            item.name ||
+            item.inspectionOfficerUsername ||
+            '',
+
+          roleLabel:
+            item.designation === 'INOFICER'
+              ? 'Inspection Officer'
+              : 'Talathi',
+
+          message:
+            item.message ||
+            item.remark ||
+            '',
+
+          time: dateTime
+            ? dateTime.toLocaleTimeString('en-IN', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true,
+            })
+            : '',
+
+          date: dateTime
+            ? dateTime.toLocaleDateString('en-GB')
+            : '',
+
+          attachment: item.attachment || null,
+        }
+      })
+
+      setRemarks(normalised)
+    } catch (err) {
+      console.error('Fetch remarks error:', err)
+
+      setError(
+        err?.response?.data?.message ||
+        'Failed to load remarks.'
+      )
+    } finally {
+      setLoading(false)
+    }
   }
 
+  // ─── Prevent Double API Calls ─────────────────────────────────────────────
+  useEffect(() => {
+    if (
+      hasFetched.current ||
+      !cCode ||
+      !revenueYear
+    ) {
+      return
+    }
+
+    hasFetched.current = true
+
+    fetchRemarks()
+  }, [cCode, revenueYear])
+
+  // ─── Auto Scroll ──────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (threadRef.current) {
+      threadRef.current.scrollTop =
+        threadRef.current.scrollHeight
+    }
+  }, [remarks])
+
+  // ─── Check Last Remark ───────────────────────────────────────────────────
+  const lastRemark = remarks[remarks.length - 1]
+
+  const isInspectionOfficerWaiting =
+    lastRemark?.role === 'io'
+
+  // ─── Submit Remark ───────────────────────────────────────────────────────
+  const handleSave = async () => {
+    if (
+      !replyText.trim() ||
+      isInspectionOfficerWaiting
+    ) {
+      return
+    }
+
+    setSubmitting(true)
+
+    const payload = {
+      ccode: cCode,
+      designation: 'INOFICER',
+      servarthId: 'CHECK!@#',
+      revenueYear: revenueYear || '2025-26',
+      remark: replyText.trim(),
+    }
+
+    try {
+      const res = await api.post(
+        `/inpsection/saveTalathiRemark`,
+        payload
+      )
+
+      if (
+        res.status === 200 ||
+        res.status === 201
+      ) {
+        const now = new Date()
+
+        // Add locally instead of refetching API
+        setRemarks((prev) => [
+          ...prev,
+          {
+            id: Date.now(),
+            role: 'io',
+            name:
+              user?.name ||
+              'Inspection Officer',
+
+            roleLabel:
+              'Inspection Officer',
+
+            message: replyText.trim(),
+
+            time: now.toLocaleTimeString(
+              'en-IN',
+              {
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+              }
+            ),
+
+            date: now.toLocaleDateString(
+              'en-GB'
+            ),
+
+            attachment: null,
+          },
+        ])
+
+        setReplyText('')
+      } else {
+        throw new Error(
+          'Unexpected response status'
+        )
+      }
+    } catch (err) {
+      console.error('Submit error:', err)
+
+      alert(
+        err?.response?.data?.message ||
+        'Failed to submit remark'
+      )
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
+  // ─── Grouped Remarks ─────────────────────────────────────────────────────
+  const grouped = groupByDate(remarks)
+
+  const lastActivity = remarks.length
+    ? remarks[remarks.length - 1].time
+    : '—'
+
+  const initiatedBy = remarks.length
+    ? remarks[0].roleLabel
+    : '—'
+
+  // ─── Render ──────────────────────────────────────────────────────────────
   return (
     <div className="rh-wrap">
 
-      {/* Stats Bar */}
+      {/* Stats */}
       <div className="rh-stats">
+
         <div className="rh-stat">
-          <p className="rh-stat-label">Total Remarks</p>
-          <p className="rh-stat-val">{remarks.length}</p>
+          <p className="rh-stat-label">
+            Total Remarks
+          </p>
+
+          <p className="rh-stat-val">
+            {remarks.length}
+          </p>
         </div>
+
         <div className="rh-stat">
-          <p className="rh-stat-label">Initiated by</p>
-          <p className="rh-stat-val">Inspection Officer</p>
+          <p className="rh-stat-label">
+            Initiated by
+          </p>
+
+          <p className="rh-stat-val">
+            {initiatedBy}
+          </p>
         </div>
+
         <div className="rh-stat">
-          <p className="rh-stat-label">Last Activity</p>
-          <p className="rh-stat-val">Today, 11:42 AM</p>
+          <p className="rh-stat-label">
+            Last Activity
+          </p>
+
+          <p className="rh-stat-val">
+            {lastActivity}
+          </p>
         </div>
+
       </div>
 
-      {/* Conversation Thread */}
-      <div className="rh-thread">
-        <Divider label="28 Apr 2025" />
-        <RemarkBubble remark={remarks[0]} />
-        <RemarkBubble remark={remarks[1]} />
+      {/* Thread */}
+      <div
+        className="rh-thread"
+        ref={threadRef}
+      >
 
-        <Divider label="30 Apr 2025" />
-        <RemarkBubble remark={remarks[2]} />
-        <RemarkBubble remark={remarks[3]} />
+        {loading && (
+          <div className="rh-state">
+            <span className="rh-spinner" />
+            Loading remarks…
+          </div>
+        )}
+
+        {!loading && error && (
+          <div className="rh-state error">
+            {error}
+          </div>
+        )}
+
+        {!loading &&
+          !error &&
+          remarks.length === 0 && (
+            <div className="rh-state muted">
+              No remarks yet.
+            </div>
+          )}
+
+        {!loading &&
+          !error &&
+          Object.entries(grouped).map(
+            ([date, list]) => (
+              <React.Fragment key={date}>
+                <Divider label={date} />
+
+                {list.map((r) => (
+                  <RemarkBubble
+                    key={r.id}
+                    remark={r}
+                  />
+                ))}
+              </React.Fragment>
+            )
+          )}
+
       </div>
 
       {/* Reply Box */}
       <div className="rh-reply">
-        <p className="rh-reply-label">Add a remark reply</p>
+
+        <p className="rh-reply-label">
+          Add a remark reply
+        </p>
+
         <textarea
           className="rh-textarea"
-          placeholder="Type your remark here..."
+          placeholder={
+            isInspectionOfficerWaiting
+              ? 'Waiting for Talathi response...'
+              : 'Type your remark here...'
+          }
           value={replyText}
-          onChange={(e) => setReplyText(e.target.value)}
+          onChange={(e) =>
+            setReplyText(e.target.value)
+          }
+          disabled={
+            submitting ||
+            isInspectionOfficerWaiting
+          }
         />
+
+        {isInspectionOfficerWaiting && (
+          <p
+            style={{
+              color: '#d97706',
+              fontSize: '13px',
+              marginTop: '8px',
+            }}
+          >
+            Waiting for Talathi remark
+            before adding another remark.
+          </p>
+        )}
+
         <div className="rh-actions">
-          <button className="rh-btn">+ Attach document</button>
-          <button className="rh-btn primary" onClick={handleSubmit}>
-            Submit remark
+
+          <button className="rh-btn">
+            + Attach document
           </button>
+
+          <button
+            className="rh-btn primary"
+            onClick={handleSave}
+            disabled={
+              submitting ||
+              !replyText.trim() ||
+              isInspectionOfficerWaiting
+            }
+          >
+            {submitting
+              ? 'Submitting…'
+              : 'Submit remark'}
+          </button>
+
         </div>
+
       </div>
 
     </div>
