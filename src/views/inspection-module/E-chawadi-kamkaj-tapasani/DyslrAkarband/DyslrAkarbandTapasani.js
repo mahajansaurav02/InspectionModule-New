@@ -58,7 +58,8 @@ const DyslrAkarbandTapasani = () => {
   let selectedVillageData = JSON.parse(VillageData)
   const navigate = useNavigate()
   const { user, roles, token } = useSelector((state) => state.auth || {})
-  const revenueYear = user?.revenueYear[0]?.revenueYear
+  // const revenueYear = user?.revenueYear[0]?.revenueYear
+  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
 
   let {
     cCode,

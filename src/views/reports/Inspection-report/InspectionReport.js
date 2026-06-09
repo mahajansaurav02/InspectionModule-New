@@ -347,7 +347,7 @@ const InspectionReport = () => {
     itarMahsul045: { mangni: 0, vasuli: 0, percentage: 0 },
   })
   const { user, roles, token } = useSelector((state) => state.auth || {})
-  const revenueYear = user?.revenueYear?.[0]?.revenueYear || '2025-26'
+  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = VillageData ? JSON.parse(VillageData) : []
   const fullName = localStorage.getItem('fullName')
@@ -459,7 +459,7 @@ const InspectionReport = () => {
       }
 
       const res = await api.get(
-        `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=2025-26&activeFlag=Y&ferFarType=0`,
+        `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=${revenueYear}&activeFlag=Y&ferFarType=0`,
       )
 
       console.log(res.data, 'ferfar data response')
@@ -1059,7 +1059,7 @@ const InspectionReport = () => {
       }
 
       const res = await api.get(
-        `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=2025-26&activeFlag=Y&ferFarType=${kramank}`,
+        `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=${revenueYear}&activeFlag=Y&ferFarType=${kramank}`,
       )
 
       console.log(res.data, 'selected ferfar data response')

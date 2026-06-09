@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from 'react'
+// import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import URLS from 'src/URLS'
 
@@ -44,6 +45,20 @@ const Dashboard = () => {
   const [demandGenerated, setDemandGenerated] = useState(0)
   const [jamabandi, setJamabandi] = useState()
 
+  const currentYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
+
+  let cCode = ''
+  const villageDataRaw = localStorage.getItem('selectedVillageData')
+
+  if (villageDataRaw) {
+    try {
+      const parsedData = JSON.parse(villageDataRaw)
+      cCode = parsedData[0]?.cCode || ''
+    } catch (error) {
+      console.error('Error parsing village data:', error)
+    }
+  }
+
   const TotalLiveKhatedar = async () => {
     // alert(dropdownVal?.cCode)
 
@@ -54,7 +69,7 @@ const Dashboard = () => {
     await axios
       //.get(`${URLS.BaseURL}/restservice/getDashBoardKhataNoDetails?cCode=272400110296420000`, {
       .get(
-        `${URLS.BaseURL}/restservice/getDashBoardKhataNoDetails?cCode=272400110296420000&talukaCode=${talukCode}`,
+        `${URLS.BaseURL}/restservice/getDashBoardKhataNoDetails?cCode=${cCode}&talukaCode=${talukCode}`,
         {
           headers: {
             Authorization: 'Bearer ' + token,
@@ -92,7 +107,8 @@ const Dashboard = () => {
     const token = localStorage.getItem('token')
     await axios
       .get(
-        `${URLS.BaseURL}/restservice/getVillageTarget?cCode=272400110296420000&revenueYear=2022-23`,
+        // `${URLS.BaseURL}/restservice/getVillageTarget?cCode=272400110296420000&revenueYear=2022-23`,
+        `${URLS.BaseURL}/restservice/getVillageTarget?cCode=${cCode}&revenueYear=${currentYear}`,
         {
           headers: {
             Authorization: 'Bearer ' + token,
@@ -125,7 +141,8 @@ const Dashboard = () => {
     const token = localStorage.getItem('token')
     axios
       .get(
-        `${URLS.BaseURL}/restservice/getDashBoardTotalDemandDetails?cCode=272400110296420000&revenueYear=2022-23`,
+        // `${URLS.BaseURL}/restservice/getDashBoardTotalDemandDetails?cCode=272400110296420000&revenueYear=2022-23`,
+        `${URLS.BaseURL}/restservice/getDashBoardTotalDemandDetails?cCode=${cCode}&revenueYear=${currentYear}`,
         {
           headers: {
             Authorization: 'Bearer ' + token,
@@ -162,13 +179,29 @@ const Dashboard = () => {
       })
   }
 
+  // useEffect(() => {
+  //   console.log(roles, 'rolesroles')
+  //   console.log(districtCode, 'districtNamedistrictNamedistrictName')
+  //   TotalLiveKhatedar()
+  //   TotalLiveDemandDetails()
+  //   getTargetData()
+  // }, [])
+
+  const isFetched = useRef(false)
+
   useEffect(() => {
-    console.log(roles, 'rolesroles')
-    console.log(districtCode, 'districtNamedistrictNamedistrictName')
-    TotalLiveKhatedar()
-    TotalLiveDemandDetails()
-    getTargetData()
-  }, [])
+    const fetchData = async () => {
+      if (cCode && currentYear && !isFetched.current) {
+        TotalLiveKhatedar()
+        TotalLiveDemandDetails()
+        getTargetData()
+
+        isFetched.current = true
+      }
+    }
+
+    fetchData()
+  }, [cCode, currentYear])
   return (
     <>
       <Paper

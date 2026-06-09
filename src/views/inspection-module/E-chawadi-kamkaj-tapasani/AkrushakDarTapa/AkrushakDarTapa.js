@@ -39,7 +39,8 @@ const AkrushakDarTapa = () => {
 
   let VillageData = localStorage.getItem('selectedVillageData')
   const { user, roles, token } = useSelector((state) => state.auth || {})
-  const revenueYear = user?.revenueYear[0]?.revenueYear
+  // const revenueYear = user?.revenueYear[0]?.revenueYear
+  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
   let selectedVillageData = JSON.parse(VillageData)
 
   let {
@@ -57,7 +58,7 @@ const AkrushakDarTapa = () => {
   }, [])
 
   const getAkurhsakDar = async () => {
-    setIsLoading(true)  
+    setIsLoading(true)
     try {
       if (!cCode) {
         alert('Village code not found....Please Select Village First')

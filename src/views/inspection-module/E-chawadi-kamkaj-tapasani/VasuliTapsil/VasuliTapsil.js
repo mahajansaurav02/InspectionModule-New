@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import {
   CTable,
   CTableBody,
@@ -40,21 +40,39 @@ const VasuliTapsil = () => {
 
   const navigate = useNavigate()
   const { user, roles, token } = useSelector((state) => state.auth || {})
-  const revenueYear = user?.revenueYear[0]?.revenueYear
+  // const revenueYear = user?.revenueYear[0]?.revenueYear
+  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
 
-  let VillageData = localStorage.getItem('selectedVillageData')
+  // let VillageData = localStorage.getItem('selectedVillageData')
 
-  let selectedVillageData = JSON.parse(VillageData)
+  // let selectedVillageData = JSON.parse(VillageData)
 
-  let {
-    cCode,
-    distMarathiName,
-    districtCode,
-    lgdCode,
-    talukaCode,
-    talukaMarathiName,
-    villageName,
-  } = selectedVillageData[0]
+  // let {
+  //   cCode,
+  //   distMarathiName,
+  //   districtCode,
+  //   lgdCode,
+  //   talukaCode,
+  //   talukaMarathiName,
+  //   villageName,
+  // } = selectedVillageData[0]
+
+  // Village Data parsing with error handling
+  const VillageDataRaw = localStorage.getItem('selectedVillageData')
+  let cCode = '',
+    districtCode = '',
+    talukaCode = ''
+
+  if (VillageDataRaw) {
+    try {
+      const selectedVillageData = JSON.parse(VillageDataRaw)
+      cCode = selectedVillageData[0]?.cCode || ''
+      districtCode = selectedVillageData[0]?.districtCode || ''
+      talukaCode = selectedVillageData[0]?.talukaCode || ''
+    } catch (error) {
+      console.error('Error parsing village data:', error)
+    }
+  }
 
   const getDemand = async () => {
     try {
@@ -66,7 +84,7 @@ const VasuliTapsil = () => {
       }
 
       const res = await api.get(
-        `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`,
+        `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=${revenueYear}`,
       )
       //  const res = await axios.get(
       //       `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`,
@@ -91,7 +109,7 @@ const VasuliTapsil = () => {
       setLoading0029(true)
 
       const res = await api.get(
-        `/inpsection/getVasuliForCollectedFor0029?ccode=${cCode}&revenueYear=2025-26`,
+        `/inpsection/getVasuliForCollectedFor0029?ccode=${cCode}&revenueYear=${revenueYear}`,
       )
 
       setCollectedData(res.data[0])
@@ -113,7 +131,7 @@ const VasuliTapsil = () => {
       }
 
       const res = await api.get(
-        `/inpsection/getVasuliForEgsAndEduCess?revenueYear=2025-26&ccode=${cCode}`,
+        `/inpsection/getVasuliForEgsAndEduCess?revenueYear=${revenueYear}&ccode=${cCode}`,
       )
 
       setEducessData(res.data)
@@ -199,7 +217,7 @@ const VasuliTapsil = () => {
       }
 
       const res = await api.get(
-        `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=2025-26&ccode=${cCode}`,
+        `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=${revenueYear}&ccode=${cCode}`,
       )
 
       console.log(res.data, 'target data response')
@@ -213,12 +231,28 @@ const VasuliTapsil = () => {
 
   //
 
+  const isFetched = useRef(false)
+
   useEffect(() => {
-    getDemand()
-    getCollected()
-    getEgsAndEduCess()
-    getTargetAndCollected()
-  }, [])
+    const fetchAllData = () => {
+      if (cCode && revenueYear && !isFetched.current) {
+        getDemand()
+        getCollected()
+        getEgsAndEduCess()
+        getTargetAndCollected()
+
+        isFetched.current = true
+      }
+    }
+    fetchAllData()
+  }, [cCode, revenueYear])
+
+  // useEffect(() => {
+  //   getDemand()
+  //   getCollected()
+  //   getEgsAndEduCess()
+  //   getTargetAndCollected()
+  // }, [])
 
   const formatNumber = (num) => {
     if (num === null || num === undefined) return 0

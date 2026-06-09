@@ -106,6 +106,8 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
     revenueYear: initialRevenueYear,
   })
 
+  const currentYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
+
   useEffect(() => {
     // ... (Initial setup logic remains the same)
     if (inspectionVillages.length > 0 && !dropdownVal.village) {
@@ -144,8 +146,11 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
     const { name, value } = e?.target
 
     if (name === 'revenueYear') {
-      setLocalDisplayData((prev) => ({ ...prev, revenueYear: value }))
-      setDropdownVal((prev) => ({ ...prev, revenueYear: value }))
+      // setLocalDisplayData((prev) => ({ ...prev, revenueYear: value }))
+      // setDropdownVal((prev) => ({ ...prev, revenueYear: value }))
+      localStorage.setItem('Ry', value)
+
+      localStorage.setItem('selectedRevenueYear', value)
       window.location.reload()
     } else if (name === 'village') {
       const selctedVillageData = inspectionVillages.find((u) => u.villageName === value)
@@ -260,6 +265,28 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
               md={compact ? 'auto' : 3}
             >
               <FormControl size="small" sx={{ minWidth: 100 }}>
+                <InputLabel id="revenue-year-label">महसूल वर्ष</InputLabel>
+                <CustomSelect
+                  labelId="revenue-year-label"
+                  name="revenueYear"
+                  value={currentYear}
+                  onChange={handleChange}
+                >
+                  {['2023-24', '2024-25', '2025-26'].map((year) => (
+                    <MenuItem key={year} value={year}>
+                      {year}
+                    </MenuItem>
+                  ))}
+                </CustomSelect>
+              </FormControl>
+            </Grid>
+            {/* <Grid
+              item
+              xs={compact ? 'auto' : 12}
+              sm={compact ? 'auto' : 6}
+              md={compact ? 'auto' : 3}
+            >
+              <FormControl size="small" sx={{ minWidth: 100 }}>
                 <InputLabel id="revenue-year-label" size="small">
                   महसूल वर्ष
                 </InputLabel>
@@ -277,7 +304,7 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
                   ))}
                 </CustomSelect>
               </FormControl>
-            </Grid>
+            </Grid> */}
           </Grid>
         </Box>
       </StyledPaper>

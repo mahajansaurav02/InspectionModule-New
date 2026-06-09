@@ -42,11 +42,11 @@ const TrutiDetailsTabs = ({ ferfar }) => {
   const [activeKey, setActiveKey] = useState(1)
   const [documentHistory, setDocumentHistory] = useState([1])
   const [remark, setRemark] = useState('')
-    const [base64Image, setBase64Image] = useState(null)
-    const [base64Mime, setBase64Mime] = useState(null)
-      const [ferfarImage, setFerfarImage] = useState('')
-      const [isRemarkSubmitLoading, setIsRemarkSubmitLoading] = useState(false)
-    
+  const [base64Image, setBase64Image] = useState(null)
+  const [base64Mime, setBase64Mime] = useState(null)
+  const [ferfarImage, setFerfarImage] = useState('')
+  const [isRemarkSubmitLoading, setIsRemarkSubmitLoading] = useState(false)
+
   const [priority, setPriority] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [submitStatus, setSubmitStatus] = useState(null)
@@ -68,7 +68,8 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
   const { user, roles, token } = useSelector((state) => state.auth || {})
 
-  const revenueYear = user?.revenueYear[0]?.revenueYear
+  // const revenueYear = user?.revenueYear[0]?.revenueYear
+  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
 
   const navigate = useNavigate()
 
@@ -80,14 +81,10 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     'अपलोड केलेले दस्तऐवज वाचण्यायोग्य आहे/नाही',
   ])
 
-
-
-    useEffect(() => {
-      get712View()
-      // getFerfarView()
-    }, [])
-  
-
+  useEffect(() => {
+    get712View()
+    // getFerfarView()
+  }, [])
 
   const handleTabChange = (key) => {
     setActiveKey(key)
@@ -113,40 +110,30 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     }
   }
 
-
   const get712View = async () => {
     try {
       setIsLoading(true)
-  
+
       const payload = {
-        lgd_code: "536349",
-        pinCode: "12",
+        lgd_code: '536349',
+        pinCode: '12',
       }
-  
-       const res = await api.post(
-              "/callExternalSatBaraApi",
-              payload
-            )
-      
-  
+
+      const res = await api.post('/callExternalSatBaraApi', payload)
+
       const { base64, mimeType } = res.data.data
-  
+
       setBase64Mime(mimeType)
       setBase64Image(`data:${mimeType};base64,${base64}`)
-  
     } catch (err) {
-      console.error("Failed to load 7/12 document:", err)
+      console.error('Failed to load 7/12 document:', err)
     } finally {
       setIsLoading(false)
     }
   }
-  
-
-
 
   const handleSubmit = async () => {
-
-    setIsRemarkSubmitLoading(true);
+    setIsRemarkSubmitLoading(true)
 
     if (!priority) {
       toast.warn('कृपया अभिप्रायाचे प्राधान्य प्रकार निवडा')
@@ -168,9 +155,8 @@ const TrutiDetailsTabs = ({ ferfar }) => {
       applicationid: ferfar.applicationId,
       ehakkaType: inte,
       remark: remark,
-      remarkType: remarkType
+      remarkType: remarkType,
     }
-
 
     // const payload =
     // {
@@ -184,34 +170,28 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     //   remarkType: "साधारण"
     // }
 
-
-
-
-
     try {
-      const res = await api.post(`/inpsection/saveEHakkaForInspection`, payload);
+      const res = await api.post(`/inpsection/saveEHakkaForInspection`, payload)
 
       if (res.status === 201 || res.status === 200) {
-        setIsRemarkSubmitLoading(false);
-        setSubmitSuccess(true);
+        setIsRemarkSubmitLoading(false)
+        setSubmitSuccess(true)
 
         setTimeout(() => {
-          setSubmitSuccess(false);
-          setShowConfirmModal(false);
-          setRemark('');
-          navigate(-1);
-        }, 2000);
-
+          setSubmitSuccess(false)
+          setShowConfirmModal(false)
+          setRemark('')
+          navigate(-1)
+        }, 2000)
       } else {
-        throw new Error('Unexpected response status');
+        throw new Error('Unexpected response status')
       }
     } catch (err) {
-      console.error('Submit error:', err);
-      setIsRemarkSubmitLoading(false);
-      alert(err?.response?.data?.message || 'Failed to submit remark');
+      console.error('Submit error:', err)
+      setIsRemarkSubmitLoading(false)
+      alert(err?.response?.data?.message || 'Failed to submit remark')
     }
   }
-
 
   const handleDownload = (type) => {
     let filePath, fileName
@@ -262,7 +242,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
     }
   }
 
- const getDocumentForTab = (tabKey) => {
+  const getDocumentForTab = (tabKey) => {
     switch (tabKey) {
       case 1:
         return { type: '7/12', content: base64Image }
@@ -360,9 +340,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
               onChange={(e) => setRemark(e.target.value)}
             />
             <div className="priority-selection-sm mb-3">
-              <span className="priority-label-sm">
-                अभिप्रायाचे प्राधान्य प्रकार :
-              </span>
+              <span className="priority-label-sm">अभिप्रायाचे प्राधान्य प्रकार :</span>
 
               <div className="d-flex gap-2 mt-2 flex-wrap">
                 <label className={`priority-pill low ${priority === 'High' ? 'active' : ''}`}>
@@ -402,7 +380,7 @@ const TrutiDetailsTabs = ({ ferfar }) => {
 
             <div className="d-flex gap-2">
               <CButton color="secondary" onClick={() => setRemark('')} className="clear-button">
-                रिसेट करा 
+                रिसेट करा
               </CButton>
 
               <CButton

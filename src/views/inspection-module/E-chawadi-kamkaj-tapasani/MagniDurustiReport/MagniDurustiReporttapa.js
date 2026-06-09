@@ -39,7 +39,8 @@ export const MagniDurustiReporttapa = () => {
   } = selectedVillageData[0]
   const navigate = useNavigate()
   const { user, roles, token } = useSelector((state) => state.auth || {})
-  const revenueYear = user?.revenueYear[0]?.revenueYear
+  // const revenueYear = user?.revenueYear[0]?.revenueYear
+  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
 
   // const reqHeaders = getReqHeaders({ token, user })
   const tableHeaderMap = {
@@ -166,7 +167,7 @@ export const MagniDurustiReporttapa = () => {
         return
       }
       const response = await api.get(
-        `/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${talukaCode}&cCode=${cCode}&activeFlag=E&revenueYear=2025-26`,
+        `/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${talukaCode}&cCode=${cCode}&activeFlag=E&revenueYear=${revenueYear}`,
       )
 
       if (response.data.length <= 0) {

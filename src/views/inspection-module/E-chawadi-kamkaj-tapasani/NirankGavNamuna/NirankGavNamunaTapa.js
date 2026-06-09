@@ -40,7 +40,8 @@ export const NirankGavNamunaTapa = () => {
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const revenueYear = user?.revenueYear[0]?.revenueYear
+  // const revenueYear = user?.revenueYear[0]?.revenueYear
+  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
 
   let {
     cCode,
@@ -79,7 +80,7 @@ export const NirankGavNamunaTapa = () => {
       }
 
       const response = await api.get(
-        `/inpsection/getNirankandCompleted?cCode=${cCode}&revenueYear=2025-26`,
+        `/inpsection/getNirankandCompleted?cCode=${cCode}&revenueYear=${revenueYear}`,
       )
 
       if (response.data) {
@@ -148,7 +149,7 @@ export const NirankGavNamunaTapa = () => {
       }
 
       const response = await api.get(
-        `/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${'2025-26'}`,
+        `/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${revenueYear}`,
       )
 
       if (response.data) {
