@@ -43,6 +43,7 @@ import SmartPagination from 'src/components/SmartPagination'
 import { toast, ToastContainer } from 'react-toastify'
 import InfoIcon from '@mui/icons-material/Info'
 import '../../FerfarList.css'
+import api from 'src/instance/axiosConfig'
 
 function ViewOrderFerfarList() {
   const navigate = useNavigate()
@@ -86,12 +87,9 @@ function ViewOrderFerfarList() {
         return
       }
       console.log(reqHeaders, 'checkkk headerss')
-      const res = await axios.get(
-        `${URLS.BaseURL}/inpsection/getAdeshNumberFerfar?ccode=${cCode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+      const res = await api.get(`${URLS.BaseURL}/inpsection/getAdeshNumberFerfar?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
       toast.success('Data fetched successfully!', { autoClose: 2000 })
 
       setFerfarList1(res.data)

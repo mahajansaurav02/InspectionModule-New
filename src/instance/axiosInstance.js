@@ -1,18 +1,24 @@
 import { useCallback } from 'react'
-import axios from 'axios'
-import reqHeaders from './headers'
-import { Toast, errorToast, infoToast, successToast } from '../views/ui/Toast'
-const token = localStorage.getItem('token')
+// import axios from 'axios'
+// import reqHeaders from './headers'
+// import { Toast, errorToast, infoToast, successToast } from '../views/ui/Toast'
+// const token = localStorage.getItem('token')
+import api from './axiosConfig' // Import the new centralized interceptor instance
 
 const useAxios = () => {
   const sendRequest = useCallback(
     async (url, type = 'GET', reqData, callback, errorCallback) => {
+      // Headers and tokens are now managed automatically by the axiosConfig interceptors
       if (type === 'POST') {
-        await axios
-          .post(url, reqData, {
-            headers: reqHeaders,
-          })
+        await api
+          .post(url, reqData)
           .then((response) => {
+            // if (type === 'POST') {
+            //   await axios
+            //     .post(url, reqData, {
+            //       headers: reqHeaders,
+            //     })
+            //     .then((response) => {
             callback(response)
             successToast('Data Fetched Successfully')
           })
@@ -50,11 +56,15 @@ const useAxios = () => {
             errorToast(error)
           })
       } else if (type === 'GET') {
-        await axios
-          .get(url, {
-            headers: reqHeaders,
-          })
+        await api
+          .get(url)
           .then((response) => {
+            // } else if (type === 'GET') {
+            //   await axios
+            //     .get(url, {
+            //       headers: reqHeaders,
+            //     })
+            //     .then((response) => {
             if (response.data.status === 'FAILURE') {
               successToast(
                 response.data.message ? response.data.message : 'Data Fetched Successfully',
@@ -88,7 +98,8 @@ const useAxios = () => {
           })
       }
     },
-    [token],
+    [],
+    // [token],
   )
 
   return {

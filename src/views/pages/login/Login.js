@@ -36,6 +36,7 @@ import { Button } from '@mui/material'
 import { Toast, errorToast } from 'src/views/ui/Toast'
 import ChangePasswordModal from 'src/views/ui/ChangePasswordModal/ChangePasswordModal'
 import { loginSuccess } from 'src/store/slices/authSlice'
+import { setAccessToken, clearAllTokens, getAccessToken } from '../../../utils/cookieUtils'
 
 const Login = () => {
   const { t } = useTranslation('login')
@@ -87,7 +88,9 @@ const Login = () => {
   }
 
   const retrieveStoredToken = () => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = getAccessToken() // Retrieve from secure cookies instead of localStorage
+    // const retrieveStoredToken = () => {
+    //   const storedToken = localStorage.getItem('token')
     const storedExpirationDate = localStorage.getItem('expiryDate')
 
     const remainingTime = calculateRemainingTime(+storedExpirationDate)
@@ -114,11 +117,18 @@ const Login = () => {
   const logout = () => {
     setToken('')
     setToastTimer(false)
-    //setToastTimer();
+    clearAllTokens() // Clears secure cookies upon logout
     localStorage.clear()
-    localStorage.removeItem('token')
-    localStorage.removeItem('expiryDate')
   }
+
+  // const logout = () => {
+  //   setToken('')
+  //   setToastTimer(false)
+  //   //setToastTimer();
+  //   localStorage.clear()
+  //   localStorage.removeItem('token')
+  //   localStorage.removeItem('expiryDate')
+  // }
 
   const toastTimerF = () => {
     setToastTimer(true)
@@ -126,7 +136,8 @@ const Login = () => {
   const authLogin = (tokenAfterLogin, expiryDate) => {
     setToastTimer(false)
     setToken(tokenAfterLogin)
-    localStorage.setItem('token', tokenAfterLogin)
+    // localStorage.setItem('token', tokenAfterLogin)
+    setAccessToken(tokenAfterLogin) // Sync state token with secure cookie
 
     localStorage.setItem('expiryDate', expiryDate)
 
@@ -196,9 +207,14 @@ const Login = () => {
       // password: 'U2FsdGVkX19//z2Rgu8CDefCCeHBVoRVU6Cg7vLBKOs=',
     }
 
+    // await axios
+    //   // http://localhost:8091/echawdi/api/authenticateUserByUsernameAndPassword
+    //   .post(`${URLS.AuthURL}/authenticateUserByUsernameAndPassword`, article)
+    //   .then((res) => {
     await axios
-      // http://localhost:8091/echawdi/api/authenticateUserByUsernameAndPassword
-      .post(`${URLS.AuthURL}/authenticateUserByUsernameAndPassword`, article)
+      .post(`${URLS.AuthURL}/authenticateUserByUsernameAndPassword`, article, {
+        withCredentials: true, // Necessary to automatically capture the HttpOnly refresh token from the response
+      })
       .then((res) => {
         //try {
         //alert('fetch data from api')
@@ -272,8 +288,12 @@ const Login = () => {
             }),
           )
 
-          localStorage.setItem('token', data.token) // Explicitly setting token from response
-          localStorage.setItem('expiryDate', data.expiryTime) // New field for expiration
+          // localStorage.setItem('token', data.token) // Explicitly setting token from response
+          // localStorage.setItem('expiryDate', data.expiryTime) // New field for expiration
+
+          // Replaced data.token with data.accessToken based on API response payload
+          setAccessToken(data.accessToken)
+          localStorage.setItem('expiryDate', data.expiryTime)
 
           const rolesToStore = Array.isArray(data.roles)
             ? data.roles[0]
@@ -330,7 +350,8 @@ const Login = () => {
 
           // --------------------------------------------------------------------------
 
-          authLogin(data.token, data.expiryTime)
+          // authLogin(data.token, data.expiryTime)
+          authLogin(data.accessToken, data.expiryTime)
           navigate('/dashboard')
           setLoginstatus(true)
         } else {
@@ -353,7 +374,6 @@ const Login = () => {
         // Reload captcha on failed API call
         setLoginValue({ ...loginValue, captcha: '' })
         loadCaptchaEnginge(6, 'skyblue')
-
       })
   }
   const togglePassword = () => {
@@ -407,28 +427,28 @@ const Login = () => {
         {/* <CRow className="justify-content-center"> */}
         <CCol md={4} xs={12}>
           <LanguageSelector />
-    <div className="d-flex justify-content-end mb-3">
-  <CButton
-    className="px-4 py-2 fw-semibold rounded-pill shadow-sm"
-    style={{
-      background: 'linear-gradient(135deg, #4f46e5, #3b82f6)',
-      color: '#fff',
-      border: 'none',
-      transition: 'all 0.3s ease',
-    }}
-    onMouseOver={(e) => {
-      e.currentTarget.style.transform = 'translateY(-2px)';
-      e.currentTarget.style.boxShadow = '0 6px 18px rgba(0,0,0,0.15)';
-    }}
-    onMouseOut={(e) => {
-      e.currentTarget.style.transform = 'translateY(0)';
-      e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)';
-    }}
-    onClick={() => navigate('/mis-inspection')}
-  >
-    Go to MIS →
-  </CButton>
-</div>
+          <div className="d-flex justify-content-end mb-3">
+            <CButton
+              className="px-4 py-2 fw-semibold rounded-pill shadow-sm"
+              style={{
+                background: 'linear-gradient(135deg, #4f46e5, #3b82f6)',
+                color: '#fff',
+                border: 'none',
+                transition: 'all 0.3s ease',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)'
+                e.currentTarget.style.boxShadow = '0 6px 18px rgba(0,0,0,0.15)'
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)'
+                e.currentTarget.style.boxShadow = '0 2px 6px rgba(0,0,0,0.1)'
+              }}
+              onClick={() => navigate('/mis-inspection')}
+            >
+              Go to MIS →
+            </CButton>
+          </div>
 
           <CCardGroup>
             <CCard className="p-4">
@@ -437,7 +457,7 @@ const Login = () => {
                   className="row g-3 needs-validation"
                   noValidate
                   validated={validated}
-                //onSubmit={handleLogin}
+                  //onSubmit={handleLogin}
                 >
                   {/* <h2> Inspection Module e-Chawadi </h2> */}
                   <h2> Inspection Module e-Chawadi </h2>
@@ -504,7 +524,7 @@ const Login = () => {
                       //     : 'Please provide a captcha.'
                       // }
                       required
-                    // tooltipFeedback
+                      // tooltipFeedback
                     />
                   </CInputGroup>
                   <div className="d-grid gap-2 col-12 mx-auto">

@@ -12,7 +12,7 @@ import { useNavigate } from 'react-router-dom'
 // import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
-import api from 'src/api/api'
+import api from 'src/instance/axiosConfig'
 import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
 

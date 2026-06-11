@@ -33,7 +33,8 @@ import MasterInspectionPrint from '../InspectionPrint/MasterInspectionPrint'
 import InspectionPrint from '../InspectionPrint/InspectionPrint'
 import PrintUtility from '../InspectionPrint/PrintUtility'
 import InspectionRemarksPrint from '../InspectionPrint/InspectionRemarksPrint'
-import api from 'src/api/api'
+// import api from 'src/instance/axiosConfig'
+import api from 'src/instance/axiosConfig'
 import { toast } from 'react-toastify'
 
 const mockApiData = {

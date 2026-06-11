@@ -35,11 +35,11 @@ import LoadingSpinner from 'src/Models/LoadingSpinner'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import 'src/views/inspection-module/ferfarNondvahi/FerfarList.css'
 import getReqHeaders from 'src/instance/getHeader'
-import api from 'src/api/api'
 import SmartPagination from 'src/components/SmartPagination'
 import { toast, ToastContainer } from 'react-toastify'
 import InfoIcon from '@mui/icons-material/Info'
 import '../../FerfarList.css'
+import api from 'src/instance/axiosConfig'
 
 function ViewsSection155FerfarList() {
   const navigate = useNavigate()

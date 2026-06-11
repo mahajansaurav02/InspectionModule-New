@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import './RemarkHistory.css'
 import { useSelector } from 'react-redux'
-import api from 'src/api/api'
+import api from 'src/instance/axiosConfig'
 
 // ─── Set this to false when your API is ready ─────────────────────────────────
 const USE_MOCK_DATA = false
@@ -21,9 +21,7 @@ const MOCK_REMARKS = [
 
 // ─── Avatar ───────────────────────────────────────────────────────────────────
 const Avatar = ({ role }) => (
-  <div className={`rh-avatar ${role}`}>
-    {role === 'io' ? 'IO' : 'TL'}
-  </div>
+  <div className={`rh-avatar ${role}`}>{role === 'io' ? 'IO' : 'TL'}</div>
 )
 
 // ─── Remark Bubble ────────────────────────────────────────────────────────────
@@ -40,14 +38,10 @@ const RemarkBubble = ({ remark }) => {
           {roleLabel} — {name}
         </span>
 
-        <div className={`rh-bubble ${isOwn ? 'own' : 'other'}`}>
-          {message}
-        </div>
+        <div className={`rh-bubble ${isOwn ? 'own' : 'other'}`}>{message}</div>
 
         {attachment && (
-          <div className={`rh-attach ${isOwn ? 'own' : 'other'}`}>
-            📎 {attachment}
-          </div>
+          <div className={`rh-attach ${isOwn ? 'own' : 'other'}`}>📎 {attachment}</div>
         )}
 
         <span className="rh-time">{time}</span>
@@ -105,7 +99,7 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
     if (raw) {
       selectedVillageData = JSON.parse(raw)
     }
-  } catch (_) { }
+  } catch (_) {}
 
   const { cCode } = selectedVillageData[0] || {}
 
@@ -127,57 +121,38 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
     }
 
     try {
-      const res = await api.get(
-        `/inpsection/getTalathiRemarkInspection`,
-        {
-          params: {
-            revenueYear: revenueYear || '2025-26',
-            ccode: cCode,
-          },
-        }
-      )
+      const res = await api.get(`/inpsection/getTalathiRemarkInspection`, {
+        params: {
+          revenueYear: revenueYear || '2025-26',
+          ccode: cCode,
+        },
+      })
 
       const raw = res.data?.data || res.data || []
 
       const normalised = raw.map((item, idx) => {
-        const dateTime = item.createDtTm
-          ? new Date(item.createDtTm)
-          : null
+        const dateTime = item.createDtTm ? new Date(item.createDtTm) : null
 
         return {
           id: item.id ?? idx,
 
-          role:
-            item.designation === 'INOFICER'
-              ? 'io'
-              : 'tl',
+          role: item.designation === 'INOFICER' ? 'io' : 'tl',
 
-          name:
-            item.name ||
-            item.inspectionOfficerUsername ||
-            '',
+          name: item.name || item.inspectionOfficerUsername || '',
 
-          roleLabel:
-            item.designation === 'INOFICER'
-              ? 'Inspection Officer'
-              : 'Talathi',
+          roleLabel: item.designation === 'INOFICER' ? 'Inspection Officer' : 'Talathi',
 
-          message:
-            item.message ||
-            item.remark ||
-            '',
+          message: item.message || item.remark || '',
 
           time: dateTime
             ? dateTime.toLocaleTimeString('en-IN', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: true,
-            })
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: true,
+              })
             : '',
 
-          date: dateTime
-            ? dateTime.toLocaleDateString('en-GB')
-            : '',
+          date: dateTime ? dateTime.toLocaleDateString('en-GB') : '',
 
           attachment: item.attachment || null,
         }
@@ -187,10 +162,7 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
     } catch (err) {
       console.error('Fetch remarks error:', err)
 
-      setError(
-        err?.response?.data?.message ||
-        'Failed to load remarks.'
-      )
+      setError(err?.response?.data?.message || 'Failed to load remarks.')
     } finally {
       setLoading(false)
     }
@@ -198,11 +170,7 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
 
   // ─── Prevent Double API Calls ─────────────────────────────────────────────
   useEffect(() => {
-    if (
-      hasFetched.current ||
-      !cCode ||
-      !revenueYear
-    ) {
+    if (hasFetched.current || !cCode || !revenueYear) {
       return
     }
 
@@ -214,23 +182,18 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
   // ─── Auto Scroll ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (threadRef.current) {
-      threadRef.current.scrollTop =
-        threadRef.current.scrollHeight
+      threadRef.current.scrollTop = threadRef.current.scrollHeight
     }
   }, [remarks])
 
   // ─── Check Last Remark ───────────────────────────────────────────────────
   const lastRemark = remarks[remarks.length - 1]
 
-  const isInspectionOfficerWaiting =
-    lastRemark?.role === 'io'
+  const isInspectionOfficerWaiting = lastRemark?.role === 'io'
 
   // ─── Submit Remark ───────────────────────────────────────────────────────
   const handleSave = async () => {
-    if (
-      !replyText.trim() ||
-      isInspectionOfficerWaiting
-    ) {
+    if (!replyText.trim() || isInspectionOfficerWaiting) {
       return
     }
 
@@ -245,15 +208,9 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
     }
 
     try {
-      const res = await api.post(
-        `/inpsection/saveTalathiRemark`,
-        payload
-      )
+      const res = await api.post(`/inpsection/saveTalathiRemark`, payload)
 
-      if (
-        res.status === 200 ||
-        res.status === 201
-      ) {
+      if (res.status === 200 || res.status === 201) {
         const now = new Date()
 
         // Add locally instead of refetching API
@@ -262,27 +219,19 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
           {
             id: Date.now(),
             role: 'io',
-            name:
-              user?.name ||
-              'Inspection Officer',
+            name: user?.name || 'Inspection Officer',
 
-            roleLabel:
-              'Inspection Officer',
+            roleLabel: 'Inspection Officer',
 
             message: replyText.trim(),
 
-            time: now.toLocaleTimeString(
-              'en-IN',
-              {
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: true,
-              }
-            ),
+            time: now.toLocaleTimeString('en-IN', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: true,
+            }),
 
-            date: now.toLocaleDateString(
-              'en-GB'
-            ),
+            date: now.toLocaleDateString('en-GB'),
 
             attachment: null,
           },
@@ -290,17 +239,12 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
 
         setReplyText('')
       } else {
-        throw new Error(
-          'Unexpected response status'
-        )
+        throw new Error('Unexpected response status')
       }
     } catch (err) {
       console.error('Submit error:', err)
 
-      alert(
-        err?.response?.data?.message ||
-        'Failed to submit remark'
-      )
+      alert(err?.response?.data?.message || 'Failed to submit remark')
     } finally {
       setSubmitting(false)
     }
@@ -309,59 +253,36 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
   // ─── Grouped Remarks ─────────────────────────────────────────────────────
   const grouped = groupByDate(remarks)
 
-  const lastActivity = remarks.length
-    ? remarks[remarks.length - 1].time
-    : '—'
+  const lastActivity = remarks.length ? remarks[remarks.length - 1].time : '—'
 
-  const initiatedBy = remarks.length
-    ? remarks[0].roleLabel
-    : '—'
+  const initiatedBy = remarks.length ? remarks[0].roleLabel : '—'
 
   // ─── Render ──────────────────────────────────────────────────────────────
   return (
     <div className="rh-wrap">
-
       {/* Stats */}
       <div className="rh-stats">
-
         <div className="rh-stat">
-          <p className="rh-stat-label">
-            Total Remarks
-          </p>
+          <p className="rh-stat-label">Total Remarks</p>
 
-          <p className="rh-stat-val">
-            {remarks.length}
-          </p>
+          <p className="rh-stat-val">{remarks.length}</p>
         </div>
 
         <div className="rh-stat">
-          <p className="rh-stat-label">
-            Initiated by
-          </p>
+          <p className="rh-stat-label">Initiated by</p>
 
-          <p className="rh-stat-val">
-            {initiatedBy}
-          </p>
+          <p className="rh-stat-val">{initiatedBy}</p>
         </div>
 
         <div className="rh-stat">
-          <p className="rh-stat-label">
-            Last Activity
-          </p>
+          <p className="rh-stat-label">Last Activity</p>
 
-          <p className="rh-stat-val">
-            {lastActivity}
-          </p>
+          <p className="rh-stat-val">{lastActivity}</p>
         </div>
-
       </div>
 
       {/* Thread */}
-      <div
-        className="rh-thread"
-        ref={threadRef}
-      >
-
+      <div className="rh-thread" ref={threadRef}>
         {loading && (
           <div className="rh-state">
             <span className="rh-spinner" />
@@ -369,45 +290,28 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
           </div>
         )}
 
-        {!loading && error && (
-          <div className="rh-state error">
-            {error}
-          </div>
+        {!loading && error && <div className="rh-state error">{error}</div>}
+
+        {!loading && !error && remarks.length === 0 && (
+          <div className="rh-state muted">No remarks yet.</div>
         )}
 
         {!loading &&
           !error &&
-          remarks.length === 0 && (
-            <div className="rh-state muted">
-              No remarks yet.
-            </div>
-          )}
+          Object.entries(grouped).map(([date, list]) => (
+            <React.Fragment key={date}>
+              <Divider label={date} />
 
-        {!loading &&
-          !error &&
-          Object.entries(grouped).map(
-            ([date, list]) => (
-              <React.Fragment key={date}>
-                <Divider label={date} />
-
-                {list.map((r) => (
-                  <RemarkBubble
-                    key={r.id}
-                    remark={r}
-                  />
-                ))}
-              </React.Fragment>
-            )
-          )}
-
+              {list.map((r) => (
+                <RemarkBubble key={r.id} remark={r} />
+              ))}
+            </React.Fragment>
+          ))}
       </div>
 
       {/* Reply Box */}
       <div className="rh-reply">
-
-        <p className="rh-reply-label">
-          Add a remark reply
-        </p>
+        <p className="rh-reply-label">Add a remark reply</p>
 
         <textarea
           className="rh-textarea"
@@ -417,13 +321,8 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
               : 'Type your remark here...'
           }
           value={replyText}
-          onChange={(e) =>
-            setReplyText(e.target.value)
-          }
-          disabled={
-            submitting ||
-            isInspectionOfficerWaiting
-          }
+          onChange={(e) => setReplyText(e.target.value)}
+          disabled={submitting || isInspectionOfficerWaiting}
         />
 
         {isInspectionOfficerWaiting && (
@@ -434,35 +333,22 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
               marginTop: '8px',
             }}
           >
-            Waiting for Talathi remark
-            before adding another remark.
+            Waiting for Talathi remark before adding another remark.
           </p>
         )}
 
         <div className="rh-actions">
-
-          <button className="rh-btn">
-            + Attach document
-          </button>
+          <button className="rh-btn">+ Attach document</button>
 
           <button
             className="rh-btn primary"
             onClick={handleSave}
-            disabled={
-              submitting ||
-              !replyText.trim() ||
-              isInspectionOfficerWaiting
-            }
+            disabled={submitting || !replyText.trim() || isInspectionOfficerWaiting}
           >
-            {submitting
-              ? 'Submitting…'
-              : 'Submit remark'}
+            {submitting ? 'Submitting…' : 'Submit remark'}
           </button>
-
         </div>
-
       </div>
-
     </div>
   )
 }

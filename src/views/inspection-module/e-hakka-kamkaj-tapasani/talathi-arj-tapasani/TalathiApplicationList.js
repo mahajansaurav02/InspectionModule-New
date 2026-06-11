@@ -28,7 +28,7 @@ import { useNavigate, useParams } from 'react-router-dom' // 👈 IMPORTANT: Imp
 import URLS from 'src/URLS'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
-import api from 'src/api/api'
+import api from 'src/instance/axiosConfig'
 import SmartPagination from 'src/components/SmartPagination'
 import { toast } from 'react-toastify'
 import moment from 'moment'

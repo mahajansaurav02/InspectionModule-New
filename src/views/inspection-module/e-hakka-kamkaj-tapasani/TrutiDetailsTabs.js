@@ -34,7 +34,7 @@ import { useSelector } from 'react-redux'
 import { MdOutlineZoomIn } from 'react-icons/md'
 import { Navigate } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import api from 'src/api/api'
+import api from 'src/instance/axiosConfig'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
 import { toast, ToastContainer } from 'react-toastify'
 

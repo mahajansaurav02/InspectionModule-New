@@ -16,13 +16,13 @@ import styles from './VasuliTapsil.module.css'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
 import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
-import api from 'src/api/api'
 import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { toast, ToastContainer, Bounce } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
+import api from 'src/instance/axiosConfig'
 
 const VasuliTapsil = () => {
   const [demandData, setDemandData] = useState(null)

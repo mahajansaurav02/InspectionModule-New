@@ -35,6 +35,7 @@ import { selectState, addHomepageDetails } from '../../../slices/HomepageSlice'
 import { Button } from '@mui/material'
 import { Toast, errorToast } from 'src/views/ui/Toast'
 import ChangePasswordModal from 'src/views/ui/ChangePasswordModal/ChangePasswordModal'
+import { setAccessToken, clearAllTokens, getAccessToken } from '../../../utils/cookieUtils'
 
 const baseURL = 'https://localhost:9092/inspection/getRoles'
 
@@ -97,8 +98,11 @@ const Login = () => {
     return 300000000
   }
 
+  // const retrieveStoredToken = () => {
+  //   const storedToken = localStorage.getItem('token')
   const retrieveStoredToken = () => {
-    const storedToken = localStorage.getItem('token')
+    const storedToken = getAccessToken() // Retrieve from secure cookies instead of localStorage
+
     const storedExpirationDate = localStorage.getItem('expiryDate')
     // console.log('retrieveStoredToken-->>', storedToken, storedExpirationDate);
 
@@ -130,35 +134,50 @@ const Login = () => {
     }
   }, [tokenData])
 
+  // const logout = () => {
+  //   setToken('')
+  //   setToastTimer(false)
+  //   //setToastTimer();
+  //   localStorage.clear()
+  //   localStorage.removeItem('token')
+  //   localStorage.removeItem('expiryDate')
+
   const logout = () => {
     setToken('')
     setToastTimer(false)
-    //setToastTimer();
+    clearAllTokens() // Clears secure cookies upon logout
     localStorage.clear()
-    localStorage.removeItem('token')
-    localStorage.removeItem('expiryDate')
-
-    // if (logoutTimer) {
-    //   clearTimeout(logoutTimer)
-    // }
-    // if (toastTimerL) {
-    //   clearTimeout(toastTimerL)
-    // }
   }
+
+  // if (logoutTimer) {
+  //   clearTimeout(logoutTimer)
+  // }
+  // if (toastTimerL) {
+  //   clearTimeout(toastTimerL)
+  // }
 
   const toastTimerF = () => {
     setToastTimer(true)
   }
+
+  // const authLogin = (tokenAfterLogin, expiryDate) => {
+  //   // if (logoutTimer) {
+  //   //   clearTimeout(logoutTimer)
+  //   // }
+  //   // if (toastTimerL) {
+  //   //   clearTimeout(toastTimerL)
+  //   // }
+  //   setToastTimer(false)
+  //   setToken(tokenAfterLogin)
+  //   localStorage.setItem('token', tokenAfterLogin)
+
   const authLogin = (tokenAfterLogin, expiryDate) => {
-    // if (logoutTimer) {
-    //   clearTimeout(logoutTimer)
-    // }
-    // if (toastTimerL) {
-    //   clearTimeout(toastTimerL)
-    // }
     setToastTimer(false)
     setToken(tokenAfterLogin)
-    localStorage.setItem('token', tokenAfterLogin)
+    setAccessToken(tokenAfterLogin) // Sync state token with secure cookie
+
+    localStorage.setItem('expiryDate', expiryDate)
+
     const remainingTime = calculateRemainingTime(expiryDate)
 
     logoutTimer = setTimeout(logout, remainingTime)
@@ -222,9 +241,15 @@ const Login = () => {
       // password: 'U2FsdGVkX19//z2Rgu8CDefCCeHBVoRVU6Cg7vLBKOs=',
     }
 
+    // await axios
+    //   // http://localhost:8091/echawdi/api/authenticateUserByUsernameAndPassword
+    //   .post(`${URLS.AuthURL}/authenticateUserByUsernameAndPassword`, article)
+    //   .then((res) => {
+
     await axios
-      // http://localhost:8091/echawdi/api/authenticateUserByUsernameAndPassword
-      .post(`${URLS.AuthURL}/authenticateUserByUsernameAndPassword`, article)
+      .post(`${URLS.AuthURL}/authenticateUserByUsernameAndPassword`, article, {
+        withCredentials: true, // Necessary to automatically capture the HttpOnly refresh token from the response
+      })
       .then((res) => {
         //try {
         //alert('fetch data from api')

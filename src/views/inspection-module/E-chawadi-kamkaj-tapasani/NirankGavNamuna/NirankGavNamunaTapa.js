@@ -13,10 +13,10 @@ import { Card } from 'react-bootstrap'
 import { useSelector } from 'react-redux'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
 import getReqHeaders from 'src/instance/getHeader'
-import api from 'src/api/api'
 import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
 import { Bounce, toast, ToastContainer } from 'react-toastify'
+import api from 'src/instance/axiosConfig'
 
 const villageData = JSON.parse(localStorage.getItem('villageData'))
 
@@ -183,12 +183,9 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-      const response = await axios.get(
-        `${URLS.BaseURL}/otherEndpoint/getOtherData?cCode=${ccode}`,
-        {
-          headers: reqHeaders,
-        },
-      )
+      const response = await api.get(`${URLS.BaseURL}/otherEndpoint/getOtherData?cCode=${ccode}`, {
+        headers: reqHeaders,
+      })
 
       if (response.data) {
         setOtherTableData([
