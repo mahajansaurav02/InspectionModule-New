@@ -35,7 +35,7 @@ export const NirankGavNamunaTapa = () => {
 
   let selectedVillageData = JSON.parse(VillageData)
   const { user, roles, token } = useSelector((state) => state.auth || {})
-  const [reqHeaders, setReqHeaders] = useState({})
+  const reqHeaders = getReqHeaders({ token, user })
   const [showConfirmModal, setShowConfirmModal] = useState(false)
   const [submitSuccess, setSubmitSuccess] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -54,7 +54,9 @@ export const NirankGavNamunaTapa = () => {
   } = selectedVillageData[0]
   const getVillageForms = async () => {
     try {
-      const response = await api.get(`/restservice/getAllVillageForm`)
+      const response = await api.get(`/restservice/getAllVillageForm`, {
+        headers: reqHeaders,
+      })
 
       setVillageForms(
         response.data.villageFormMaster.map((vfm, i) => ({
@@ -81,6 +83,9 @@ export const NirankGavNamunaTapa = () => {
 
       const response = await api.get(
         `/inpsection/getNirankandCompleted?cCode=${cCode}&revenueYear=${revenueYear}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       if (response.data) {
@@ -109,7 +114,9 @@ export const NirankGavNamunaTapa = () => {
         return
       }
 
-      const response = await api.get(`/form17NoKaJaPa/getReportForm17NoKaJaPa?cCode=${cCode}`)
+      const response = await api.get(`/form17NoKaJaPa/getReportForm17NoKaJaPa?cCode=${cCode}`, {
+        headers: reqHeaders,
+      })
 
       if (response.data) {
         setKajapaData(
@@ -150,6 +157,9 @@ export const NirankGavNamunaTapa = () => {
 
       const response = await api.get(
         `/additionalLandRevenue/ReportGetAdditionalLandRevenue?cCode=${cCode}&revenueYear=${revenueYear}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       if (response.data) {

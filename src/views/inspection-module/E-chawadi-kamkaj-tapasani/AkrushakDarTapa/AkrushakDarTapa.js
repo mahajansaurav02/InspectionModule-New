@@ -67,7 +67,9 @@ const AkrushakDarTapa = () => {
       // const payload ={
       //   ferFarType:3
       // }
-      const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
       // const check = await api.get(`/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=9&talukaCode=13&revenueYear=2024-25&activeFlag=Y&ferFarType=3`)
       // console.log(check, "checkkkk")
       setAkrushakRateList(res.data || [])
@@ -103,7 +105,9 @@ const AkrushakDarTapa = () => {
     }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload, {
+        headers: reqHeaders,
+      })
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick

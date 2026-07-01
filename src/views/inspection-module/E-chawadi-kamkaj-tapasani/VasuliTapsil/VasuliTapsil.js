@@ -85,6 +85,9 @@ const VasuliTapsil = () => {
 
       const res = await api.get(
         `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=${revenueYear}`,
+        {
+          headers: reqHeaders,
+        },
       )
       //  const res = await axios.get(
       //       `${URLS.BaseURL}/inpsection/getVasuliForDemandFor0029?ccode=${cCode}&revenueYear=2025-26`,
@@ -110,6 +113,9 @@ const VasuliTapsil = () => {
 
       const res = await api.get(
         `/inpsection/getVasuliForCollectedFor0029?ccode=${cCode}&revenueYear=${revenueYear}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       setCollectedData(res.data[0])
@@ -122,7 +128,7 @@ const VasuliTapsil = () => {
 
   const getEgsAndEduCess = async () => {
     try {
-      reqHeaders.token = `Bearer`
+      // reqHeaders.token = `Bearer`
       setLoading0045(true)
 
       if (!cCode) {
@@ -132,6 +138,9 @@ const VasuliTapsil = () => {
 
       const res = await api.get(
         `/inpsection/getVasuliForEgsAndEduCess?revenueYear=${revenueYear}&ccode=${cCode}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       setEducessData(res.data)
@@ -155,7 +164,9 @@ const VasuliTapsil = () => {
     }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload, {
+        headers: reqHeaders,
+      })
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
@@ -218,6 +229,9 @@ const VasuliTapsil = () => {
 
       const res = await api.get(
         `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=${revenueYear}&ccode=${cCode}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(res.data, 'target data response')

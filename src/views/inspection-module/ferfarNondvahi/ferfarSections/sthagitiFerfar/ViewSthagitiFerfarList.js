@@ -84,7 +84,9 @@ function ViewSthagitiFerfarList() {
       return
     }
     try {
-      const res = await api.get(`/inpsection/getStayFerfarForInspection?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getStayFerfarForInspection?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {

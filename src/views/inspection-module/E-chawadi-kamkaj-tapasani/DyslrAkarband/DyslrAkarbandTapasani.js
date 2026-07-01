@@ -58,6 +58,7 @@ const DyslrAkarbandTapasani = () => {
   let selectedVillageData = JSON.parse(VillageData)
   const navigate = useNavigate()
   const { user, roles, token } = useSelector((state) => state.auth || {})
+
   // const revenueYear = user?.revenueYear[0]?.revenueYear
   const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
 
@@ -105,7 +106,9 @@ const DyslrAkarbandTapasani = () => {
     }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload, {
+        headers: reqHeaders,
+      })
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
@@ -169,7 +172,9 @@ const DyslrAkarbandTapasani = () => {
     }
 
     try {
-      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload)
+      const res = await api.post(`/inpsection/saveEchawdiDataForInspection`, payload, {
+        headers: reqHeaders,
+      })
 
       if (res.status === 201 || res.status === 200) {
         // 2. Stop Loading and Show Green Tick
@@ -233,6 +238,9 @@ const DyslrAkarbandTapasani = () => {
 
       const response = await api.get(
         `/inpsection/form1OdcDiff?districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${cCode}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       if (response.data) {
@@ -464,7 +472,9 @@ const DyslrAkarbandTapasani = () => {
 
     setLoadingRejected(true)
     try {
-      const response = await api.get(`/inpsection/getFormDyslrDeleteEntries?cCode=${cCode}`)
+      const response = await api.get(`/inpsection/getFormDyslrDeleteEntries?cCode=${cCode}`, {
+        headers: reqHeaders,
+      })
 
       if (response.data && response.data.form1DyslrData) {
         const mappedData = response.data.form1DyslrData.map((r) => {

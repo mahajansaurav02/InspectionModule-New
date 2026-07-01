@@ -6,7 +6,7 @@ import {
   clearAllTokens,
 } from '../utils/cookieUtils'
 import URLS from '../URLS'
-
+import { toast, Bounce } from 'react-toastify'
 /**
  * Centralized Axios instance with request and response interceptors.
  * Handles automatic token attachment and seamless refresh-token flow on expiration.
@@ -36,7 +36,7 @@ const processQueue = (error, token = null) => {
 api.interceptors.request.use(
   (config) => {
     const token = getAccessToken()
-    console.log('➡️ API Call चाललाय! Interceptor मधून टोकन मिळाला: ', token)
+    console.log('➡️ Access Token retrieved from interceptor: ', token)
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`
     }
@@ -79,7 +79,7 @@ api.interceptors.response.use(
 
       try {
         const refreshToken = getRefreshToken()
-        // const refreshToken = '2ea235e2-d846-4d6f-b0e4-17828fe6bf0c'
+        // const refreshToken = '60307fba-45c2-4907-8c30-7fb1b813c2a8'
         if (!refreshToken) {
           throw new Error('No refresh token available==============')
         }
@@ -104,12 +104,44 @@ api.interceptors.response.use(
         originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`
         return api(originalRequest)
       } catch (refreshError) {
-        // If the refresh token itself is expired, force logout
+        const errorStatus = refreshError.response?.status
+
+        // Clear the failed requests queue and reset the refreshing state
         processQueue(refreshError, null)
         isRefreshing = false
-        clearAllTokens()
-        // localStorage.clear()
-        // window.location.href = '/Login'
+
+        // 1. If a 500 Internal Server Error occurs: Show an toast, DO NOT clear cookies
+        if (errorStatus === 500) {
+          setTimeout(() => {
+            toast.error('Network error, please try again later.', {
+              position: 'top-right',
+              autoClose: 5000,
+              hideProgressBar: false,
+              closeOnClick: false,
+              pauseOnHover: true,
+              draggable: true,
+              theme: 'colored',
+              transition: Bounce,
+              style: {
+                backgroundColor: '#FF9800',
+                color: '#FFFFFF',
+                fontWeight: 'bold',
+                fontSize: '15px',
+              },
+            })
+          }, 500)
+        }
+        // 2. If a 403 Forbidden Error occurs: Clear cookies, clear storage, and logout
+        else if (errorStatus === 403) {
+          clearAllTokens()
+          localStorage.clear()
+          window.location.href = '/Login'
+        }
+        // 3. Default fallback for any other unhandled errors
+        // else {
+        //   clearAllTokens()
+        // }
+
         return Promise.reject(refreshError)
       }
     }
@@ -117,5 +149,20 @@ api.interceptors.response.use(
     return Promise.reject(error)
   },
 )
+
+//       } catch (refreshError) {
+//         // If the refresh token itself is expired, force logout
+//         processQueue(refreshError, null)
+//         isRefreshing = false
+//         clearAllTokens()
+//         // localStorage.clear()
+//         // window.location.href = '/Login'
+//         return Promise.reject(refreshError)
+//       }
+//     }
+
+//     return Promise.reject(error)
+//   },
+// )
 
 export default api

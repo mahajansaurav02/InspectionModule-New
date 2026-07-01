@@ -26,9 +26,8 @@ import { useSelector } from 'react-redux'
 import CIcon from '@coreui/icons-react'
 import { cilUser, cilCalendar, cilLocationPin, cilDescription } from '@coreui/icons'
 import '@coreui/coreui/dist/css/coreui.min.css'
-
 import './InspectionReport.css'
-
+import getReqHeaders from 'src/instance/getHeader'
 import MasterInspectionPrint from '../InspectionPrint/MasterInspectionPrint'
 import InspectionPrint from '../InspectionPrint/InspectionPrint'
 import PrintUtility from '../InspectionPrint/PrintUtility'
@@ -348,6 +347,7 @@ const InspectionReport = () => {
     itarMahsul045: { mangni: 0, vasuli: 0, percentage: 0 },
   })
   const { user, roles, token } = useSelector((state) => state.auth || {})
+  const reqHeaders = getReqHeaders({ token, user })
   const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = VillageData ? JSON.parse(VillageData) : []
@@ -436,7 +436,9 @@ const InspectionReport = () => {
         return
       }
 
-      const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getAkrushakDar?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
 
       console.log(res.data[0], 'hiiiiiiiii')
 
@@ -461,6 +463,9 @@ const InspectionReport = () => {
 
       const res = await api.get(
         `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=${revenueYear}&activeFlag=Y&ferFarType=0`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(res.data, 'ferfar data response')
@@ -489,6 +494,9 @@ const InspectionReport = () => {
   //     // 1. Fetch the real-time data from Type Five API
   //     const response = await api.get(
   //       `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
+  //       {
+  //         headers: reqHeaders,
+  //       }
   //     )
 
   //     // console.log(response.data, 'EhakkData data response')
@@ -551,6 +559,9 @@ const InspectionReport = () => {
 
       const response = await api.get(
         `/inpsection/getEHakkaTypeFiveDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(response.data, 'Truti Arj API Response (Type 5)')
@@ -595,6 +606,9 @@ const InspectionReport = () => {
 
       const response = await api.get(
         `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=${revenueYear}&ccode=${cCode}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(response.data, 'EhakkData data response')
@@ -621,6 +635,9 @@ const InspectionReport = () => {
       const response = await api.get(
         // `/inpsection/getTargetAndSankirnDemandForInspection?revenueYear=${revenueYear}&ccode=${cCode}`
         `/inpsection/getEchawadiRemark?districtCode=${districtCode}&talukaCode=${talukaCode}&ccode=${cCode}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(response.data, 'EhakkData data response')
@@ -645,6 +662,9 @@ const InspectionReport = () => {
 
       const response = await api.get(
         `/inpsection/getDyslrDurustiCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(response.data, 'Dyslr Durusti API Response')
@@ -669,6 +689,9 @@ const InspectionReport = () => {
 
       const response = await api.get(
         `/inpsection/getMaganiDurustiKhatedarCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(response.data, 'Magani Durusti API Response')
@@ -690,6 +713,9 @@ const InspectionReport = () => {
 
       const response = await api.get(
         `/inpsection/getDyslrAkarbandDeletedCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(response.data, 'Dyslr Akarband API Response')
@@ -717,6 +743,9 @@ const InspectionReport = () => {
 
       const response = await api.get(
         `/inpsection/getNirankCounts?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(response.data, 'Nirank Counts API Response')
@@ -741,6 +770,9 @@ const InspectionReport = () => {
 
       const response = await api.get(
         `/inpsection/getTotalVasuliForReport?revenueYear=${revenueYear}&ccode=${cCode}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log('Vasuli Details API Response:', response.data)
@@ -792,6 +824,9 @@ const InspectionReport = () => {
       const requests = ehakkaTypes.map((type) =>
         api.get(
           `/inpsection/getEHakkaApplicationCountDetails?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&eHakkaType=${type}`,
+          {
+            headers: reqHeaders,
+          },
         ),
       )
 
@@ -1061,6 +1096,9 @@ const InspectionReport = () => {
 
       const res = await api.get(
         `/inpsection/FetchAllFerfarSavedData?ccode=${cCode}&districtCode=${districtCode}&talukaCode=${talukaCode}&revenueYear=${revenueYear}&activeFlag=Y&ferFarType=${kramank}`,
+        {
+          headers: reqHeaders,
+        },
       )
 
       console.log(res.data, 'selected ferfar data response')

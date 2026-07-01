@@ -3,16 +3,29 @@ import { CDropdownItem } from '@coreui/react'
 import { cilAccountLogout } from '@coreui/icons'
 import CIcon from '@coreui/icons-react'
 import { useNavigate } from 'react-router-dom'
+import api from 'src/instance/axiosConfig'
 
 const Logout = () => {
   const navigate = useNavigate()
 
-  const handleLogout = () => {
-    localStorage.clear()
-    sessionStorage.clear()
-
-    navigate('/Login')
+  const handleLogout = async () => {
+    try {
+      await api.post('http://115.124.110.193:8091/echawdi/auth/logout')
+    } catch (error) {
+      console.error('Logout API Error:', error)
+    } finally {
+      localStorage.clear()
+      sessionStorage.clear()
+      navigate('/Login')
+    }
   }
+
+  // const handleLogout = () => {
+  //   localStorage.clear()
+  //   sessionStorage.clear()
+
+  //   navigate('/Login')
+  // }
 
   return (
     <CDropdownItem

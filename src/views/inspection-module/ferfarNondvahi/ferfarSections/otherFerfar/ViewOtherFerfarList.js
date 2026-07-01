@@ -72,7 +72,9 @@ function ViewOtherFerfarList() {
       // const res = await axios.get(`${URLS.BaseURL}/inpsection/getItarFerfar?ccode=${cCode}`, {
       //   headers: reqHeaders,
       // })
-      const res = await api.get(`/inpsection/getItarFerfar?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getItarFerfar?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
 
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })

@@ -8,6 +8,7 @@ const VillageDetailsList = () => {
   const [revenueYear, setRevenueYear] = useState('')
 
   let VillageData = localStorage.getItem('selectedVillageData')
+  let revenueYearData = localStorage.getItem('selectedRevenueYear')
 
   let selectedVillageData = JSON.parse(VillageData)
 
@@ -104,7 +105,7 @@ const VillageDetailsList = () => {
               minHeight: '20px',
             }}
           >
-            {'2024-25' || '---'}
+            {revenueYearData || '---'}
           </div>
         </div>
       </div>

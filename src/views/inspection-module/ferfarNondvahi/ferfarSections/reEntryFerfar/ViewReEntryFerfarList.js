@@ -44,6 +44,7 @@ import '../../FerfarList.css'
 
 function ViewReEntryFerfarList() {
   const navigate = useNavigate()
+  const { user, token } = useSelector((state) => state.auth || {})
   const [visible, setVisible] = useState(false)
   const [selectedFerfar, setSelectedFerfar] = useState(null)
   const [ferfarList1, setFerfarList1] = useState([])
@@ -54,7 +55,7 @@ function ViewReEntryFerfarList() {
   let VillageData = localStorage.getItem('selectedVillageData')
 
   let selectedVillageData = JSON.parse(VillageData)
-
+  const reqHeaders = getReqHeaders({ token, user })
   let {
     cCode,
     distMarathiName,
@@ -76,7 +77,9 @@ function ViewReEntryFerfarList() {
       return
     }
     try {
-      const res = await api.get(`/inpsection/getReEntryFerfarDetails?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getReEntryFerfarDetails?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {

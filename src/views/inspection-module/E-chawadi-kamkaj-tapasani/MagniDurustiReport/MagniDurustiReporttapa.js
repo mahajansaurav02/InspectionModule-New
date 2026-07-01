@@ -9,9 +9,9 @@ import 'react-toastify/dist/ReactToastify.css'
 import LoadingSpinner from 'src/Models/LoadingSpinner'
 import { CAlert } from '@coreui/react'
 import { useNavigate } from 'react-router-dom'
-// import reqHeaders from 'src/instance/headers'
+import reqHeaders from 'src/instance/headers'
 import VillageDetailsList from 'src/views/dashboard/ReusableComponents/VillageDetailsList'
-import getReqHeaders from 'src/instance/getHeader'
+// import getReqHeaders from 'src/instance/getHeader'
 import api from 'src/instance/axiosConfig'
 import FerfarNavbar from '../../ferfarNondvahi/ferfarSections/FerfarNavbar'
 import ConfirmSubmitModal from 'src/components/ConfirmSubmitModal'
@@ -20,7 +20,7 @@ export const MagniDurustiReporttapa = () => {
   const [khatedarList, setKhatedarList] = useState([])
   const [remark, setRemark] = useState('')
   const [loading, setLoading] = useState(false)
-  const [reqHeaders, setReqHeaders] = useState({})
+  // const [reqHeaders, setReqHeaders] = useState({})
   const [submitStatus, setSubmitStatus] = useState('')
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = JSON.parse(VillageData)
@@ -81,16 +81,19 @@ export const MagniDurustiReporttapa = () => {
     const initHeaders = async () => {
       if (!token || !user) return
 
-      const headers = await getReqHeaders({ token, user })
-      setReqHeaders(headers)
+      // const headers = await getReqHeaders({ token, user })
+      // setReqHeaders(headers)
     }
 
     initHeaders()
   }, [token, user])
 
   useEffect(() => {
+    console.log('check i am here')
+    console.log(reqHeaders, '===========reqHeaders')
     if (!reqHeaders || Object.keys(reqHeaders).length === 0) return
 
+    console.log('check i am here too')
     getMahsulDurustiList()
   }, [reqHeaders])
 
@@ -168,6 +171,7 @@ export const MagniDurustiReporttapa = () => {
       }
       const response = await api.get(
         `/landRevenue/getLandRevenueDemandDetails?districtCode=${'24'}&talukaCode=${talukaCode}&cCode=${cCode}&activeFlag=E&revenueYear=${revenueYear}`,
+        { headers: reqHeaders },
       )
 
       if (response.data.length <= 0) {

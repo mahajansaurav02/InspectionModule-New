@@ -70,7 +70,9 @@ function ViewTemplateFerfarList() {
       return
     }
     try {
-      const res = await api.get(`/inpsection/getTemplateFerfar?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getTemplateFerfar?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
       setFerfarList(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {

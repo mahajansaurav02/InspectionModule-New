@@ -77,11 +77,11 @@ function ViewsSection155FerfarList() {
         alert('Village code not found....Please Select Village First')
         return
       }
-      // const res = await axios.get(`${URLS.BaseURL}`, {
-      //   headers: reqHeaders,
-      // })
 
-      const res = await api.get(`${URLS.BaseURL}/inpsection/getKalamFerfar?ccode=${cCode}`)
+      const res = await api.get(`${URLS.BaseURL}/inpsection/getKalamFerfar?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
+
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {

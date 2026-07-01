@@ -54,6 +54,8 @@ function ViewNiyantritFerfar() {
   const [searchTerm, setSearchTerm] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const itemsPerPage = 10
+  const { user, token } = useSelector((state) => state.auth || {})
+  const reqHeaders = getReqHeaders({ token, user })
 
   // Filter data based on search term
   const filteredData = ferfarList1.filter((ferfar) =>
@@ -64,7 +66,9 @@ function ViewNiyantritFerfar() {
     setIsLoading(true)
     const cCode = '272400110296420000'
     try {
-      const res = await api.get(`${URLS.BaseURL}/inpsection/getWarg2FherfarData?ccode=${cCode}`)
+      const res = await api.get(`${URLS.BaseURL}/inpsection/getWarg2FherfarData?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
 
       setFerfarList1(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })

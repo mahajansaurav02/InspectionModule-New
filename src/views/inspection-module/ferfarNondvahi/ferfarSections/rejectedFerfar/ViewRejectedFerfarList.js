@@ -76,7 +76,9 @@ function ViewRejectedFerfarList() {
       return
     }
     try {
-      const res = await api.get(`/inpsection/getTantrikFerfarForInspection?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getTantrikFerfarForInspection?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
       setFerfarList(res.data)
       toast.success('Data fetched successfully!', { autoClose: 2000 })
     } catch (err) {

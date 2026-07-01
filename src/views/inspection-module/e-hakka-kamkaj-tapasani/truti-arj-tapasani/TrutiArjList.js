@@ -64,7 +64,9 @@ function TrutiArjList() {
       return
     }
     try {
-      const res = await api.get(`/inpsection/getEhakkaTrutiApplication?ccode=${cCode}`)
+      const res = await api.get(`/inpsection/getEhakkaTrutiApplication?ccode=${cCode}`, {
+        headers: reqHeaders,
+      })
 
       console.log(res.data, 'trutiApplication list')
       setTrutiArjList(res.data)

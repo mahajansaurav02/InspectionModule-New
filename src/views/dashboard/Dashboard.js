@@ -1,20 +1,23 @@
-// import React, { useState, useEffect } from 'react'
 import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import URLS from 'src/URLS'
-
 import { Paper } from '@mui/material'
+import { useLocation } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+
+import reqHeaders from 'src/instance/headers'
+import api from 'src/instance/axiosConfig'
+
 import Section1 from './Sections/Section1'
 import Section2 from './Sections/Section2'
 import Section3 from './Sections/Section3'
 import Section4 from './Sections/Section4'
-import { useLocation } from 'react-router-dom'
-
 function useQuery() {
   return new URLSearchParams(useLocation().search)
 }
 
 const Dashboard = () => {
+  const { token } = useSelector((state) => state.auth || {})
   const [dropdownVal, setDropdownVal] = useState({
     village: '',
     villageCode: '',
@@ -62,17 +65,18 @@ const Dashboard = () => {
   const TotalLiveKhatedar = async () => {
     // alert(dropdownVal?.cCode)
 
-    const token = localStorage.getItem('token')
+    // const token = localStorage.getItem('token')
     const talukCode = JSON.parse(localStorage.getItem('talukaCode'))
     const ccode = JSON.parse(localStorage.getItem('talukaCode'))
     //272400110296420000
-    await axios
-      //.get(`${URLS.BaseURL}/restservice/getDashBoardKhataNoDetails?cCode=272400110296420000`, {
+
+    //.get(`${URLS.BaseURL}/restservice/getDashBoardKhataNoDetails?cCode=272400110296420000`, {
+    await api
       .get(
         `${URLS.BaseURL}/restservice/getDashBoardKhataNoDetails?cCode=${cCode}&talukaCode=${talukCode}`,
         {
           headers: {
-            Authorization: 'Bearer ' + token,
+            Authorization: reqHeaders.Authorization,
             Echdbname: '3y+6bSLaBNfOzEUWW3yXOA==',
             Echschemaname: '33gU8iw1FOl/D43LCQ6MhA==',
             Echhost: 'On3zPHeGPKNn95bKB26ZhA==',
@@ -104,14 +108,14 @@ const Dashboard = () => {
   const getTargetData = async () => {
     let a = '3y+6bSLaBNfOzEUWW3yXOA=='
     let b = '33gU8iw1FOl/D43LCQ6MhA=='
-    const token = localStorage.getItem('token')
-    await axios
+    // const token = localStorage.getItem('token')
+    await api
       .get(
         // `${URLS.BaseURL}/restservice/getVillageTarget?cCode=272400110296420000&revenueYear=2022-23`,
         `${URLS.BaseURL}/restservice/getVillageTarget?cCode=${cCode}&revenueYear=${currentYear}`,
         {
           headers: {
-            Authorization: 'Bearer ' + token,
+            Authorization: reqHeaders.Authorization,
             Echdbname: a,
             Echschemaname: b,
             Echhost: 'On3zPHeGPKNn95bKB26ZhA==',
@@ -138,14 +142,14 @@ const Dashboard = () => {
   const TotalLiveDemandDetails = async () => {
     let a = '3y+6bSLaBNfOzEUWW3yXOA=='
     let b = '33gU8iw1FOl/D43LCQ6MhA=='
-    const token = localStorage.getItem('token')
-    axios
+    // const token = localStorage.getItem('token')
+    await api
       .get(
         // `${URLS.BaseURL}/restservice/getDashBoardTotalDemandDetails?cCode=272400110296420000&revenueYear=2022-23`,
         `${URLS.BaseURL}/restservice/getDashBoardTotalDemandDetails?cCode=${cCode}&revenueYear=${currentYear}`,
         {
           headers: {
-            Authorization: 'Bearer ' + token,
+            Authorization: reqHeaders.Authorization,
             Echdbname: a,
             Echschemaname: b,
             Echhost: 'On3zPHeGPKNn95bKB26ZhA==',
