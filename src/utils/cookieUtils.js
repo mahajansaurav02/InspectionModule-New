@@ -10,6 +10,15 @@ export const setAccessToken = (token) => {
   Cookies.set('accessToken', token, { sameSite: 'strict' })
 }
 
+// NEW: Saves the encodedKey as the refreshToken
+export const setRefreshToken = (token) => {
+  Cookies.set('refreshToken', token, {
+    secure: true,
+    sameSite: 'strict',
+    path: '/',
+  })
+}
+
 // Retrieves the access token from the cookie
 export const getAccessToken = () => {
   return Cookies.get('accessToken')

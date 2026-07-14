@@ -36,7 +36,12 @@ import { Button } from '@mui/material'
 import { Toast, errorToast } from 'src/views/ui/Toast'
 import ChangePasswordModal from 'src/views/ui/ChangePasswordModal/ChangePasswordModal'
 import { loginSuccess } from 'src/store/slices/authSlice'
-import { setAccessToken, clearAllTokens, getAccessToken } from '../../../utils/cookieUtils'
+import {
+  setAccessToken,
+  setRefreshToken,
+  clearAllTokens,
+  getAccessToken,
+} from '../../../utils/cookieUtils'
 
 const Login = () => {
   const { t } = useTranslation('login')
@@ -292,7 +297,13 @@ const Login = () => {
           // localStorage.setItem('expiryDate', data.expiryTime) // New field for expiration
 
           // Replaced data.token with data.accessToken based on API response payload
-          setAccessToken(data.accessToken)
+          // setAccessToken(data.accessToken)
+
+          // NEW: Mask the backend's encodedKey as our frontend refreshToken cookie
+          if (data.encodedKey) {
+            setRefreshToken(data.encodedKey)
+          }
+
           localStorage.setItem('expiryDate', data.expiryTime)
 
           const rolesToStore = Array.isArray(data.roles)
