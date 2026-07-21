@@ -59,7 +59,7 @@ const FerfarDetailsTabs = ({ ferfar, selectedSurvey }) => {
   let selectedVillageData = JSON.parse(VillageData)
   const { user, roles, token } = useSelector((state) => state.auth || {})
   // const revenueYear = user?.revenueYear[0]?.revenueYear
-  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
+  const revenueYear = localStorage.getItem('selectedRevenueYear')
   let {
     cCode,
     distMarathiName,

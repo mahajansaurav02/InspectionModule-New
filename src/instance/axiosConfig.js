@@ -85,7 +85,7 @@ api.interceptors.response.use(
         }
         console.log('🔄 Refreshing token using refresh token: ', refreshToken)
         const refreshUrl = `${URLS.AuthURL}/refreshtoken?refreshToken=${refreshToken}`
-        const refreshResponse = await axios.post(refreshUrl, { withCredentials: true })
+        const refreshResponse = await axios.post(refreshUrl, null, { withCredentials: true })
 
         const newAccessToken =
           refreshResponse.data.token || refreshResponse.data.accessToken || refreshResponse.data.jwt

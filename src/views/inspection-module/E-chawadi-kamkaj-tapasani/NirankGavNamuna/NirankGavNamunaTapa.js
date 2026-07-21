@@ -41,7 +41,7 @@ export const NirankGavNamunaTapa = () => {
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   // const revenueYear = user?.revenueYear[0]?.revenueYear
-  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
+  const revenueYear = localStorage.getItem('selectedRevenueYear')
 
   let {
     cCode,

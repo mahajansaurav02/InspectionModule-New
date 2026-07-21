@@ -89,7 +89,7 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
 
   const { user } = useSelector((state) => state.auth || {})
 
-  const revenueYear = user?.revenueYear?.[0]?.revenueYear
+  const revenueYear = localStorage.getItem('selectedRevenueYear')
 
   let selectedVillageData = []
 
@@ -123,7 +123,7 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
     try {
       const res = await api.get(`/inpsection/getTalathiRemarkInspection`, {
         params: {
-          revenueYear: revenueYear || '2025-26',
+          revenueYear: revenueYear,
           ccode: cCode,
         },
       })
@@ -203,7 +203,7 @@ const RemarkHistory = ({ currentUserRole = 'io' }) => {
       ccode: cCode,
       designation: 'INOFICER',
       servarthId: 'CHECK!@#',
-      revenueYear: revenueYear || '2025-26',
+      revenueYear: revenueYear,
       remark: replyText.trim(),
     }
 

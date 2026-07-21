@@ -259,6 +259,9 @@ function ViewOrderFerfarList() {
         </CCardHeader>
 
         {/* ======================================================================================================= */}
+        <div style={{ paddingLeft: '80px', paddingRight: '80px' }}>
+          <VillageDetailsList />
+        </div>
         <br />
         <CCardBody>
           {isLoading ? (
@@ -274,8 +277,6 @@ function ViewOrderFerfarList() {
                 </CAlert>
               ) : (
                 <>
-                  <VillageDetailsList />
-
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
                       <CTableHead className="text-center flex-grow-1 table-dark">

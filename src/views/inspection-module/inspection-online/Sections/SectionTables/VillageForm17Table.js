@@ -11,7 +11,7 @@ const codeVillage = JSON.parse(localStorage.getItem('villageData'))[0].cCode
 const districtName = localStorage.getItem('districtName')
 const talukaName = localStorage.getItem('talukaName')
 const villageName = JSON.parse(localStorage.getItem('villageData'))[0].villageName
-const revenueYear = JSON.parse(localStorage.getItem('revenueYear'))[1].revenueYear
+const revenueYear = localStorage.getItem('selectedRevenueYear')
 
 const VillageForm17Table = () => {
   const [tableData, setTableData] = useState()
@@ -22,8 +22,7 @@ const VillageForm17Table = () => {
   const getTableData = async () => {
     axios
       .get(
-        // `${URLS.BaseURL}/form17/getForm17Report?revenueYear=${revenueYear}&districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${codeVillage}`,
-        `${URLS.BaseURL}/form17/getForm17Report?revenueYear=2021-22&districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${codeVillage}`,
+        `${URLS.BaseURL}/form17/getForm17Report?revenueYear=${revenueYear}&districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${codeVillage}`,
         {
           headers: reqHeaders,
         },

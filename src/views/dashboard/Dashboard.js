@@ -48,7 +48,7 @@ const Dashboard = () => {
   const [demandGenerated, setDemandGenerated] = useState(0)
   const [jamabandi, setJamabandi] = useState()
 
-  const currentYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
+  const currentYear = localStorage.getItem('selectedRevenueYear')
 
   let cCode = ''
   const villageDataRaw = localStorage.getItem('selectedVillageData')

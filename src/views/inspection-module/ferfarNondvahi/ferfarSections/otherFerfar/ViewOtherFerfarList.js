@@ -187,6 +187,9 @@ function ViewOtherFerfarList() {
             </CTooltip>
           </div>
         </CCardHeader>
+        <div style={{ paddingLeft: '80px', paddingRight: '80px' }}>
+          <VillageDetailsList />
+        </div>
         <CCardBody>
           {isLoading ? (
             <div className="loading-state">
@@ -201,8 +204,6 @@ function ViewOtherFerfarList() {
                 </CAlert>
               ) : (
                 <>
-                  <VillageDetailsList />
-
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
                       <CTableHead className="text-center flex-grow-1 table-dark">

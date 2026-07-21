@@ -333,6 +333,7 @@ const Login = () => {
             'selectedVillageData',
             JSON.stringify([{ ...data.villageForInspection[0] }]),
           )
+          localStorage.setItem('selectedRevenueYear', data.revenueYear?.[0]?.revenueYear || '')
           // Storing the processed role string
           localStorage.setItem('roles', rolesToStore)
 

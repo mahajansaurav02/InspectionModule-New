@@ -60,7 +60,7 @@ const DyslrAkarbandTapasani = () => {
   const { user, roles, token } = useSelector((state) => state.auth || {})
 
   // const revenueYear = user?.revenueYear[0]?.revenueYear
-  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
+  const revenueYear = localStorage.getItem('selectedRevenueYear')
 
   let {
     cCode,

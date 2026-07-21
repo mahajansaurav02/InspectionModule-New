@@ -13,7 +13,6 @@ export const setAccessToken = (token) => {
 // NEW: Saves the encodedKey as the refreshToken
 export const setRefreshToken = (token) => {
   Cookies.set('refreshToken', token, {
-    secure: true,
     sameSite: 'strict',
     path: '/',
   })
@@ -24,7 +23,7 @@ export const getAccessToken = () => {
   return Cookies.get('accessToken')
 }
 
-// Retrieves the refresh token (set automatically via HttpOnly cookie by backend)
+// Retrieves the refresh token (set by the frontend from the login response's encodedKey)
 export const getRefreshToken = () => {
   const refreshToken = Cookies.get('refreshToken')
   console.log('🔍 Retrieved refresh token from cookie: ', refreshToken)

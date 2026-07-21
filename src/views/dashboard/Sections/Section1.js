@@ -106,7 +106,7 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
     revenueYear: initialRevenueYear,
   })
 
-  const currentYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
+  const currentYear = localStorage.getItem('selectedRevenueYear')
 
   useEffect(() => {
     // ... (Initial setup logic remains the same)

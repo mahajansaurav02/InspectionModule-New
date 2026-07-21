@@ -191,9 +191,9 @@ function ViewsSection155FerfarList() {
             </CTooltip>
           </div>
         </CCardHeader>
-        {/* <div style={{paddingLeft:'80px',paddingRight:'80px'}}>
-                  <VillageDetailsList />
-        </div> */}
+        <div style={{ paddingLeft: '80px', paddingRight: '80px' }}>
+          <VillageDetailsList />
+        </div>
 
         <CCardBody>
           {isLoading ? (
@@ -209,7 +209,6 @@ function ViewsSection155FerfarList() {
                 </CAlert>
               ) : (
                 <>
-                  <VillageDetailsList />
                   <div className="table-responsive">
                     <CTable hover striped bordered className="mb-4">
                       <CTableHead className="text-center flex-grow-1 table-dark">

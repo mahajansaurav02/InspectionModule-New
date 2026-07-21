@@ -348,7 +348,7 @@ const InspectionReport = () => {
   })
   const { user, roles, token } = useSelector((state) => state.auth || {})
   const reqHeaders = getReqHeaders({ token, user })
-  const revenueYear = localStorage.getItem('selectedRevenueYear') || '2024-25'
+  const revenueYear = localStorage.getItem('selectedRevenueYear')
   let VillageData = localStorage.getItem('selectedVillageData')
   let selectedVillageData = VillageData ? JSON.parse(VillageData) : []
   const fullName = localStorage.getItem('fullName')
@@ -658,7 +658,7 @@ const InspectionReport = () => {
     try {
       if (!cCode) return 0
 
-      const currentRevenueYear = revenueYear || '2025-26'
+      const currentRevenueYear = revenueYear
 
       const response = await api.get(
         `/inpsection/getDyslrDurustiCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
@@ -685,7 +685,7 @@ const InspectionReport = () => {
     try {
       if (!cCode) return 0
 
-      const currentRevenueYear = revenueYear || '2025-26'
+      const currentRevenueYear = revenueYear
 
       const response = await api.get(
         `/inpsection/getMaganiDurustiKhatedarCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
@@ -709,7 +709,7 @@ const InspectionReport = () => {
     try {
       if (!cCode) return 0
 
-      const currentRevenueYear = revenueYear || '2025-26'
+      const currentRevenueYear = revenueYear
 
       const response = await api.get(
         `/inpsection/getDyslrAkarbandDeletedCount?ccode=${cCode}&revenueYear=${currentRevenueYear}`,
@@ -739,7 +739,7 @@ const InspectionReport = () => {
     try {
       if (!cCode) return { nirank: 0, kamkajPurna: 0, aghoshanaKeliNaslele: 0 }
 
-      const currentRevenueYear = revenueYear || '2025-26'
+      const currentRevenueYear = revenueYear
 
       const response = await api.get(
         `/inpsection/getNirankCounts?ccode=${cCode}&revenueYear=${currentRevenueYear}`,

@@ -11,6 +11,7 @@ const codeVillage = JSON.parse(localStorage.getItem('villageData'))[0].cCode
 const districtName = localStorage.getItem('districtName')
 const talukaName = localStorage.getItem('talukaName')
 const villageName = JSON.parse(localStorage.getItem('villageData'))[0].villageName
+const revenueYear = localStorage.getItem('selectedRevenueYear')
 
 const VillageForm4Table = () => {
   const [tableData, setTableData] = useState()
@@ -18,7 +19,7 @@ const VillageForm4Table = () => {
   const getTableData1B = async () => {
     axios
       .get(
-        `${URLS.BaseURL}/reports/getForm4Report?revenueYear=2022-23&districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${codeVillage}`,
+        `${URLS.BaseURL}/reports/getForm4Report?revenueYear=${revenueYear}&districtCode=${districtCode}&talukaCode=${talukaCode}&cCode=${codeVillage}`,
         {
           headers: reqHeaders,
         },
