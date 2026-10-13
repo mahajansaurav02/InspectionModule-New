@@ -84,41 +84,44 @@ const CircleOfficer = () => {
     totalReceived: 0, // वसूल झालेली रक्कम
     sankirnMahsool: 0, // संकीर्ण महसूल
   }
-  const trend = { labels: [], values: [] } // महसूल वसुलीचा कल
-  const recentActivity = [] // अलीकडील हालचाली
 
   const landRevenue = toNumber(data.totalReceived) - toNumber(data.sankirnMahsool)
-  const pending = Math.max(toNumber(data.vasuliPatra) - toNumber(data.vasuliPurna), 0)
-  const progress =
-    toNumber(data.target) > 0
-      ? Math.min(Math.round((toNumber(data.totalReceived) / toNumber(data.target)) * 100), 100)
-      : 0
 
-  const trendLabels = trend.labels.length ? trend.labels : Array(7).fill('१ ऑगस्ट')
-  const trendValues = trend.values.length ? trend.values : Array(7).fill(0)
+  const pieOptions = {
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 30, font: { size: 11 } } } },
+  }
 
-  const lineChartData = {
-    labels: trendLabels,
+  const demandPieData = {
+    labels: [
+      'मागणी निश्चित झालेली खातेदार संख्या % मध्ये',
+      'मागणी निश्चित न झालेली खातेदार संख्या % मध्ये',
+    ],
     datasets: [
       {
-        label: 'वसुली',
-        data: trendValues,
-        borderColor: '#14a098',
-        backgroundColor: 'rgba(20, 160, 152, 0.15)',
-        fill: true,
-        tension: 0.3,
+        data: [
+          toNumber(data.demandGenerated),
+          Math.max(toNumber(data.khatedarAug) - toNumber(data.demandGenerated), 0),
+        ],
+        backgroundColor: ['#1565c0', '#90caf9'],
+        hoverBackgroundColor: ['#0a3d9c', '#64b5f6'],
       },
     ],
   }
 
-  const doughnutData = {
-    labels: ['पूर्ण', 'प्रलंबित'],
+  const vasuliPieData = {
+    labels: [
+      'वसुली पूर्ण झालेली खातेदार संख्या % मध्ये',
+      'वसुली पूर्ण न झालेली खातेदार संख्या % मध्ये',
+    ],
     datasets: [
       {
-        data:
-          toNumber(data.vasuliPurna) + pending > 0 ? [toNumber(data.vasuliPurna), pending] : [1, 0],
-        backgroundColor: ['#bcdcf7', '#d4a017'],
-        borderWidth: 0,
+        data: [
+          toNumber(data.vasuliPurna),
+          Math.max(toNumber(data.vasuliPatra) - toNumber(data.vasuliPurna), 0),
+        ],
+        backgroundColor: ['#1565c0', '#90caf9'],
+        hoverBackgroundColor: ['#0a3d9c', '#64b5f6'],
       },
     ],
   }
@@ -206,119 +209,56 @@ const CircleOfficer = () => {
           </div>
         </div>
 
-        {/* Row 2 : khatedar counts */}
-        <div className="co-grid-3">
-          <StatCard
-            label="मागणी निश्चित केलेले खातेदार संख्या"
-            count={data.demandGenerated}
-            icon={<DescriptionIcon />}
-          />
-          <StatCard
-            label="वसुली पात्र खातेदार संख्या"
-            count={data.vasuliPatra}
-            icon={<DescriptionIcon />}
-          />
-          <StatCard
-            label="वसुली पूर्ण खातेदार संख्या"
-            count={data.vasuliPurna}
-            icon={<DescriptionIcon />}
-          />
-        </div>
-
-        {/* Row 3 : charts */}
-        <div className="co-chart-row">
-          <div className="co-card co-panel">
-            <div className="co-panel-header">
-              <span>महसूल वसुलीचा कल</span>
-              <span className="co-dot co-dot-teal" />
-            </div>
-            <div className="co-line-chart">
-              <CChart
-                type="line"
-                data={lineChartData}
-                options={{
-                  maintainAspectRatio: false,
-                  plugins: { legend: { display: false } },
-                  scales: { y: { beginAtZero: true } },
-                }}
-              />
-            </div>
+        {/* Row 2 : khatedar counts + pie charts */}
+        <div className="co-section-panel">
+          <div className="co-grid-3">
+            <StatCard
+              label="मागणी निश्चित केलेले खातेदार संख्या"
+              count={data.demandGenerated}
+              icon={<DescriptionIcon />}
+            />
+            <StatCard
+              label="वसुली पात्र खातेदार संख्या"
+              count={data.vasuliPatra}
+              icon={<DescriptionIcon />}
+            />
+            <StatCard
+              label="वसुली पूर्ण खातेदार संख्या"
+              count={data.vasuliPurna}
+              icon={<DescriptionIcon />}
+            />
           </div>
 
-          <div className="co-card co-panel">
-            <div className="co-panel-header">
-              <span>वसुली स्थिती</span>
+          <div className="co-pie-row">
+            <div className="co-card co-pie-card">
+              <CChart type="pie" data={demandPieData} options={pieOptions} />
             </div>
-            <div className="co-doughnut-wrap">
-              <CChart
-                type="doughnut"
-                data={doughnutData}
-                options={{
-                  maintainAspectRatio: false,
-                  cutout: '70%',
-                  plugins: { legend: { display: false }, tooltip: { enabled: pending > 0 } },
-                }}
-              />
-              <div className="co-doughnut-center">{toNumber(data.vasuliPurna)}</div>
-            </div>
-            <div className="co-legend">
-              <span>
-                <i className="co-legend-box" style={{ background: '#bcdcf7' }} /> पूर्ण
-              </span>
-              <span>
-                <i className="co-legend-box" style={{ background: '#d4a017' }} /> प्रलंबित
-              </span>
-            </div>
-          </div>
-
-          <div className="co-side-col">
-            <div className="co-card co-panel">
-              <div className="co-panel-header">
-                <span>वसुली प्रगती</span>
-                <span className="co-dot co-dot-gold" />
-              </div>
-              <div className="co-progress-value">{progress}%</div>
-              <div className="co-progress-track">
-                <div className="co-progress-fill" style={{ width: `${progress}%` }} />
-              </div>
-            </div>
-
-            <div className="co-card co-panel co-panel-grow">
-              <div className="co-panel-header">
-                <span>अलीकडील हालचाली</span>
-                <span className="co-dot co-dot-gold" />
-              </div>
-              {recentActivity.length === 0 ? (
-                <div className="co-empty">अद्याप कोणतीही हालचाल नाही</div>
-              ) : (
-                <ul className="co-activity-list">
-                  {recentActivity.map((item, i) => (
-                    <li key={i}>{item}</li>
-                  ))}
-                </ul>
-              )}
+            <div className="co-card co-pie-card">
+              <CChart type="pie" data={vasuliPieData} options={pieOptions} />
             </div>
           </div>
         </div>
 
-        {/* Row 4 : amount equation */}
-        <div className="co-amount-row">
-          <div className="co-card co-amount-card">
-            <span className="co-dot co-dot-teal co-dot-corner" />
-            <div className="co-card-label">वसूल झालेली रक्कम</div>
-            <div className="co-card-count">{toNumber(data.totalReceived)}</div>
-          </div>
-          <div className="co-operator">=</div>
-          <div className="co-card co-amount-card">
-            <span className="co-dot co-dot-gold co-dot-corner" />
-            <div className="co-card-label">जमीन व इतर महसूल (संकीर्ण वगळता)</div>
-            <div className="co-card-count">{landRevenue}</div>
-          </div>
-          <div className="co-operator">+</div>
-          <div className="co-card co-amount-card">
-            <span className="co-dot co-dot-gold co-dot-corner" />
-            <div className="co-card-label">संकीर्ण महसूल</div>
-            <div className="co-card-count">{toNumber(data.sankirnMahsool)}</div>
+        {/* Row 3 : amount equation */}
+        <div className="co-section-panel">
+          <div className="co-amount-row">
+            <StatCard
+              label="वसूल झालेली रक्कम"
+              count={data.totalReceived}
+              icon={<DescriptionIcon />}
+            />
+            <div className="co-operator">=</div>
+            <StatCard
+              label="जमीन व इतर महसूल (संकीर्ण वगळता)"
+              count={landRevenue}
+              icon={<DescriptionIcon />}
+            />
+            <div className="co-operator">+</div>
+            <StatCard
+              label="संकीर्ण महसूल"
+              count={data.sankirnMahsool}
+              icon={<DescriptionIcon />}
+            />
           </div>
         </div>
       </div>
