@@ -272,7 +272,7 @@ const Section1 = ({ setDropdownVal, dropdownVal = {}, compact = false }) => {
                   value={currentYear}
                   onChange={handleChange}
                 >
-                  {['2023-24', '2024-25', '2025-26'].map((year) => (
+                  {['2023-24', '2024-25', '2025-26', '2026-27'].map((year) => (
                     <MenuItem key={year} value={year}>
                       {year}
                     </MenuItem>

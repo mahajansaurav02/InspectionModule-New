@@ -4,6 +4,7 @@ import InspectionReport from './views/reports/Inspection-report/InspectionReport
 import RemarkHistory from './views/reports/Remark-history/RemarkHistory'
 
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
+const CircleOfficerDashboard = React.lazy(() => import('./views/dashboard/CircleOfficer'))
 // Reports
 const InspectionOffline = React.lazy(() =>
   import('./views/inspection-module/inspection-offline/AuditFormtrial'),
@@ -69,6 +70,11 @@ const TalukaForm1 = React.lazy(() => import('./views/Taluka_Office/Taluka-form-1
 const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', element: Dashboard },
+  {
+    path: '/CircleOfficer',
+    name: 'Circle Officer Dashboard',
+    element: CircleOfficerDashboard,
+  },
 
   { path: '/inspection-module/inspection-offline', name: 'TrialForm', element: InspectionOffline },
   { path: '/inspection-module/inspection-online', name: 'TrialForm', element: InspectionOnline },
