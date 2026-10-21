@@ -251,6 +251,8 @@ const Login = () => {
                 talukaName: data.talukaName,
                 revenueYear: data.revenueYear,
                 villageForInspection: data.villageForInspection,
+                villageList: data.villages,
+
                 challanHeads: data.challanHeads,
                 dbInfo: {
                   echDbName: data.echDbName,
@@ -279,6 +281,7 @@ const Login = () => {
                 talukaName: data.talukaName,
                 revenueYear: data.revenueYear,
                 villageForInspection: data.villageForInspection,
+                villageList: data.villages,
                 challanHeads: data.challanHeads,
                 dbInfo: {
                   echDbName: data.echDbName,
@@ -328,6 +331,7 @@ const Login = () => {
           // Arrays stored as JSON strings
           localStorage.setItem('revenueYear', JSON.stringify(data.revenueYear))
           localStorage.setItem('villageForInspection', JSON.stringify(data.villageForInspection)) // NEW
+          localStorage.setItem('villageList', JSON.stringify(data.villages)) // NEW
           localStorage.setItem('challanHeads', JSON.stringify(data.challanHeads))
           localStorage.setItem(
             'selectedVillageData',
@@ -469,7 +473,7 @@ const Login = () => {
                   className="row g-3 needs-validation"
                   noValidate
                   validated={validated}
-                  //onSubmit={handleLogin}
+                //onSubmit={handleLogin}
                 >
                   {/* <h2> Inspection Module e-Chawadi </h2> */}
                   <h2> Inspection Module e-Chawadi </h2>
@@ -536,7 +540,7 @@ const Login = () => {
                       //     : 'Please provide a captcha.'
                       // }
                       required
-                      // tooltipFeedback
+                    // tooltipFeedback
                     />
                   </CInputGroup>
                   <div className="d-grid gap-2 col-12 mx-auto">
