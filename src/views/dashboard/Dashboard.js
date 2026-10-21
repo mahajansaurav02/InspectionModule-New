@@ -361,17 +361,17 @@ const CircleOfficer = () => {
     />
 
     {/* Village: Enabled for non-Collector roles */}
-    <FilterSelect
-      label="गाव"
-      name="village"
-      value={selectedMainVillage}
-      options={inspectionVillages?.map((val) => ({
-        value: val.villageCode,
-        label: val.villageCode,
-      }))}
-      onChange={handleFilterChange}
-      disabled={isCollector}
-    />
+  <FilterSelect
+  label="गाव"
+  name="village"
+  value={selectedMainVillage}
+  options={inspectionVillages?.map((val) => ({
+    value: val.villageCode,
+    label: val.villageName || val.villageCode, // show name, fallback to code
+  }))}
+  onChange={handleFilterChange}
+  disabled={isCollector}
+/>
 
     {/* Revenue Year */}
     <FilterSelect

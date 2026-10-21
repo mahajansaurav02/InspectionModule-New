@@ -325,7 +325,7 @@ const Section1 = ({
                       key={village.cCode}
                       value={String(village.villageName)}
                     >
-                      {village.villageCode}
+                      {village.villageName}
                     </MenuItem>
                   ))}
                 </CustomSelect>
